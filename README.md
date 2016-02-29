@@ -1,2 +1,2 @@
 # PLOX
-Proyecto final de Diseño de Compiladores, enero-mayo 2016
+Lenguaje basico de programacion, orientado a objetos. Proyecto final de Diseño de Compiladores, enero-mayo 2016
