@@ -1,6 +1,6 @@
 # Lista con nombres de tokens de palabras reservadas
 reserved = {
-   'class'   	: 'CLASS',
+   'class'   	  : 'CLASS',
    'under'      : 'UNDER',
    'main'       : 'MAIN',
    'new'        : 'NEW',
