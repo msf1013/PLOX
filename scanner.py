@@ -21,7 +21,7 @@ reserved = {
    'while'      : 'WHILE',
    'for'        : 'FOR',
    'input'      : 'INPUT',
-   'output'     : 'OUTPUT',
+   'output'     : 'OUTPUT'
 }
 
 
