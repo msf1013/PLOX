@@ -67,9 +67,216 @@ def p_asignacion_obj(p):
 						| IGUAL exp_objeto'''
 	print('asignacion_obj')
 
+def p_tipo(p):
+	'''tipo 	: NUMERAL
+				| REAL
+				| BOOL
+				| CHAR
+				| STRING'''
+	print('tipo')
+
+def p_acceso(p):
+	'''acceso 	: empty
+				| HIDDEN
+				| VISIBLE'''
+	print('acceso')
+
+def p_func(p):
+	'''func 	: acceso retorno ID params cuerpo_func'''
+	print('func')
+
+def p_retorno(p):
+	'''retorno 	: tipo
+				| WITHOUT'''
+	print('retorno')
+
+def p_main(p):
+	'''main 	: VISIBLE WITHOUT MAIN PIZQ PDER cuerpo_func'''
+	print('main')
+
+def p_params(p):
+	'''params 	: PIZQ params_op PDER'''
+	print('params')
+
+def p_params_op(p):
+	'''params_op: empty
+				| params_ciclo'''
+	print('params_op')
+
+def p_params_ciclo(p):
+	'''params_ciclo 	: tipo ID
+						| params_ciclo COMA tipo id'''
+	print('params_ciclo')
+
+def p_cuerpo_func(p):
+	'''cuerpo_func 	: LLIZQ vars ciclo_estatuto LLDER'''
+	print('cuerpo_func')
+
+def p_ciclo_estatuto(p):
+	'''ciclo_estatuto 	: empty
+						| ciclo_estatuto estatuto'''
+	print('ciclo_estatuto')
+
+def p_estatuto(p):
+	'''estatuto 	: while
+					| for
+					| asignacion
+					| condicion
+					| escritura
+					| lectura
+					| llamada_func
+					| return'''
+	print('estatuto')
+
+def p_llamada_func(p):
+	'''llamada_func : caller ID PIZQ exp_op PDER PYC'''
+	print('llamada_func')
+
+def p_caller(p):
+	'''caller 	: empty
+				| THIS PUNTO
+				| ID arreglo PUNTO'''
+	print('caller')
+
+def p_exp_op(p):
+	'''exp_op 	: empty
+				| exp_ciclo'''
+	print('exp_op')
+
+def p_exp_ciclo(p):
+	'''exp_ciclo 	: exp
+					| exp_ciclo COMA exp'''
+	print('exp_ciclo')
+
+def p_cte_bool(p):
+	'''cte_bool 	: TRUE
+					| FALSE'''
+	print('cte_bool')
+
+def p_exp(p):
+	'''exp 	: exp_bool
+			| exp_arit
+			| exp_str
+			| exp_objeto'''
+	print('exp')
+
+def p_exp_objeto(p):
+	'''exp_objeto 	: atom
+					| NEW ID PIZQ PDER'''
+	print('exp_objeto')
+
+def p_return(p):
+	'''return 	: RETURN exp PYC'''
+	print('return')
+
+def p_while(p):
+	'''while 	: WHILE PIZQ exp_bool PDER LLIZQ ciclo_estatuto LLDER'''
+	print('while')
+
+def p_exp_bool(p):
+	'''exp_bool : termino_bool
+				| exp_bool OR termino_bool'''
+	print('exp_bool')
+
+def p_termino_bool(p):
+	'''termino_bool 	: exp_b
+						| termino_bool AND exp_b'''
+	print('termino_bool')
+
+def p_exp_b(p):
+	'''exp_b 	: negacion op_exp_b'''
+	print('exp_b')
+
+def p_negacion(p):
+	'''negacion : empty
+				| NOT'''
+	print('negacion')
+
+def p_op_exp_b(p):
+	'''op_exp_b : llamada_func
+				| PIZQ exp_bool PDER'''
+	print('op_exp_b')
+
+def p_comparacion(p):
+	'''comparacion 	: exp_arit op_comp exp_arit
+					| exp_str IGUALC exp_str'''
+	print('comparacion')
+
+def p_exp_arit(p):
+	'''exp_arit 	: termino
+					| exp_arit MAS termino
+					| exp_arit MENOS termino'''
+	print('exp_arit')
+
+def p_termino(p):
+	'''termino  : factor
+				| termino POR factor
+				| termino ENTRE factor'''
+	print('termino')
+
+def p_factor(p):
+	'''factor 	: PIZQ exp_arit PDER
+				| factor_oper_op factor_cte_op'''
+	print('factor')
+
+def p_factor_oper_op(p):
+	'''factor_oper_op 	: empty
+						| MENOS
+						| MAS'''
+	print('factor_oper_op')
+
+def p_factor_cte_op(p):
+	'''factor_cte_op 	: CTE_NUMERAL
+						| CTE_REAL
+						| atom
+						| llamada_func'''
+	print('factor_cte_op')
+
+def p_for(p):
+	'''for 	: FOR PIZQ asignacion exp_bool PYC atom IGUAL exp PDER LLIZQ ciclo_estatuto LLDER'''
+	print('for')
+
+def p_exp_str(p):
+	'''exp_str 	: CONST_STR
+				| CONST_CHAR
+				| atom
+				| llamada_func'''
+	print('exp_str')
+
+def p_asignacion(p):
+	'''asignacion 	: atom IGUAL exp PYC'''
+	print('asignacion')
+
+def p_atom(p):
+	'''atom : ID arreglo atributo_arr
+			| ID arreglo
+			| THIS atributo_arr'''
+	print('atom')
+
+def p_atributo_arr(p):
+	'''atributo_arr 	: PUNTO ID arreglo'''
+	print('atributo_arr')
+
+def p_condicion(p):
+	'''condicion 	: ciclo_cond ELSE LLIZQ ciclo_estatuto LLDER'''
+	print('condicion')
+
+def p_ciclo_cond(p):
+	'''ciclo_cond 	: IF PIZQ exp_bool PDER LLIZQ ciclo_estatuto LLDER
+					| ciclo_cond ELSE IF PIZQ exp_bool PDER LLIZQ ciclo_estatuto LLDER'''
+	print('ciclo_cond')
+
+def p_lectura(p):
+	'''lectura 	: INPUT PIZQ atom PDER PYC'''
+	print('lectura')
+
+def p_escritura(p):
+	'''escritura 	: OUTPUT PIZQ exp PDER PYC'''
+	print('escritura')
+
 # Function to serve as an empty word
 def p_empty(p):
-	'empty :'
+	'''empty :'''
 	pass
 
 # Syntax error function
