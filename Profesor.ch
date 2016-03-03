@@ -16,3 +16,7 @@ a_chefe
 a_l_l_l
 chefe_lol
 || || & & && | | lol &&
+"chefe''"
+"'"
+'lol'
+'c'

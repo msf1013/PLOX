@@ -60,7 +60,7 @@ t_PUNTO			= r'\.'
 t_IGUAL			= r'\='
 
 t_CTE_STR       = r'\"(\\.|[^"])*\"'
-t_CTE_CHAR      = r"\'.\'"
+t_CTE_CHAR      = r"\'(\\.|[^'])\'"
 t_CTE_NUMERAL   = r'[0-9]+'
 t_CTE_REAL      = r'[0-9]+\.[0-9]+'
 
