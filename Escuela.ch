@@ -1,10 +1,8 @@
-add Persona;
-add Profesor;
-add Estudiante;
+
 class main {
     numeral cont = 0;
     Persona mama, papa;
-    Persona arrP[2];
+    Persona arrP;
 Profesor profe;
     Estudiante yo;
     string nombreProfe = "no lo se", nombre;

@@ -18,7 +18,7 @@ Params ::= '(' ((Tipo 'id') (',' Tipo 'id')* | ) ')'
 
 Cuerpo_func ::= '{' Vars Estatuto* '}'
 
-Estatuto ::= While | For | Foreach | Asignacion | Condicion | Escritura | Lectura | Llamada_func | Return
+Estatuto ::= While | For | Asignacion | Condicion | Escritura | Lectura | Llamada_func | Return
 
 Llamada_func ::= ( ('this' | 'id' ('[' Exp_arit ']' | )) '.' | ) 'id' '(' (Exp (',' Exp)* | ) ')' ';'
 
@@ -42,13 +42,11 @@ Comparacion ::= ( Exp_arit ('>' | '<' | '==' | '!=' | '<=' | '>=') Exp_arit ) | 
 
 Exp_arit ::= Termino (('+' | '-') Termino)*
 
-Termino ::= Factor (('*' | '/') Factor)*
+Termino ::= Factor (('*' | '/' | '%') Factor)*
 
 Factor ::= ('(' Exp_arit ')' | ('-' | '+' | ) ( 'cte_numeral' | 'cte_real' | Atom | Llamada_func))
 
 For ::= 'for' '(' Atom '=' Exp ';' Exp_bool ';' Asignacion ')' '{' Estatuto* '}'
-
-Foreach ::= 'foreach' '(' Atom 'in' Atom ')' '{' Estatuto* '}'
 
 Exp_str ::= ( 'const_str' | 'const_char' | Atom | Llamada_func)
 
