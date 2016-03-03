@@ -86,15 +86,3 @@ def t_error(t):
 import sys
 import ply.lex as lex
 lexer = lex.lex()
-
-myfile = open("Profesor.ch","r")
-s = myfile.read()
-# Give the lexer some input
-lexer.input(s)
-
-# Tokenize
-while True:
-    tok = lexer.token()
-    if not tok: 
-        break      # No more input
-    print(tok)

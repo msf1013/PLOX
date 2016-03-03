@@ -19,6 +19,11 @@ def p_clase(p):
 	'''clase : CLASS ID herencia LLIZQ ciclo_vars ciclo_func LLDER'''
 	print('clase')
 
+def p_herencia(p):
+	'''herencia : empty
+				| UNDER ID'''
+	print('herencia')
+
 def p_ciclo_vars(p):
 	'''ciclo_vars 	: empty
 					| ciclo_vars acceso vars'''
@@ -99,13 +104,13 @@ def p_params(p):
 	print('params')
 
 def p_params_op(p):
-	'''params_op: empty
+	'''params_op : empty
 				| params_ciclo'''
 	print('params_op')
 
 def p_params_ciclo(p):
 	'''params_ciclo 	: tipo ID
-						| params_ciclo COMA tipo id'''
+						| params_ciclo COMA tipo ID'''
 	print('params_ciclo')
 
 def p_cuerpo_func(p):
@@ -194,6 +199,10 @@ def p_negacion(p):
 
 def p_op_exp_b(p):
 	'''op_exp_b : llamada_func
+				| cte_bool
+				| comparacion
+				| exp_bool
+				| atom
 				| PIZQ exp_bool PDER'''
 	print('op_exp_b')
 
@@ -201,6 +210,15 @@ def p_comparacion(p):
 	'''comparacion 	: exp_arit op_comp exp_arit
 					| exp_str IGUALC exp_str'''
 	print('comparacion')
+
+def p_op_comp(p):
+	'''op_comp 	: MAYOR
+				| MENOR
+				| IGUALC
+				| NOTIGUAL
+				| MENORIGUAL
+				| MAYORIGUAL'''
+	print('op_comp')
 
 def p_exp_arit(p):
 	'''exp_arit 	: termino
@@ -211,7 +229,8 @@ def p_exp_arit(p):
 def p_termino(p):
 	'''termino  : factor
 				| termino POR factor
-				| termino ENTRE factor'''
+				| termino ENTRE factor
+				| termino MOD factor'''
 	print('termino')
 
 def p_factor(p):
@@ -237,8 +256,8 @@ def p_for(p):
 	print('for')
 
 def p_exp_str(p):
-	'''exp_str 	: CONST_STR
-				| CONST_CHAR
+	'''exp_str 	: CTE_STR
+				| CTE_CHAR
 				| atom
 				| llamada_func'''
 	print('exp_str')
