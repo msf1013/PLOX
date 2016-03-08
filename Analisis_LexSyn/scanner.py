@@ -30,6 +30,11 @@ reserved = {
 # Lista con nombres de tokens y palabras reservadas
 tokens = ['ID', 'MAS', 'MENOS', 'POR', 'ENTRE', 'MOD', 'AND', 'OR', 'PYC', 'COMA', 'MAYOR', 'MENOR', 'NOTIGUAL', 'NOT', 'PIZQ', 'PDER', 'LLIZQ', 'LLDER', 'COIZQ', 'CODER', 'PUNTO', 'IGUAL', 'CTE_STR', 'CTE_CHAR', 'CTE_NUMERAL', 'CTE_REAL'] + list(reserved.values())
 
+# Ultimo ID obtenido de scanner
+ultimoId = ''
+ultimoAcceso = ''
+ultimoTipo = ''
+
 # Definicion de tokens a traves de expresiones regulares
 t_MAS           = r'\+'
 t_MENOS         = r'-'
@@ -69,6 +74,15 @@ t_ignore = " \t\r"
 def t_ID(t):
     r'[a-zA-Z](_?[a-zA-Z0-9])*'
     t.type = reserved.get(t.value,'ID')    # Verificar si es palabra reservada
+    global ultimoId
+    global ultimoAcceso
+    global ultimoTipo
+    if(t.type == 'ID' or t.type == 'MAIN'):
+      ultimoId = t.value
+    elif(t.type == 'HIDDEN' or t.type == 'VISIBLE'):
+      ultimoAcceso = t.value
+    elif(t.type == 'CHAR' or t.type == 'NUMERAL' or t.type == 'REAL' or t.type == 'STRING' or t.type == 'BOOL'):
+      ultimoTipo = t.value
     return t
 
 def t_IGUAL(t):

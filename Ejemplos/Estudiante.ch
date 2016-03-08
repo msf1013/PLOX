@@ -1,6 +1,12 @@
+class Persona {
+	visible without main21(){
+	
+	}
+}
+
 class Estudiante under Persona {
     hidden real calificacion;
-    hidden Profesor profe; 
+    hidden Persona persona;
 	visible real getCalif() {
 	        return this.calificacion;
 	}
@@ -10,7 +16,7 @@ class Estudiante under Persona {
 	visible numeral getProfesor() {
 	        return this.profe;
 	}
-	visible without setProfesor(Profesor pro) {
+	visible without setProfesor(real pro) {
 	        this.profe = pro;
 	}
 }

@@ -3,6 +3,11 @@ import os.path
 import scanner
 tokens = scanner.tokens
 
+# Tabla semantica de clases a utilizar
+DirClases = {}
+ClaseActual = ''
+MetodoActual = ''
+
 # Global variable to store where the syntax error was trigger
 error = "'Program declaration'"
 
@@ -17,16 +22,46 @@ def p_ciclo_clase(p):
 	print('ciclo_clase')	
 
 def p_clase(p):
-	'''clase : CLASS ID herencia LLIZQ ciclo_vars ciclo_func LLDER
-			 | CLASS ID herencia LLIZQ ciclo_vars LLDER
-			 | CLASS ID herencia LLIZQ ciclo_func LLDER
-			 | CLASS ID herencia LLIZQ LLDER'''
+	'''clase : CLASS ID declararClase herencia LLIZQ ciclo_vars ciclo_func LLDER limpiarMetodoActual
+			 | CLASS ID declararClase herencia LLIZQ ciclo_vars LLDER limpiarMetodoActual
+			 | CLASS ID declararClase herencia LLIZQ ciclo_func LLDER limpiarMetodoActual
+			 | CLASS ID declararClase herencia LLIZQ LLDER limpiarMetodoActual'''
 	print('clase')
+
+def p_declararClase(p):
+	'''declararClase : '''
+	global ClaseActual
+	global DirClases
+	ClaseActual = scanner.ultimoId
+	if(DirClases.has_key(ClaseActual)):
+		lineNumber = scanner.lexer.lineno
+		print('Semantic error at line {0}, multiple declaration of Class {1}.').format(lineNumber, ClaseActual)
+		exit()
+	else:
+		DirClases[ClaseActual] = {'variables': {}, 'metodos': {}, 'ancestros': {}}
+
+def p_limpiarMetodoActual(p):
+	'''limpiarMetodoActual : '''
+	global MetodoActual
+	MetodoActual = ''
 
 def p_herencia(p):
 	'''herencia : empty
-				| UNDER ID'''
+				| UNDER ID agregaAncestro'''
 	print('herencia')
+
+def p_agregaAncestro(p):
+	'''agregaAncestro : '''
+	global ClaseActual
+	global DirClases
+	ancestro = scanner.ultimoId
+	if(not DirClases.has_key(ancestro)):
+		lineNumber = scanner.lexer.lineno
+		print('Semantic error at line {0}, Class {1} not declared and used in inheritance.').format(lineNumber, ancestro)
+		exit()
+	else:
+		DirClases[ClaseActual]['ancestros'] = DirClases[ancestro]['ancestros']
+		DirClases[ClaseActual]['ancestros'][ancestro] = DirClases[ancestro]
 
 def p_ciclo_vars(p):
 	'''ciclo_vars 	: acceso vars
@@ -39,10 +74,10 @@ def p_ciclo_func(p):
 	print('ciclo_func')
 
 def p_clase_main(p):
-	'''clase_main 	: CLASS MAIN LLIZQ ciclo_vars ciclo_func main LLDER
-					| CLASS MAIN LLIZQ ciclo_vars main LLDER
-					| CLASS MAIN LLIZQ ciclo_func main LLDER
-					| CLASS MAIN LLIZQ main LLDER'''
+	'''clase_main 	: CLASS MAIN declararClase LLIZQ ciclo_vars ciclo_func main LLDER
+					| CLASS MAIN declararClase LLIZQ ciclo_vars main LLDER
+					| CLASS MAIN declararClase LLIZQ ciclo_func main LLDER
+					| CLASS MAIN declararClase LLIZQ main LLDER'''
 	print('clase_main')
 
 def p_vars(p):
@@ -51,30 +86,80 @@ def p_vars(p):
 
 def p_var_op(p):
 	'''var_op 	: tipo ciclo_tipo
-				| ID ciclo_id'''
+				| ID revisarExistenciaClase ciclo_id'''
 	print('var_op')
 
+def p_revisarExistenciaClase(p):
+	'''revisarExistenciaClase : '''
+	global ClaseActual
+	global DirClases
+	tipo = scanner.ultimoId
+	if(not DirClases.has_key(tipo)):
+		lineNumber = scanner.lexer.lineno
+		print('Semantic error at line {0}, Class {1} not declared but being instanced.').format(lineNumber, tipo)
+		exit()
+	else:
+		scanner.ultimoTipo = tipo
+
 def p_ciclo_tipo(p):
-	'''ciclo_tipo 	: ID
-					| ID COIZQ exp CODER
-					| ciclo_tipo COMA ID
-					| ciclo_tipo COMA ID COIZQ exp CODER
-					| ID IGUAL exp
-					| ID COIZQ exp CODER IGUAL exp
-					| ciclo_tipo COMA ID IGUAL exp
-					| ciclo_tipo COMA ID COIZQ exp CODER IGUAL exp'''
+	'''ciclo_tipo 	: ID declararVariable
+					| ID declararVariable COIZQ exp CODER
+					| ciclo_tipo COMA ID declararVariable
+					| ciclo_tipo COMA ID declararVariable COIZQ exp CODER
+					| ID declararVariable IGUAL exp
+					| ID declararVariable COIZQ exp CODER IGUAL exp
+					| ciclo_tipo COMA ID declararVariable IGUAL exp
+					| ciclo_tipo COMA ID declararVariable COIZQ exp CODER IGUAL exp'''
 	print('ciclo_tipo')
 
 def p_ciclo_id(p):
-	'''ciclo_id 	: ID 
-					| ID COIZQ exp CODER 
-					| ciclo_id COMA ID 
-					| ciclo_id COMA ID COIZQ exp CODER 
-					| ID IGUAL NEW ID PIZQ PDER
-					| ID COIZQ exp CODER IGUAL NEW ID PIZQ PDER
-					| ciclo_id COMA ID IGUAL NEW ID PIZQ PDER
-					| ciclo_id COMA ID COIZQ exp CODER IGUAL NEW ID PIZQ PDER'''
+	'''ciclo_id 	: ID declararVariable 
+					| ID declararVariable COIZQ exp CODER 
+					| ciclo_id COMA ID declararVariable
+					| ciclo_id COMA ID declararVariable COIZQ exp CODER 
+					| ID declararVariable IGUAL atom
+					| ciclo_id COMA ID declararVariable IGUAL atom'''
 	print('ciclo_id')
+
+def p_declararVariable(p):
+	'''declararVariable : '''
+	'''revisarExistenciaClase : '''
+	global ClaseActual
+	global MetodoActual
+	global DirClases
+	lineNumber = scanner.lexer.lineno
+	var = scanner.ultimoId
+	if(DirClases.has_key(var)):
+		print('Semantic error at line {0}, variable {1} declared but Class {1} already exists.').format(lineNumber, var)
+		exit()
+	elif(DirClases[ClaseActual]['variables'].has_key(var)):
+		print('Semantic error at line {0}, variable {1} already declared.').format(lineNumber, var)
+		exit()
+	elif(DirClases[ClaseActual]['metodos'].has_key(var)):
+		print('Semantic error at line {0}, variable {1} declared but function {1} already declared.').format(lineNumber, var)
+		exit()
+	elif(MetodoActual != '' and DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(var)):
+		print('Semantic error at line {0}, variable {1} already declared.').format(lineNumber, var)
+		exit()
+	elif(checarAncestros(DirClases[ClaseActual]['ancestros'], var, lineNumber)):
+		exit()
+	else:
+		if(MetodoActual != ''):
+			DirClases[ClaseActual]['variables'][var] = {'type': scanner.ultimoTipo}
+		else:
+			DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][var] = {'type': scanner.ultimoTipo}
+
+
+def checarAncestros(ancestros, var, lineNumber):
+	listaAn = ancestros.items()
+	for item in listaAn:
+		if (item['variables'].has_key(var)):
+			print('Semantic error at line {0}, variable {1} already declared.').format(lineNumber, var)
+			return True
+		elif (item['metodos'].has_key(var)):
+			print('Semantic error at line {0}, variable {1} declared but Class {1} already exists.').format(lineNumber, var)
+			return True
+	return False
 
 def p_tipo(p):
 	'''tipo 	: NUMERAL
