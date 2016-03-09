@@ -141,23 +141,29 @@ def p_declararVariable(p):
 	elif(MetodoActual != '' and DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(var)):
 		print('Semantic error at line {0}, variable {1} already declared.').format(lineNumber, var)
 		exit()
-	elif(checarAncestros(DirClases[ClaseActual]['ancestros'], var, lineNumber)):
+	elif(checarAncestros(DirClases[ClaseActual]['ancestros'], var, lineNumber, 0)):
 		exit()
 	else:
-		if(MetodoActual != ''):
-			DirClases[ClaseActual]['variables'][var] = {'type': scanner.ultimoTipo}
+		if(MetodoActual == ''):
+			DirClases[ClaseActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : ''}
 		else:
-			DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][var] = {'type': scanner.ultimoTipo}
+			DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : scanner.ultimoAcceso}
 
 
-def checarAncestros(ancestros, var, lineNumber):
+def checarAncestros(ancestros, var, lineNumber, tipo):
 	listaAn = ancestros.items()
 	for item in listaAn:
-		if (item['variables'].has_key(var)):
-			print('Semantic error at line {0}, variable {1} already declared.').format(lineNumber, var)
+		if (item[1]['variables'].has_key(var)):
+			if (tipo == 0):
+				print('Semantic error at line {0}, variable {1} already declared.').format(lineNumber, var)
+			else:
+				print('Semantic error at line {0}, method {1} declared but variable {1} already declared.').format(lineNumber, var)
 			return True
-		elif (item['metodos'].has_key(var)):
-			print('Semantic error at line {0}, variable {1} declared but Class {1} already exists.').format(lineNumber, var)
+		elif (item[1]['metodos'].has_key(var)):
+			if (tipo == 0):
+				print('Semantic error at line {0}, variable {1} declared but method {1} already exists.').format(lineNumber, var)
+			else:
+				print('Semantic error at line {0}, method {1} already declared.').format(lineNumber, var)
 			return True
 	return False
 
@@ -175,12 +181,37 @@ def p_acceso(p):
 	print('acceso')
 
 def p_func(p):
-	'''func 	: acceso tipo ID params cuerpo_func
-				| acceso WITHOUT ID params cuerpo_func'''
+	'''func 	: acceso tipo ID declararMetodo params cuerpo_func
+				| acceso WITHOUT ID declararMetodo params cuerpo_func'''
+	print('---1---')
+	for par in DirClases[ClaseActual]['metodos'][MetodoActual]['parametros']:
+		print(par[0] + " " + par[1])
+	print('---2---')
 	print('func')
 
+def p_declararMetodo(p):
+	'''declararMetodo : '''
+	global ClaseActual
+	global MetodoActual
+	global DirClases
+	lineNumber = scanner.lexer.lineno
+	MetodoActual = scanner.ultimoId
+	if(DirClases.has_key(MetodoActual) and MetodoActual != 'main'):
+		print('Semantic error at line {0}, method {1} declared but Class {1} already exists.').format(lineNumber, MetodoActual)
+		exit()
+	elif(DirClases[ClaseActual]['variables'].has_key(MetodoActual)):
+		print('Semantic error at line {0}, method {1} declared but variable {1} already declared.').format(lineNumber, MetodoActual)
+		exit()
+	elif(DirClases[ClaseActual]['metodos'].has_key(MetodoActual)):
+		print('Semantic error at line {0}, method {1} already declared.').format(lineNumber, MetodoActual)
+		exit()
+	elif(checarAncestros(DirClases[ClaseActual]['ancestros'], MetodoActual, lineNumber, 1)):
+		exit()
+	else:
+		DirClases[ClaseActual]['metodos'][MetodoActual] = {'tablaVars' : {}, 'parametros' : [], 'acceso' : scanner.ultimoAcceso}
+
 def p_main(p):
-	'''main 	: acceso WITHOUT MAIN PIZQ PDER cuerpo_func'''
+	'''main 	: acceso WITHOUT MAIN declararMetodo PIZQ PDER cuerpo_func'''
 	print('main')
 
 def p_params(p):
@@ -189,9 +220,19 @@ def p_params(p):
 	print('params')
 
 def p_params_ciclo(p):
-	'''params_ciclo 	: tipo ID
-						| params_ciclo COMA tipo ID'''
+	'''params_ciclo 	: tipo ID meterParametros
+						| params_ciclo COMA tipo ID meterParametros'''
 	print('params_ciclo')
+
+def p_meterParametros(p):
+	'''meterParametros : '''
+	global ClaseActual
+	global MetodoActual
+	global DirClases
+	lineNumber = scanner.lexer.lineno
+	parametro = scanner.ultimoId
+	tipo = scanner.ultimoTipo
+	DirClases[ClaseActual]['metodos'][MetodoActual]['parametros'].append([tipo, parametro])
 
 def p_cuerpo_func(p):
 	'''cuerpo_func 	: LLIZQ ciclo_vars_func ciclo_estatuto LLDER
