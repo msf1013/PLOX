@@ -77,7 +77,7 @@ def t_ID(t):
     global ultimoId
     global ultimoAcceso
     global ultimoTipo
-    if(t.type == 'ID' or t.type == 'MAIN'):
+    if(t.type == 'ID' or t.type == 'MAIN' or t.type == 'THIS'):
       ultimoId = t.value
     elif(t.type == 'HIDDEN' or t.type == 'VISIBLE'):
       ultimoAcceso = t.value

@@ -11,27 +11,24 @@ class Estudiante under Persona {
 	        return this.calificacion;
 	}
 	visible without setCalif(real calif) {
-	        this.calificacion = calif;
+			this.calificacion = calif;
 	}
 	visible numeral getProfesor() {
-	        return this.profe;
+	        return this.persona;
 	}
 	visible without setProfesor(real pro) {
-	        this.profe = pro;
+	        this.calificacion = pro;
 	}
 }
 
 class main {
-	visible without chefe() {
-
-	}
-	visible without chefe2(real todoBien, real todoMal, numeral wowo) {
-
-	}
-	visible without main(){
-	
-	}
+	hidden real chofo;
 	visible without main() {
-	
+		real lol, chu, chossfos;
+		string l;
+		Estudiante g;
+		string hu, calificacion;
+		lol = chofo;
+
 	}
 }

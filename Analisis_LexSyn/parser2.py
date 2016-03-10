@@ -7,6 +7,7 @@ tokens = scanner.tokens
 DirClases = {}
 ClaseActual = ''
 MetodoActual = ''
+Invocador = ''
 
 # Global variable to store where the syntax error was trigger
 error = "'Program declaration'"
@@ -33,17 +34,24 @@ def p_declararClase(p):
 	global ClaseActual
 	global DirClases
 	ClaseActual = scanner.ultimoId
+	if (ClaseActual == 'main'):
+		print("ESTAMOS EN MAIN")
 	if(DirClases.has_key(ClaseActual)):
 		lineNumber = scanner.lexer.lineno
 		print('Semantic error at line {0}, multiple declaration of Class {1}.').format(lineNumber, ClaseActual)
 		exit()
 	else:
-		DirClases[ClaseActual] = {'variables': {}, 'metodos': {}, 'ancestros': {}}
+		DirClases[ClaseActual] = {'variables': { 'this' : {'tipo': ClaseActual, 'acceso' : 'hidden'} }, 'metodos': {}, 'ancestros': {}}
 
 def p_limpiarMetodoActual(p):
 	'''limpiarMetodoActual : '''
 	global MetodoActual
 	MetodoActual = ''
+
+def p_limpiarInvocador(p):
+	'''limpiarInvocador : '''
+	global Invocador
+	Invocador = ''
 
 def p_herencia(p):
 	'''herencia : empty
@@ -94,8 +102,10 @@ def p_revisarExistenciaClase(p):
 	global ClaseActual
 	global DirClases
 	tipo = scanner.ultimoId
+	#print(tipo)
 	if(not DirClases.has_key(tipo)):
 		lineNumber = scanner.lexer.lineno
+		#print("ALGO PASA")
 		print('Semantic error at line {0}, Class {1} not declared but being instanced.').format(lineNumber, tipo)
 		exit()
 	else:
@@ -117,18 +127,20 @@ def p_ciclo_id(p):
 					| ID declararVariable COIZQ exp CODER 
 					| ciclo_id COMA ID declararVariable
 					| ciclo_id COMA ID declararVariable COIZQ exp CODER 
-					| ID declararVariable IGUAL atom
-					| ciclo_id COMA ID declararVariable IGUAL atom'''
+					| ID declararVariable IGUAL atom limpiarInvocador
+					| ciclo_id COMA ID declararVariable IGUAL atom limpiarInvocador'''
 	print('ciclo_id')
 
 def p_declararVariable(p):
 	'''declararVariable : '''
-	'''revisarExistenciaClase : '''
+	#'''revisarExistenciaClase : '''
 	global ClaseActual
 	global MetodoActual
 	global DirClases
 	lineNumber = scanner.lexer.lineno
 	var = scanner.ultimoId
+	print('QUE ONDA')
+	print(var)
 	if(DirClases.has_key(var)):
 		print('Semantic error at line {0}, variable {1} declared but Class {1} already exists.').format(lineNumber, var)
 		exit()
@@ -167,6 +179,20 @@ def checarAncestros(ancestros, var, lineNumber, tipo):
 			return True
 	return False
 
+def checarAtributoAncestros(ancestros, var, lineNumber):
+	listaAn = ancestros.items()
+	for item in listaAn:
+		if (item[1]['variables'].has_key(var)):
+			return True
+	return False
+
+def checarMetodoAncestros(ancestros, var, lineNumber):
+	listaAn = ancestros.items()
+	for item in listaAn:
+		if (item[1]['metodos'].has_key(var)):
+			return True
+	return False
+
 def p_tipo(p):
 	'''tipo 	: NUMERAL
 				| REAL
@@ -196,6 +222,8 @@ def p_declararMetodo(p):
 	global DirClases
 	lineNumber = scanner.lexer.lineno
 	MetodoActual = scanner.ultimoId
+	if (MetodoActual == 'main'):
+		print("ESTAMOS EN metodo MAIN")
 	if(DirClases.has_key(MetodoActual) and MetodoActual != 'main'):
 		print('Semantic error at line {0}, method {1} declared but Class {1} already exists.').format(lineNumber, MetodoActual)
 		exit()
@@ -208,11 +236,16 @@ def p_declararMetodo(p):
 	elif(checarAncestros(DirClases[ClaseActual]['ancestros'], MetodoActual, lineNumber, 1)):
 		exit()
 	else:
-		DirClases[ClaseActual]['metodos'][MetodoActual] = {'tablaVars' : {}, 'parametros' : [], 'acceso' : scanner.ultimoAcceso}
+		DirClases[ClaseActual]['metodos'][MetodoActual] = {'variables' : {}, 'parametros' : [], 'acceso' : scanner.ultimoAcceso}
 
 def p_main(p):
-	'''main 	: acceso WITHOUT MAIN declararMetodo PIZQ PDER cuerpo_func'''
+	'''main 	: acceso WITHOUT MAIN declararMetodo PIZQ PDER prueba cuerpo_func'''
 	print('main')
+
+def p_prueba(p):
+	'''prueba 	:'''
+	print('TODO BIEN AQUI')
+	print('prueba')
 
 def p_params(p):
 	'''params 	: PIZQ params_ciclo PDER
@@ -232,6 +265,7 @@ def p_meterParametros(p):
 	lineNumber = scanner.lexer.lineno
 	parametro = scanner.ultimoId
 	tipo = scanner.ultimoTipo
+	DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][parametro] = {'tipo':tipo, 'acceso':'hidden'}
 	DirClases[ClaseActual]['metodos'][MetodoActual]['parametros'].append([tipo, parametro])
 
 def p_cuerpo_func(p):
@@ -258,20 +292,55 @@ def p_estatuto(p):
 					| condicion
 					| escritura
 					| lectura
-					| llamada_func PYC
+					| llamada_func limpiarInvocador PYC
 					| return'''
 	print('estatuto')
 
 def p_llamada_func(p):
-	'''llamada_func : ID PIZQ exp_ciclo PDER
-					| THIS PUNTO ID PIZQ exp_ciclo PDER
-					| ID PUNTO ID PIZQ exp_ciclo PDER
-					| ID COIZQ exp CODER PUNTO ID PIZQ exp_ciclo PDER
-					| ID PIZQ PDER
-					| THIS PUNTO ID PIZQ PDER
-					| ID PUNTO ID PIZQ PDER
-					| ID COIZQ exp CODER PUNTO ID PIZQ PDER'''
+	'''llamada_func : ID checarFuncion PIZQ exp_ciclo PDER
+					| ID PUNTO definirInvocador ID checarFuncion PIZQ exp_ciclo PDER
+					| ID definirInvocador COIZQ exp CODER PUNTO ID checarFuncion PIZQ exp_ciclo PDER
+					| ID checarFuncion PIZQ PDER
+					| ID PUNTO definirInvocador ID checarFuncion PIZQ PDER
+					| ID definirInvocador COIZQ exp CODER PUNTO ID checarFuncion PIZQ PDER'''
 	print('llamada_func')
+
+def p_checarFuncion(p):
+	'''checarFuncion : '''
+	global ClaseActual
+	global MetodoActual
+	global DirClases
+	global Invocador
+	lineNumber = scanner.lexer.lineno
+	func = scanner.ultimoId
+	if (Invocador == ''):
+		if (not DirClases[ClaseActual]['metodos'].has_key(func) and not checarMetodoAncestros(DirClases[ClaseActual]['ancestros'], func, lineNumber)):
+			print('Semantic error at line {0}, method {1} not found in Class Hierarchy.').format(lineNumber, func)
+			exit()
+	else:
+		claseAux = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo']
+		if (not DirClases[claseAux]['metodos'].has_key(func) and not checarMetodoAncestros(DirClases[claseAux]['ancestros'], func, lineNumber)):
+			print('Semantic error at line {0}, method {1} not associated with Object {2}.').format(lineNumber, func, Invocador)
+			exit()
+
+def p_definirInvocador(p):
+	'''definirInvocador : '''
+	global ClaseActual
+	global MetodoActual
+	global DirClases
+	global Invocador
+	lineNumber = scanner.lexer.lineno
+	Invocador = scanner.ultimoId
+	print('MetodoActual : ' + MetodoActual)
+	print('Invocador : ' + Invocador)
+	print(DirClases[ClaseActual]['variables'])
+	if ( DirClases[ClaseActual]['variables'].has_key(Invocador) or checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], func, lineNumber)):
+		pass
+	elif (MetodoActual != '' and DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(Invocador) ):
+		pass
+	else:
+		print('Semantic error at line {0}, Class instance {1} not found.').format(lineNumber, Invocador)
+		exit()
 
 def p_exp_ciclo(p):
 	'''exp_ciclo 	: exp
@@ -283,7 +352,7 @@ def p_cte_bool(p):
 					| FALSE'''
 	print('cte_bool')
 
-def p_exp(p):
+def p_exp(p):	
 	'''exp 	: opciones ope exp
 			| opciones
 			| PIZQ exp PDER
@@ -299,12 +368,12 @@ def p_opciones(p):
 				| CTE_NUMERAL
 				| CTE_REAL
 				| cte_bool
-				| atom
-				| llamada_func
+				| atom limpiarInvocador
+				| llamada_func limpiarInvocador
 				| MENOS CTE_NUMERAL
 				| MENOS CTE_REAL
-				| MENOS atom
-				| MENOS llamada_func'''
+				| MENOS atom limpiarInvocador
+				| MENOS llamada_func limpiarInvocador'''
 	print('opciones')
 
 def p_ope(p):
@@ -334,20 +403,76 @@ def p_while(p):
 	print('while')
 
 def p_asignacion(p):
-	'''asignacion 	: atom IGUAL exp PYC
-					| atom IGUAL NEW ID PIZQ PDER PYC'''
+	'''asignacion 	: atom limpiarInvocador IGUAL exp PYC'''
 	print('asignacion')
 
 def p_atom(p):
-	'''atom : ID PUNTO ID COIZQ exp CODER
-			| ID PUNTO ID
-			| ID COIZQ exp CODER PUNTO ID COIZQ exp CODER
-			| ID COIZQ exp CODER PUNTO ID
-			| ID
-			| ID COIZQ exp CODER
-			| THIS PUNTO ID
-			| THIS PUNTO ID COIZQ exp CODER'''
+	'''atom : ID PUNTO definirInvocador ID checarAtributo COIZQ exp CODER
+			| ID PUNTO definirInvocador ID checarAtributo
+			| ID definirInvocador COIZQ exp CODER PUNTO ID checarAtributo COIZQ exp CODER 
+			| ID definirInvocador COIZQ exp CODER PUNTO ID checarAtributo
+			| ID checarAtributo
+			| ID definirInvocador COIZQ exp CODER checarAtributo2
+			| THIS PUNTO definirInvocador ID checarAtributo
+			| THIS PUNTO definirInvocador ID checarAtributo COIZQ exp CODER '''
 	print('atom')
+
+def p_checarAtributo2(p):
+	'''checarAtributo2 : '''
+	global ClaseActual
+	global MetodoActual
+	global DirClases
+	global Invocador
+	lineNumber = scanner.lexer.lineno
+	atributo = Invocador
+	Invocador = ''
+	
+	if (Invocador == ''):
+		if (MetodoActual == ''):
+			if (not DirClases[ClaseActual]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
+				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 111').format(lineNumber, atributo)
+				exit()
+		else:
+			if (not DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(atributo) and not DirClases[ClaseActual]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
+				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 222').format(lineNumber, atributo)
+				exit()
+	elif (Invocador == 'THIS'):
+		if (not DirClases[ClaseActual]['variables'].has_key(atributo)):
+			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 333').format(lineNumber, atributo)
+			exit()
+	else:
+		claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+		if (not DirClases[claseAux]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)):
+			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
+			exit()
+
+def p_checarAtributo(p):
+	'''checarAtributo : '''
+	global ClaseActual
+	global MetodoActual
+	global DirClases
+	global Invocador
+	lineNumber = scanner.lexer.lineno
+	atributo = scanner.ultimoId
+	
+	if (Invocador == ''):
+		if (MetodoActual == ''):
+			if (not DirClases[ClaseActual]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
+				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 111').format(lineNumber, atributo)
+				exit()
+		else:
+			if (not DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(atributo) and not DirClases[ClaseActual]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
+				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 222').format(lineNumber, atributo)
+				exit()
+	elif (Invocador == 'THIS'):
+		if (not DirClases[ClaseActual]['variables'].has_key(atributo)):
+			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 333').format(lineNumber, atributo)
+			exit()
+	else:
+		claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+		if (not DirClases[claseAux]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)):
+			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
+			exit()
 
 def p_condicion(p):
 	'''condicion 	: ciclo_cond ELSE LLIZQ ciclo_estatuto LLDER
@@ -362,7 +487,7 @@ def p_ciclo_cond(p):
 	print('ciclo_cond')
 
 def p_lectura(p):
-	'''lectura 	: INPUT PIZQ atom PDER PYC'''
+	'''lectura 	: INPUT PIZQ atom limpiarInvocador PDER PYC'''
 	print('lectura')
 
 def p_escritura(p):
