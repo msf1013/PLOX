@@ -34,8 +34,6 @@ def p_declararClase(p):
 	global ClaseActual
 	global DirClases
 	ClaseActual = scanner.ultimoId
-	if (ClaseActual == 'main'):
-		print("ESTAMOS EN MAIN")
 	if(DirClases.has_key(ClaseActual)):
 		lineNumber = scanner.lexer.lineno
 		print('Semantic error at line {0}, multiple declaration of Class {1}.').format(lineNumber, ClaseActual)
@@ -94,7 +92,7 @@ def p_vars(p):
 
 def p_var_op(p):
 	'''var_op 	: tipo ciclo_tipo
-				| ID revisarExistenciaClase ciclo_id'''
+				| ID revisarExistenciaClase DOSP ciclo_id'''
 	print('var_op')
 
 def p_revisarExistenciaClase(p):
@@ -102,10 +100,8 @@ def p_revisarExistenciaClase(p):
 	global ClaseActual
 	global DirClases
 	tipo = scanner.ultimoId
-	#print(tipo)
 	if(not DirClases.has_key(tipo)):
 		lineNumber = scanner.lexer.lineno
-		#print("ALGO PASA")
 		print('Semantic error at line {0}, Class {1} not declared but being instanced.').format(lineNumber, tipo)
 		exit()
 	else:
@@ -139,8 +135,6 @@ def p_declararVariable(p):
 	global DirClases
 	lineNumber = scanner.lexer.lineno
 	var = scanner.ultimoId
-	print('QUE ONDA')
-	print(var)
 	if(DirClases.has_key(var)):
 		print('Semantic error at line {0}, variable {1} declared but Class {1} already exists.').format(lineNumber, var)
 		exit()
@@ -157,9 +151,9 @@ def p_declararVariable(p):
 		exit()
 	else:
 		if(MetodoActual == ''):
-			DirClases[ClaseActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : ''}
+			DirClases[ClaseActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : scanner.ultimoAcceso}
 		else:
-			DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : scanner.ultimoAcceso}
+			DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : ''}
 
 
 def checarAncestros(ancestros, var, lineNumber, tipo):
@@ -223,8 +217,6 @@ def p_declararMetodo(p):
 	lineNumber = scanner.lexer.lineno
 	retorno = scanner.ultimoTipo
 	MetodoActual = scanner.ultimoId
-	if (MetodoActual == 'main'):
-		print("ESTAMOS EN metodo MAIN")
 	if(DirClases.has_key(MetodoActual) and MetodoActual != 'main'):
 		print('Semantic error at line {0}, method {1} declared but Class {1} already exists.').format(lineNumber, MetodoActual)
 		exit()
@@ -240,13 +232,8 @@ def p_declararMetodo(p):
 		DirClases[ClaseActual]['metodos'][MetodoActual] = {'variables' : {}, 'parametros' : [], 'retorno': retorno, 'acceso' : scanner.ultimoAcceso}
 
 def p_main(p):
-	'''main 	: acceso WITHOUT MAIN declararMetodo PIZQ PDER prueba cuerpo_func'''
+	'''main 	: acceso WITHOUT MAIN declararMetodo PIZQ PDER cuerpo_func'''
 	print('main')
-
-def p_prueba(p):
-	'''prueba 	:'''
-	print('TODO BIEN AQUI')
-	print('prueba')
 
 def p_params(p):
 	'''params 	: PIZQ params_ciclo PDER
@@ -319,7 +306,16 @@ def p_checarFuncion(p):
 			print('Semantic error at line {0}, method {1} not found in Class Hierarchy.').format(lineNumber, func)
 			exit()
 	else:
-		claseAux = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo']
+		claseAux = ''
+
+		if (MetodoActual != ''):
+			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(Invocador) ):
+				claseAux = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo']
+			else:
+				claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+		else:
+			claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+
 		if (not DirClases[claseAux]['metodos'].has_key(func) and not checarMetodoAncestros(DirClases[claseAux]['ancestros'], func, lineNumber)):
 			print('Semantic error at line {0}, method {1} not associated with Object {2}.').format(lineNumber, func, Invocador)
 			exit()
@@ -332,10 +328,7 @@ def p_definirInvocador(p):
 	global Invocador
 	lineNumber = scanner.lexer.lineno
 	Invocador = scanner.ultimoId
-	print('MetodoActual : ' + MetodoActual)
-	print('Invocador : ' + Invocador)
-	print(DirClases[ClaseActual]['variables'])
-	if ( DirClases[ClaseActual]['variables'].has_key(Invocador) or checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], func, lineNumber)):
+	if ( DirClases[ClaseActual]['variables'].has_key(Invocador) or checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], Invocador, lineNumber)):
 		pass
 	elif (MetodoActual != '' and DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(Invocador) ):
 		pass
@@ -442,7 +435,17 @@ def p_checarAtributo2(p):
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 333').format(lineNumber, atributo)
 			exit()
 	else:
-		claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+
+		claseAux = ''
+
+		if (MetodoActual != ''):
+			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(Invocador) ):
+				claseAux = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo']
+			else:
+				claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+		else:
+			claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+
 		if (not DirClases[claseAux]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)):
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
 			exit()
@@ -470,7 +473,17 @@ def p_checarAtributo(p):
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 333').format(lineNumber, atributo)
 			exit()
 	else:
-		claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+		
+		claseAux = ''
+
+		if (MetodoActual != ''):
+			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(Invocador) ):
+				claseAux = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo']
+			else:
+				claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+		else:
+			claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+
 		if (not DirClases[claseAux]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)):
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
 			exit()

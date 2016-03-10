@@ -3,7 +3,6 @@ reserved = {
    'class'   	  : 'CLASS',
    'under'      : 'UNDER',
    'main'       : 'MAIN',
-   'new'        : 'NEW',
    'numeral'    : 'NUMERAL',
    'real'       : 'REAL',
    'bool'       : 'BOOL',
@@ -28,7 +27,7 @@ reserved = {
 
 
 # Lista con nombres de tokens y palabras reservadas
-tokens = ['ID', 'MAS', 'MENOS', 'POR', 'ENTRE', 'MOD', 'AND', 'OR', 'PYC', 'COMA', 'MAYOR', 'MENOR', 'NOTIGUAL', 'NOT', 'PIZQ', 'PDER', 'LLIZQ', 'LLDER', 'COIZQ', 'CODER', 'PUNTO', 'IGUAL', 'CTE_STR', 'CTE_CHAR', 'CTE_NUMERAL', 'CTE_REAL'] + list(reserved.values())
+tokens = ['ID', 'MAS', 'MENOS', 'POR', 'DOSP', 'ENTRE', 'MOD', 'AND', 'OR', 'PYC', 'COMA', 'MAYOR', 'MENOR', 'NOTIGUAL', 'NOT', 'PIZQ', 'PDER', 'LLIZQ', 'LLDER', 'COIZQ', 'CODER', 'PUNTO', 'IGUAL', 'CTE_STR', 'CTE_CHAR', 'CTE_NUMERAL', 'CTE_REAL'] + list(reserved.values())
 
 # Ultimo ID obtenido de scanner
 ultimoId = ''
@@ -60,6 +59,7 @@ t_COIZQ			= r'\['
 t_CODER			= r'\]'
 
 t_PUNTO			= r'\.'
+t_DOSP     = r'\:'
 
 t_CTE_STR       = r'\"(\\.|[^"])*\"'
 t_CTE_CHAR      = r"\'(\\.|[^'])\'"

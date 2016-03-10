@@ -1,4 +1,5 @@
 class Persona {
+hidden string hola;
 	visible without main21(numeral chefe, char loco, char chacha, string wow){
 	
 	}
@@ -6,7 +7,7 @@ class Persona {
 
 class Estudiante under Persona {
     hidden real calificacion;
-    hidden Persona persona;
+    visible Persona : persona, chavo = persona;
 	visible real getCalif() {
 	        return this.calificacion;
 	}
@@ -22,13 +23,13 @@ class Estudiante under Persona {
 }
 
 class main {
-	hidden real chofo;
+	hidden real chofo, a;
+	
 	visible without main() {
 		real lol, chu, chossfos;
 		string l;
-		Estudiante g;
-		string hu, calificacion;
-		lol = chofo;
+		Estudiante : g, loca;
+		l = loca;
 
 	}
 }
