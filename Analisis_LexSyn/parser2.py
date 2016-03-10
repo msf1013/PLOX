@@ -15,7 +15,6 @@ error = "'Program declaration'"
 def p_programa(p):
 	'''programa : ciclo_clase clase_main
 				| clase_main'''
-	print(DirClases['Estudiante']['metodos'])
 	print('Compilation successful!')
 
 def p_ciclo_clase(p):
@@ -428,7 +427,7 @@ def p_checarAtributo2(p):
 				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 222').format(lineNumber, atributo)
 				exit()
 	elif (Invocador == 'THIS'):
-		if (not DirClases[ClaseActual]['variables'].has_key(atributo)):
+		if (not DirClases[ClaseActual]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 333').format(lineNumber, atributo)
 			exit()
 	else:
@@ -466,7 +465,7 @@ def p_checarAtributo(p):
 				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 222').format(lineNumber, atributo)
 				exit()
 	elif (Invocador == 'THIS'):
-		if (not DirClases[ClaseActual]['variables'].has_key(atributo)):
+		if (not DirClases[ClaseActual]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 333').format(lineNumber, atributo)
 			exit()
 	else:

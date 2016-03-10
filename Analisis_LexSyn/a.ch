@@ -1,4 +1,5 @@
 class Persona {
+visible numeral jj;
 visible string hola;
 	visible string calificacion;
 	visible without main21(numeral chefe, char loco, char chacha, string wow){
@@ -24,9 +25,10 @@ class Estudiante under Persona {
 }
 
 class Lalio under Estudiante {
-    visible numeral jj;
 	
 	visible without main22(real pro) {
+			numeral jj;
+			this.jj = jj;
 	        this.calificacion = pro;
 	}
 }
