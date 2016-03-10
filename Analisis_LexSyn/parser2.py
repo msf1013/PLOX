@@ -15,6 +15,7 @@ error = "'Program declaration'"
 def p_programa(p):
 	'''programa : ciclo_clase clase_main
 				| clase_main'''
+	print(DirClases['Estudiante']['metodos'])
 	print('Compilation successful!')
 
 def p_ciclo_clase(p):
@@ -138,22 +139,20 @@ def p_declararVariable(p):
 	if(DirClases.has_key(var)):
 		print('Semantic error at line {0}, variable {1} declared but Class {1} already exists.').format(lineNumber, var)
 		exit()
-	elif(DirClases[ClaseActual]['variables'].has_key(var)):
+	elif( (DirClases[ClaseActual]['variables'].has_key(var) or checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], var, lineNumber)) and MetodoActual == ''):
 		print('Semantic error at line {0}, variable {1} already declared.').format(lineNumber, var)
 		exit()
-	elif(DirClases[ClaseActual]['metodos'].has_key(var)):
+	elif(DirClases[ClaseActual]['metodos'].has_key(var) or checarMetodoAncestros(DirClases[ClaseActual]['ancestros'], var, lineNumber)):
 		print('Semantic error at line {0}, variable {1} declared but function {1} already declared.').format(lineNumber, var)
 		exit()
 	elif(MetodoActual != '' and DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(var)):
 		print('Semantic error at line {0}, variable {1} already declared.').format(lineNumber, var)
 		exit()
-	elif(checarAncestros(DirClases[ClaseActual]['ancestros'], var, lineNumber, 0)):
-		exit()
 	else:
 		if(MetodoActual == ''):
 			DirClases[ClaseActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : scanner.ultimoAcceso}
 		else:
-			DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : ''}
+			DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : 'hidden'}
 
 
 def checarAncestros(ancestros, var, lineNumber, tipo):
@@ -220,13 +219,11 @@ def p_declararMetodo(p):
 	if(DirClases.has_key(MetodoActual) and MetodoActual != 'main'):
 		print('Semantic error at line {0}, method {1} declared but Class {1} already exists.').format(lineNumber, MetodoActual)
 		exit()
-	elif(DirClases[ClaseActual]['variables'].has_key(MetodoActual)):
+	elif( DirClases[ClaseActual]['variables'].has_key(MetodoActual) or checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], MetodoActual, lineNumber) ):
 		print('Semantic error at line {0}, method {1} declared but variable {1} already declared.').format(lineNumber, MetodoActual)
 		exit()
-	elif(DirClases[ClaseActual]['metodos'].has_key(MetodoActual)):
+	elif(DirClases[ClaseActual]['metodos'].has_key(MetodoActual) or checarMetodoAncestros(DirClases[ClaseActual]['ancestros'], MetodoActual, lineNumber) ):
 		print('Semantic error at line {0}, method {1} already declared.').format(lineNumber, MetodoActual)
-		exit()
-	elif(checarAncestros(DirClases[ClaseActual]['ancestros'], MetodoActual, lineNumber, 1)):
 		exit()
 	else:
 		DirClases[ClaseActual]['metodos'][MetodoActual] = {'variables' : {}, 'parametros' : [], 'retorno': retorno, 'acceso' : scanner.ultimoAcceso}
