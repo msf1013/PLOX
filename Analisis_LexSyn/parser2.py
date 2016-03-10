@@ -221,6 +221,7 @@ def p_declararMetodo(p):
 	global MetodoActual
 	global DirClases
 	lineNumber = scanner.lexer.lineno
+	retorno = scanner.ultimoTipo
 	MetodoActual = scanner.ultimoId
 	if (MetodoActual == 'main'):
 		print("ESTAMOS EN metodo MAIN")
@@ -236,7 +237,7 @@ def p_declararMetodo(p):
 	elif(checarAncestros(DirClases[ClaseActual]['ancestros'], MetodoActual, lineNumber, 1)):
 		exit()
 	else:
-		DirClases[ClaseActual]['metodos'][MetodoActual] = {'variables' : {}, 'parametros' : [], 'acceso' : scanner.ultimoAcceso}
+		DirClases[ClaseActual]['metodos'][MetodoActual] = {'variables' : {}, 'parametros' : [], 'retorno': retorno, 'acceso' : scanner.ultimoAcceso}
 
 def p_main(p):
 	'''main 	: acceso WITHOUT MAIN declararMetodo PIZQ PDER prueba cuerpo_func'''

@@ -81,7 +81,7 @@ def t_ID(t):
       ultimoId = t.value
     elif(t.type == 'HIDDEN' or t.type == 'VISIBLE'):
       ultimoAcceso = t.value
-    elif(t.type == 'CHAR' or t.type == 'NUMERAL' or t.type == 'REAL' or t.type == 'STRING' or t.type == 'BOOL'):
+    elif(t.type == 'CHAR' or t.type == 'NUMERAL' or t.type == 'REAL' or t.type == 'STRING' or t.type == 'BOOL' or t.type == 'WITHOUT'):
       ultimoTipo = t.value
     return t
 
