@@ -1,6 +1,6 @@
 class Persona {
-visible numeral jj;
-visible string hola;
+	visible numeral jj;
+	visible string hola;
 	visible string calificacion;
 	visible without main21(numeral chefe, char loco, char chacha, string wow){
 		string hola;
@@ -8,7 +8,10 @@ visible string hola;
 }
 
 class Estudiante under Persona {
+
     visible Persona : persona, chavo = persona;
+
+	hidden real chofo;
 	visible real getCalif() {
 			Persona : calificacion;
 	        return this.calificacion;
@@ -24,7 +27,7 @@ class Estudiante under Persona {
 	}
 }
 
-class Lalio under Estudiante {
+class wuwu under Estudiante {
 	
 	visible without main22(real pro) {
 			numeral jj;
@@ -33,15 +36,26 @@ class Lalio under Estudiante {
 	}
 }
 
+class chifo {
+	visible numeral a;
+	visible without main22(real pro) {
+			numeral jj;
+			this.a = jj;
+	        this.a = pro;
+	}
+}
+
 class main {
-	hidden real chofo, a;
+	hidden real nel, a;
 	
 	visible without main() {
-		char chofo;
+		char le;
 		real lol, chu, chossfos;
 		string l;
-		Lalio : g, loca;
-		g = g.hola;
+		wuwu : g, lel;
+		chifo : Delga;
+		g = g.main21();
+		output(main21());
 
 	}
 }

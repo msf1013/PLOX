@@ -61,9 +61,15 @@ def p_agregaAncestro(p):
 	global ClaseActual
 	global DirClases
 	ancestro = scanner.ultimoId
+	lineNumber = scanner.lexer.lineno
 	if(not DirClases.has_key(ancestro)):
-		lineNumber = scanner.lexer.lineno
 		print('Semantic error at line {0}, Class {1} not declared and used in inheritance.').format(lineNumber, ancestro)
+		exit()
+	elif ( checarAtributoAncestros(DirClases[ancestro]['ancestros'], ClaseActual, lineNumber) or DirClases[ancestro]['variables'].has_key(ClaseActual) ):
+		print('Semantic error at line {0}, attribute {1} already declared in Class Hierarchy.').format(lineNumber, ClaseActual)
+		exit()
+	elif ( checarMetodoAncestros(DirClases[ancestro]['ancestros'], ClaseActual, lineNumber) or DirClases[ancestro]['metodos'].has_key(ClaseActual) ):
+		print('Semantic error at line {0}, method {1} already declared in Class Hierarchy.').format(lineNumber, ClaseActual)
 		exit()
 	else:
 		DirClases[ClaseActual]['ancestros'] = DirClases[ancestro]['ancestros']
