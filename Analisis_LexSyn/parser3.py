@@ -29,12 +29,9 @@ DirClases = {}
 ClaseActual = ''
 MetodoActual = ''
 Invocador = ''
-AtributoAtom = ''
 PilaO = stack()
 PTipo = stack()
 POper = stack()
-
-arch = open('codigo.txt', 'w')
 
 # Global variable to store where the syntax error was trigger
 error = "'Program declaration'"
@@ -376,118 +373,120 @@ def p_cte_bool(p):
 					| FALSE'''
 	print('cte_bool')
 
-precedence = (
-	('left','OR'),
-	('left','AND'),
-	('right','NOT'),
-	('nonassoc', 'MAYOR', 'MAYORIGUAL', 'MENOR', 'MENORIGUAL', 'IGUALC', 'NOTIGUAL'),
-    ('left','MAS','MENOS'),
-    ('left','POR','ENTRE','MOD'),
-    ('right','UMINUS'),
-    )
+def p_exp(p):	
+	'''exp 	: es
+			| es oprel es'''
+	print('TOKEN')
+	print(p.getToken(0))
+	print('exp')
 
-cont = 0
+def p_es(p):
+	'''es 	: t checarT
+			| es opsum t checarT'''
+	print('es')
 
-def p_exp_binaria(p):	
-	'''exp 	: exp MAS exp
-			| exp MENOS exp
-			| exp POR exp
-			| exp ENTRE exp
-			| exp MOD exp
-			| exp IGUALC exp
-			| exp NOTIGUAL exp
-			| exp MAYOR exp
-			| exp MAYORIGUAL exp
-			| exp MENOR exp
-			| exp MENORIGUAL exp
-			| exp AND exp
-			| exp OR exp'''
-	global cont
-	if (p[2] == '+'):
-		p[0] = {'tipo': 'numeral', 'id': ('t' + str(cont)) }
-		arch.write('MAS' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
-	elif (p[2] == '-'):
-		p[0] = {'tipo': 'numeral', 'id': ('t' + str(cont)) }
-		arch.write('MENOS' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
-	elif (p[2] == '*'):
-		p[0] = {'tipo': 'numeral', 'id': ('t' + str(cont)) }
-		arch.write('POR' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
-	elif (p[2] == '/'):
-		p[0] = {'tipo': 'numeral', 'id': ('t' + str(cont)) }
-		arch.write('ENTRE' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
-	elif (p[2] == '%'):
-		p[0] = {'tipo': 'numeral', 'id': ('t' + str(cont)) }
-		arch.write('MOD' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
+def p_t(p):
+	'''t 	: f checarF
+			| t opmul f checarF'''
+	print('t')
 
-	elif (p[2] == '=='):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('IGUALC' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
-	elif (p[2] == '!='):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('NOTIGUAL' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
-	elif (p[2] == '>'):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('MAYOR' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
-	elif (p[2] == '>='):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('MAYORIGUAL' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
-	elif (p[2] == '<'):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('MENOR' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
-	elif (p[2] == '<='):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('MENORIGUAL' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
-	elif (p[2] == '||'):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('OR' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
-	elif (p[2] == '&&'):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('AND' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
+def p_checarF(p):
+	'''checarF : '''
+	if ( not POper.isEmpty() and ( POper.top() == 'POR' or POper.top() == 'ENTRE' or POper.top() == 'MOD' ) ):
+		operacion = POper.pop()
+		aux2 = PilaO.pop()
+		aux1 = PilaO.pop()
+		if (operacion == 'POR'):
+			PilaO.push(aux1 * aux2)
+		elif (operacion == 'ENTRE'):
+			PilaO.push(aux1 / aux2)
+		else:
+			PilaO.push(aux1 % aux2)
+	print('checarF')
 
-	print('exp_binaria')
+def p_checarT(p):
+	'''checarT : '''
+	if ( not POper.isEmpty() and (POper.top() == 'MAS' or POper.top() == 'MENOS') ):
+		operacion = POper.pop()
+		aux2 = PilaO.pop()
+		aux1 = PilaO.pop()
+		if (operacion == 'MAS'):
+			PilaO.push(aux1 + aux2)
+		else:
+			PilaO.push(aux1 - aux2)
+	print('checarT')
 
-def p_exp_unaria(p):	
-	'''exp 	: NOT exp
-			| MENOS exp %prec UMINUS
-			| PIZQ exp PDER'''
-	global cont
-	if (p[1] == '!'):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('NOT' + '\t' + p[2]['id'] + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
-	elif (p[1] == '-'):
-		p[0] = {'tipo': 'numeral', 'id': ('t' + str(cont)) }
-		arch.write('UMENOS' + '\t' + p[2]['id'] + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
-		cont = cont + 1
-	elif (p[1] == '('):
-		p[0] = p[2]
-	print('exp_unaria')
+def p_f(p):
+	'''f 	: opciones
+			| PIZQ meterFondo exp sacarFondo PDER
+			| NOT exp
+			| MENOS PIZQ meterFondo exp sacarFondo PDER'''
+	print('f')
+
+def p_meterFondo(p):
+	'''meterFondo 	: '''
+	POper.push('fondo')
+	print('meterFondo')
+
+def p_sacarFondo(p):
+	'''sacarFondo 	: '''
+	auxi = POper.pop()
+	print('sacarFondo')
 
 def p_opciones(p):
-	'''exp : CTE_STR
+	'''opciones : CTE_STR
 				| CTE_CHAR
 				| CTE_NUMERAL
 				| CTE_REAL
 				| cte_bool
 				| atom limpiarInvocador
-				| llamada_func limpiarInvocador'''
-	p[0] = {'tipo': 'numeral', 'id': AtributoAtom}
+				| llamada_func limpiarInvocador
+				| MENOS CTE_NUMERAL
+				| MENOS CTE_REAL
+				| MENOS atom limpiarInvocador
+				| MENOS llamada_func limpiarInvocador'''
+	print(p.getToken)
+	if (p.getToken(1).type == 'CTE_NUMERAL'): # 1
+		PilaO.push( int(p.getToken(1).value) )
+		PTipo.push('numeral')
 	print('opciones')
 
+def p_opsum(p):
+	'''opsum 	: MAS
+				| MENOS
+				| OR'''
+	if (p.getToken(1).type == 'MAS'): # 3
+		POper.push('MAS')
+	elif (p.getToken(1).type == 'MENOS'):
+		POper.push('MENOS')
+	else:
+		pass
+	print('opsum')
 
+def p_opmul(p):
+	'''opmul 	: MOD
+				| POR
+				| ENTRE
+				| AND'''
+	if (p.getToken(1).type == 'MOD'): # 2
+		POper.push('MOD')
+	elif (p.getToken(1).type == 'POR'):
+		POper.push('POR')
+	elif (p.getToken(1).type == 'ENTRE'):
+		POper.push('ENTRE')
+	else:
+		pass
+	print('opsum')
+
+def p_oprel(p):
+	'''oprel 	: IGUALC
+				| NOTIGUAL
+				| MENOR
+				| MENORIGUAL
+				| MAYOR
+				| MAYORIGUAL'''
+	POper.push(p.getToken(1).type)	# 8
+	print('oprel')
 
 def p_return(p):
 	'''return 	: RETURN exp PYC
@@ -501,9 +500,9 @@ def p_while(p):
 
 def p_asignacion(p):
 	'''asignacion 	: atom limpiarInvocador IGUAL exp PYC'''
-	#print(PilaO)
-	#print(POper)
-	#print(PilaO.top())
+	print(PilaO)
+	print(POper)
+	print(PilaO.top())
 	print('asignacion')
 
 def p_atom(p):
@@ -523,7 +522,6 @@ def p_checarAtributo2(p):
 	global MetodoActual
 	global DirClases
 	global Invocador
-	global AtributoAtom
 	lineNumber = scanner.lexer.lineno
 	atributo = Invocador
 	Invocador = ''
@@ -556,7 +554,6 @@ def p_checarAtributo2(p):
 		if (not DirClases[claseAux]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)):
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
 			exit()
-	AtributoAtom = atributo
 
 def p_checarAtributo(p):
 	'''checarAtributo : '''
@@ -564,7 +561,6 @@ def p_checarAtributo(p):
 	global MetodoActual
 	global DirClases
 	global Invocador
-	global AtributoAtom
 	lineNumber = scanner.lexer.lineno
 	atributo = scanner.ultimoId
 	
@@ -596,7 +592,6 @@ def p_checarAtributo(p):
 		if (not DirClases[claseAux]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)):
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
 			exit()
-	AtributoAtom = atributo
 
 def p_condicion(p):
 	'''condicion 	: ciclo_cond ELSE LLIZQ ciclo_estatuto LLDER
