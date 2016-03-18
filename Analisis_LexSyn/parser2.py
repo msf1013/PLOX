@@ -30,9 +30,9 @@ ClaseActual = ''
 MetodoActual = ''
 Invocador = ''
 AtributoAtom = ''
-PilaO = stack()
-PTipo = stack()
-POper = stack()
+AtributoTipo = ''
+MetodoNombre = ''
+MetodoTipo = ''
 
 arch = open('codigo.txt', 'w')
 
@@ -211,12 +211,24 @@ def checarAtributoAncestros(ancestros, var, lineNumber):
 			return True
 	return False
 
+def valorAtributoAncestros(ancestros, var, lineNumber):
+	listaAn = ancestros.items()
+	for item in listaAn:
+		if (item[1]['variables'].has_key(var)):
+			return item[1]['variables'][var]['tipo']
+
 def checarMetodoAncestros(ancestros, var, lineNumber):
 	listaAn = ancestros.items()
 	for item in listaAn:
 		if (item[1]['metodos'].has_key(var)):
 			return True
 	return False
+
+def valorMetodoAncestros(ancestros, var, lineNumber):
+	listaAn = ancestros.items()
+	for item in listaAn:
+		if (item[1]['metodos'].has_key(var)):
+			return item[1]['metodos'][var]['retorno']
 
 def p_tipo(p):
 	'''tipo 	: NUMERAL
@@ -320,6 +332,10 @@ def p_llamada_func(p):
 					| ID checarFuncion PIZQ PDER
 					| ID PUNTO definirInvocador ID checarFuncion PIZQ PDER
 					| ID definirInvocador COIZQ exp CODER PUNTO ID checarFuncion PIZQ PDER'''
+	if (Invocador != ''):
+		p[0] = { 'tipo': MetodoTipo, 'id': MetodoNombre, "invocador": Invocador, 'esFuncion' : True }
+	else:
+		p[0] = { 'tipo': MetodoTipo, 'id': MetodoNombre, 'esFuncion' : True }
 	print('llamada_func')
 
 def p_checarFuncion(p):
@@ -328,10 +344,16 @@ def p_checarFuncion(p):
 	global MetodoActual
 	global DirClases
 	global Invocador
+	global MetodoNombre
+	global MetodoTipo
 	lineNumber = scanner.lexer.lineno
 	func = scanner.ultimoId
 	if (Invocador == ''):
-		if (not DirClases[ClaseActual]['metodos'].has_key(func) and not checarMetodoAncestros(DirClases[ClaseActual]['ancestros'], func, lineNumber)):
+		if ( DirClases[ClaseActual]['metodos'].has_key(func) ):
+			MetodoTipo = DirClases[ClaseActual]['metodos'][func]['retorno']
+		elif ( checarMetodoAncestros(DirClases[ClaseActual]['ancestros'], func, lineNumber)):
+			MetodoTipo = valorMetodoAncestros(DirClases[ClaseActual]['ancestros'], func, lineNumber)
+		else:
 			print('Semantic error at line {0}, method {1} not found in Class Hierarchy.').format(lineNumber, func)
 			exit()
 	else:
@@ -345,10 +367,14 @@ def p_checarFuncion(p):
 		else:
 			claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
 
-		if (not DirClases[claseAux]['metodos'].has_key(func) and not checarMetodoAncestros(DirClases[claseAux]['ancestros'], func, lineNumber)):
+		if ( DirClases[claseAux]['metodos'].has_key(func) ):
+			MetodoTipo = DirClases[claseAux]['metodos'][func]['retorno']
+		elif ( checarMetodoAncestros(DirClases[claseAux]['ancestros'], func, lineNumber) ):
+			MetodoTipo = valorMetodoAncestros(DirClases[claseAux]['ancestros'], func, lineNumber)
+		else:
 			print('Semantic error at line {0}, method {1} not associated with Object {2}.').format(lineNumber, func, Invocador)
 			exit()
-				
+	MetodoNombre = func			
 
 def p_definirInvocador(p):
 	'''definirInvocador : '''
@@ -370,11 +396,6 @@ def p_exp_ciclo(p):
 	'''exp_ciclo 	: exp
 					| exp_ciclo COMA exp'''
 	print('exp_ciclo')
-
-def p_cte_bool(p):
-	'''cte_bool 	: TRUE
-					| FALSE'''
-	print('cte_bool')
 
 precedence = (
 	('left','OR'),
@@ -477,17 +498,43 @@ def p_exp_unaria(p):
 	print('exp_unaria')
 
 def p_opciones(p):
-	'''exp : CTE_STR
-				| CTE_CHAR
-				| CTE_NUMERAL
-				| CTE_REAL
-				| cte_bool
-				| atom limpiarInvocador
-				| llamada_func limpiarInvocador'''
-	p[0] = {'tipo': 'numeral', 'id': AtributoAtom}
+	'''exp 	: cte_str
+			| cte_char
+			| cte_numeral
+			| cte_real
+			| cte_bool
+			| atom limpiarInvocador
+			| llamada_func limpiarInvocador'''
+	print('OPCION')
+	print(p[1])
+	p[0] = p[1]
 	print('opciones')
 
+def p_cte_str(p):
+	'''cte_str : CTE_STR'''
+	print('cte_str')
+	p[0] = { 'tipo': 'cte_string', 'id': p[1] }
 
+def p_cte_char(p):
+	'''cte_char : CTE_CHAR'''
+	print('cte_char')
+	p[0] = { 'tipo': 'cte_char', 'id': p[1] }
+
+def p_cte_numeral(p):
+	'''cte_numeral : CTE_NUMERAL'''
+	print('cte_numeral')
+	p[0] = { 'tipo': 'cte_numeral', 'id': p[1] }
+
+def p_cte_real(p):
+	'''cte_real : CTE_REAL'''
+	print('cte_real')
+	p[0] = { 'tipo': 'cte_real', 'id': p[1] }
+
+def p_cte_bool(p):
+	'''cte_bool 	: TRUE
+					| FALSE'''
+	print('cte_bool')
+	p[0] = { 'tipo': 'cte_bool', 'id': p[1] }
 
 def p_return(p):
 	'''return 	: RETURN exp PYC
@@ -515,6 +562,11 @@ def p_atom(p):
 			| ID definirInvocador COIZQ exp CODER checarAtributo2
 			| THIS PUNTO definirInvocador ID checarAtributo
 			| THIS PUNTO definirInvocador ID checarAtributo COIZQ exp CODER '''
+	if (Invocador != ''):
+		print(Invocador)
+		p[0] = { 'tipo': AtributoTipo, 'id': AtributoAtom, "invocador": Invocador }
+	else:
+		p[0] = { 'tipo': AtributoTipo, 'id': AtributoAtom }
 	print('atom')
 
 def p_checarAtributo2(p):
@@ -524,21 +576,36 @@ def p_checarAtributo2(p):
 	global DirClases
 	global Invocador
 	global AtributoAtom
+	global AtributoTipo
 	lineNumber = scanner.lexer.lineno
 	atributo = Invocador
 	Invocador = ''
 	
 	if (Invocador == ''):
 		if (MetodoActual == ''):
-			if (not DirClases[ClaseActual]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
+			if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
+				AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
+			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
+				AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
+			else:
 				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 111').format(lineNumber, atributo)
 				exit()
 		else:
-			if (not DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(atributo) and not DirClases[ClaseActual]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
+			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(atributo) ):
+				AtributoTipo = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][atributo]['tipo']
+			elif ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
+				AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
+			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
+				AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
+			else:
 				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 222').format(lineNumber, atributo)
 				exit()
 	elif (Invocador == 'THIS'):
-		if (not DirClases[ClaseActual]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
+		if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
+			AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
+		elif( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
+			AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
+		else:
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 333').format(lineNumber, atributo)
 			exit()
 	else:
@@ -553,7 +620,11 @@ def p_checarAtributo2(p):
 		else:
 			claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
 
-		if (not DirClases[claseAux]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)):
+		if ( DirClases[claseAux]['variables'].has_key(atributo) ):
+			AtributoTipo = DirClases[claseAux]['variables'][atributo]['tipo']
+		elif ( checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
+			AtributoTipo = valorAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)
+		else:
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
 			exit()
 	AtributoAtom = atributo
@@ -565,24 +636,39 @@ def p_checarAtributo(p):
 	global DirClases
 	global Invocador
 	global AtributoAtom
+	global AtributoTipo
 	lineNumber = scanner.lexer.lineno
 	atributo = scanner.ultimoId
 	
 	if (Invocador == ''):
 		if (MetodoActual == ''):
-			if (not DirClases[ClaseActual]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
+			if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
+				AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
+			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
+				AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
+			else:
 				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 111').format(lineNumber, atributo)
 				exit()
 		else:
-			if (not DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(atributo) and not DirClases[ClaseActual]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
+			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(atributo) ):
+				AtributoTipo = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][atributo]['tipo']
+			elif ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
+				AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
+			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
+				AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
+			else:
 				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 222').format(lineNumber, atributo)
 				exit()
 	elif (Invocador == 'THIS'):
-		if (not DirClases[ClaseActual]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
+		if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
+			AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
+		elif( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
+			AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
+		else:
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 333').format(lineNumber, atributo)
 			exit()
 	else:
-		
+
 		claseAux = ''
 
 		if (MetodoActual != ''):
@@ -593,7 +679,11 @@ def p_checarAtributo(p):
 		else:
 			claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
 
-		if (not DirClases[claseAux]['variables'].has_key(atributo) and not checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)):
+		if ( DirClases[claseAux]['variables'].has_key(atributo) ):
+			AtributoTipo = DirClases[claseAux]['variables'][atributo]['tipo']
+		elif ( checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
+			AtributoTipo = valorAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)
+		else:
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
 			exit()
 	AtributoAtom = atributo
