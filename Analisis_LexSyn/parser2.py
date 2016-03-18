@@ -217,6 +217,12 @@ def valorAtributoAncestros(ancestros, var, lineNumber):
 		if (item[1]['variables'].has_key(var)):
 			return item[1]['variables'][var]['tipo']
 
+def esVisibleAtributoAncestros(ancestros, var, lineNumber):
+	listaAn = ancestros.items()
+	for item in listaAn:
+		if (item[1]['variables'].has_key(var)):
+			return (item[1]['variables'][var]['acceso'] == 'visible')
+
 def checarMetodoAncestros(ancestros, var, lineNumber):
 	listaAn = ancestros.items()
 	for item in listaAn:
@@ -229,6 +235,12 @@ def valorMetodoAncestros(ancestros, var, lineNumber):
 	for item in listaAn:
 		if (item[1]['metodos'].has_key(var)):
 			return item[1]['metodos'][var]['retorno']
+
+def esVisibleMetodoAncestros(ancestros, var, lineNumber):
+	listaAn = ancestros.items()
+	for item in listaAn:
+		if (item[1]['metodos'].has_key(var)):
+			return (item[1]['metodos'][var]['acceso'] == 'visible')
 
 def p_tipo(p):
 	'''tipo 	: NUMERAL
@@ -368,8 +380,14 @@ def p_checarFuncion(p):
 			claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
 
 		if ( DirClases[claseAux]['metodos'].has_key(func) ):
+			if ( not (DirClases[claseAux]['metodos'][func]['acceso'] == 'visible') ):
+				print('Semantic error at line {0}, method {1} is hidden').format(lineNumber, func)
+				exit()
 			MetodoTipo = DirClases[claseAux]['metodos'][func]['retorno']
 		elif ( checarMetodoAncestros(DirClases[claseAux]['ancestros'], func, lineNumber) ):
+			if ( not esVisibleMetodoAncestros(DirClases[claseAux]['ancestros'], func, lineNumber) ):
+				print('Semantic error at line {0}, method {1} is hidden').format(lineNumber, func)
+				exit()
 			MetodoTipo = valorMetodoAncestros(DirClases[claseAux]['ancestros'], func, lineNumber)
 		else:
 			print('Semantic error at line {0}, method {1} not associated with Object {2}.').format(lineNumber, func, Invocador)
@@ -621,8 +639,14 @@ def p_checarAtributo2(p):
 			claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
 
 		if ( DirClases[claseAux]['variables'].has_key(atributo) ):
+			if ( not (DirClases[claseAux]['variables'][atributo]['acceso'] == 'visible') ):
+				print('Semantic error at line {0}, variable {1} is hidden').format(lineNumber, atributo)
+				exit()
 			AtributoTipo = DirClases[claseAux]['variables'][atributo]['tipo']
 		elif ( checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
+			if ( not esVisibleAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
+				print('Semantic error at line {0}, variable {1} is hidden').format(lineNumber, atributo)
+				exit()
 			AtributoTipo = valorAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)
 		else:
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
@@ -680,8 +704,14 @@ def p_checarAtributo(p):
 			claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
 
 		if ( DirClases[claseAux]['variables'].has_key(atributo) ):
+			if ( not (DirClases[claseAux]['variables'][atributo]['acceso'] == 'visible') ):
+				print('Semantic error at line {0}, variable {1} is hidden').format(lineNumber, atributo)
+				exit()
 			AtributoTipo = DirClases[claseAux]['variables'][atributo]['tipo']
 		elif ( checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
+			if ( not esVisibleAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
+				print('Semantic error at line {0}, variable {1} is hidden').format(lineNumber, atributo)
+				exit()
 			AtributoTipo = valorAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)
 		else:
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)

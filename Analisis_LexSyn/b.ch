@@ -14,11 +14,13 @@ class l {
 
 class lol under l{
 	visible char chepo;
-	visible l : wowo;
+	hidden l : wowo;
+	visible numeral locote;
 
 	visible real laFunc() {
 
 	}
+	
 }
 
 class main {
@@ -32,6 +34,6 @@ class main {
 
 	visible without main() {
 		numeral c;
-		a = ele.laFunc() + a * -wiw.fReal() - (h / ele.k - func() * c % 6) * ele.funcLoca();
+		a = ele.laFunc() + a * -wiw.fReal() - (h / ele.k - func() * c % 6) * ele.funcLoca() + ole.locote;
 	}
 }

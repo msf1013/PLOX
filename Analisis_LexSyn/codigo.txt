@@ -7,3 +7,4 @@ MOD	t4	6	t5
 MENOS	t3	t5	t6
 POR	t6	funcLoca	t7
 MENOS	t2	t7	t8
+MAS	t8	locote	t9
