@@ -1,62 +1,26 @@
-UMENOS	g	-	t0
-	UMENOS	numeral	-	numeral
-IGUAL	t0	-	c
-	IGUAL	numeral	-	numeral
-UMENOS	fReal	-	t2
-	UMENOS	real	-	real
-POR	a	t2	t3
+POR	b	c	t0
+	POR	numeral	numeral	numeral
+MAS	a	t0	t1
+	MAS	numeral	numeral	numeral
+ENTRE	d	4	t2
+	ENTRE	numeral	numeral	numeral
+MENOS	t1	t2	t3
+	MENOS	numeral	numeral	numeral
+OUTPUT	-	-	t3
+	OUTPUT	-	-	numeral
+MAS	a	b	t4
+	MAS	numeral	numeral	numeral
+MAS	6	ole.locote	t5
+	MAS	numeral	numeral	numeral
+POR	t5	wiw.k	t6
 	POR	numeral	real	real
-MAS	laFunc	t3	t4
-	MAS	real	real	real
-ENTRE	h	k	t5
-	ENTRE	numeral	real	real
-POR	func	c	t6
-	POR	numeral	numeral	numeral
-MOD	t6	6	t7
-	MOD	numeral	numeral	numeral
-MENOS	t5	t7	t8
-	MENOS	real	numeral	real
-POR	t8	funcLoca	t9
-	POR	real	numeral	real
-MENOS	t4	t9	t10
-	MENOS	real	real	real
-MAS	t10	locote	t11
-	MAS	real	numeral	real
-IGUAL	t11	-	y
-	IGUAL	real	-	real
-IGUALC	a	1.2	t13
-	IGUALC	numeral	real	bool
-NOTIGUAL	a	3	t14
-	NOTIGUAL	numeral	numeral	bool
-NOT	t14	-	t15
-	NOT	bool	-	bool
-MAYOR	2.5	2	t16
-	MAYOR	real	numeral	bool
-AND	t15	t16	t17
+MENOR	t4	t6	t7
+	MENOR	numeral	real	bool
+AND	false	t7	t8
 	AND	bool	bool	bool
-OR	t13	t17	t18
+OR	true	t8	t9
 	OR	bool	bool	bool
-MAYORIGUAL	2.5	2	t19
-	MAYORIGUAL	real	numeral	bool
-MENOR	2.5	2	t20
-	MENOR	real	numeral	bool
-AND	t19	t20	t21
-	AND	bool	bool	bool
-OR	t18	t21	t22
-	OR	bool	bool	bool
-MENORIGUAL	2.5	2	t23
-	MENORIGUAL	real	numeral	bool
-NOT	true	-	t24
-	NOT	bool	-	bool
-AND	t23	t24	t25
-	AND	bool	bool	bool
-OR	t22	t25	t26
-	OR	bool	bool	bool
-POR	d	e	t27
-	POR	numeral	numeral	numeral
-MAS	g	t27	t28
-	MAS	numeral	numeral	numeral
-MAS	t28	5	t29
-	MAS	numeral	numeral	numeral
-IGUAL	t29	-	c
-	IGUAL	numeral	-	numeral
+IGUAL	t9	-	ele.x
+	IGUAL	bool	-	bool
+INPUT	-	-	ele.x
+	INPUT	-	-	bool

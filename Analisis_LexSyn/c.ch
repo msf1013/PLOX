@@ -1,6 +1,7 @@
 class l {
 	visible real k;
 	hidden string chefe;
+	visible numeral wow;
 
 	visible numeral funcLoca() {
 
@@ -18,7 +19,7 @@ class lol under l{
 	visible numeral locote;
 
 	visible real laFunc() {
-
+		output(locote - 8 * (wowo.k+ 1));
 	}
 	
 }
@@ -37,9 +38,12 @@ class main {
 	visible without main() {
 		numeral c;
 		c = -g;
+		output(ole.locote - 8 * (- 89 + ele.locote/ 1));
+		output(y - 8 * ((678 % wiw.wow))+ 1);
 		y = ele.laFunc() + a * -wiw.fReal() - (h / ele.k - func() * c % 6) * ele.funcLoca() + ole.locote;
 		if (a == 1.2 || !(a != 3) && 2.5 > 2 || 2.5 >= 2 && 2.5 < 2 || 2.5 <= 2 && !true) {
             c = g + d * e + 5;
         }
+        input(ele.wow);
 	}
 }
