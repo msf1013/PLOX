@@ -24,6 +24,151 @@ class stack:
      def size(self):
          return len(self.items)
 
+# Implementacion de Cubo Semantico para revision de tipos de operadores
+CuboSemantico = {}
+
+# Reglas semanticas para 
+CuboSemantico['numeral'] = {}
+
+CuboSemantico['numeral']['+'] = {}
+CuboSemantico['numeral']['+']['numeral'] = 'numeral'
+CuboSemantico['numeral']['+']['real'] = 'real'
+
+CuboSemantico['numeral']['-'] = {}
+CuboSemantico['numeral']['-']['-'] = 'numeral'
+CuboSemantico['numeral']['-']['numeral'] = 'numeral'
+CuboSemantico['numeral']['-']['real'] = 'real'
+
+CuboSemantico['numeral']['/'] = {}
+CuboSemantico['numeral']['/']['numeral'] = 'numeral'
+CuboSemantico['numeral']['/']['real'] = 'real'
+
+CuboSemantico['numeral']['*'] = {}
+CuboSemantico['numeral']['*']['numeral'] = 'numeral'
+CuboSemantico['numeral']['*']['real'] = 'real'
+
+CuboSemantico['numeral']['%'] = {}
+CuboSemantico['numeral']['%']['numeral'] = 'numeral'
+
+CuboSemantico['numeral']['=='] = {}
+CuboSemantico['numeral']['==']['numeral'] = 'bool'
+CuboSemantico['numeral']['==']['real'] = 'bool'
+
+CuboSemantico['numeral']['!='] = {}
+CuboSemantico['numeral']['!=']['numeral'] = 'bool'
+CuboSemantico['numeral']['!=']['real'] = 'bool'
+
+CuboSemantico['numeral']['<'] = {}
+CuboSemantico['numeral']['<']['numeral'] = 'bool'
+CuboSemantico['numeral']['<']['real'] = 'bool'
+
+CuboSemantico['numeral']['>'] = {}
+CuboSemantico['numeral']['>']['numeral'] = 'bool'
+CuboSemantico['numeral']['>']['real'] = 'bool'
+
+CuboSemantico['numeral']['<='] = {}
+CuboSemantico['numeral']['<=']['numeral'] = 'bool'
+CuboSemantico['numeral']['<=']['real'] = 'bool'
+
+CuboSemantico['numeral']['>='] = {}
+CuboSemantico['numeral']['>=']['numeral'] = 'bool'
+CuboSemantico['numeral']['>=']['real'] = 'bool'
+
+CuboSemantico['numeral']['='] = {}
+CuboSemantico['numeral']['=']['numeral'] = 'numeral'
+
+
+CuboSemantico['real'] = {}
+
+CuboSemantico['real']['+'] = {}
+CuboSemantico['real']['+']['numeral'] = 'real'
+CuboSemantico['real']['+']['real'] = 'real'
+
+CuboSemantico['real']['-'] = {}
+CuboSemantico['real']['-']['-'] = 'real'
+CuboSemantico['real']['-']['numeral'] = 'real'
+CuboSemantico['real']['-']['real'] = 'real'
+
+CuboSemantico['real']['/'] = {}
+CuboSemantico['real']['/']['numeral'] = 'real'
+CuboSemantico['real']['/']['real'] = 'real'
+
+CuboSemantico['real']['*'] = {}
+CuboSemantico['real']['*']['numeral'] = 'real'
+CuboSemantico['real']['*']['real'] = 'real'
+
+CuboSemantico['real']['=='] = {}
+CuboSemantico['real']['==']['numeral'] = 'bool'
+CuboSemantico['real']['==']['real'] = 'bool'
+
+CuboSemantico['real']['!='] = {}
+CuboSemantico['real']['!=']['numeral'] = 'bool'
+CuboSemantico['real']['!=']['real'] = 'bool'
+
+CuboSemantico['real']['<'] = {}
+CuboSemantico['real']['<']['numeral'] = 'bool'
+CuboSemantico['real']['<']['real'] = 'bool'
+
+CuboSemantico['real']['>'] = {}
+CuboSemantico['real']['>']['numeral'] = 'bool'
+CuboSemantico['real']['>']['real'] = 'bool'
+
+CuboSemantico['real']['<='] = {}
+CuboSemantico['real']['<=']['numeral'] = 'bool'
+CuboSemantico['real']['<=']['real'] = 'bool'
+
+CuboSemantico['real']['>='] = {}
+CuboSemantico['real']['>=']['numeral'] = 'bool'
+CuboSemantico['real']['>=']['real'] = 'bool'
+
+CuboSemantico['real']['='] = {}
+CuboSemantico['real']['=']['numeral'] = 'numeral'
+CuboSemantico['real']['=']['real'] = 'real'
+
+
+CuboSemantico['bool'] = {}
+
+CuboSemantico['bool']['=='] = {}
+CuboSemantico['bool']['==']['bool'] = 'bool'
+
+CuboSemantico['bool']['!='] = {}
+CuboSemantico['bool']['!=']['bool'] = 'bool'
+
+CuboSemantico['bool']['&&'] = {}
+CuboSemantico['bool']['&&']['bool'] = 'bool'
+
+CuboSemantico['bool']['||'] = {}
+CuboSemantico['bool']['||']['bool'] = 'bool'
+
+CuboSemantico['bool']['!'] = 'bool'
+
+CuboSemantico['bool']['='] = {}
+CuboSemantico['bool']['=']['bool'] = 'bool'
+
+
+CuboSemantico['char'] = {}
+
+CuboSemantico['char']['=='] = {}
+CuboSemantico['char']['==']['char'] = 'bool'
+
+CuboSemantico['char']['!='] = {}
+CuboSemantico['char']['!=']['char'] = 'bool'
+
+CuboSemantico['char']['='] = {}
+CuboSemantico['char']['=']['char'] = 'char'
+
+
+CuboSemantico['string'] = {}
+
+CuboSemantico['string']['=='] = {}
+CuboSemantico['string']['==']['string'] = 'bool'
+
+CuboSemantico['string']['!='] = {}
+CuboSemantico['string']['!=']['string'] = 'bool'
+
+CuboSemantico['string']['='] = {}
+CuboSemantico['string']['=']['string'] = 'string'
+
 # Tabla semantica de clases a utilizar
 DirClases = {}
 ClaseActual = ''
@@ -442,58 +587,124 @@ def p_exp_binaria(p):
 			| exp AND exp
 			| exp OR exp'''
 	global cont
+	lineNumber = scanner.lexer.lineno
 	if (p[2] == '+'):
-		p[0] = {'tipo': 'numeral', 'id': ('t' + str(cont)) }
-		arch.write('MAS' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[1]['tipo'] ].has_key('+') and CuboSemantico[ p[1]['tipo'] ]['+'].has_key( p[3]['tipo'] )):
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
+			arch.write('MAS' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'MAS' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'+\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
+			exit()
 		cont = cont + 1
 	elif (p[2] == '-'):
-		p[0] = {'tipo': 'numeral', 'id': ('t' + str(cont)) }
-		arch.write('MENOS' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[1]['tipo'] ].has_key('-') and CuboSemantico[ p[1]['tipo'] ]['-'].has_key( p[3]['tipo'] )):
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['-'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
+			arch.write('MENOS' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'MENOS' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'-\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
+			exit()
 		cont = cont + 1
 	elif (p[2] == '*'):
-		p[0] = {'tipo': 'numeral', 'id': ('t' + str(cont)) }
-		arch.write('POR' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[1]['tipo'] ].has_key('*') and CuboSemantico[ p[1]['tipo'] ]['*'].has_key( p[3]['tipo'] )):
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['*'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
+			arch.write('POR' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'POR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'*\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
+			exit()
 		cont = cont + 1
 	elif (p[2] == '/'):
-		p[0] = {'tipo': 'numeral', 'id': ('t' + str(cont)) }
-		arch.write('ENTRE' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[1]['tipo'] ].has_key('/') and CuboSemantico[ p[1]['tipo'] ]['/'].has_key( p[3]['tipo'] )):
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['/'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
+			arch.write('ENTRE' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'ENTRE' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'/\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
+			exit()
 		cont = cont + 1
 	elif (p[2] == '%'):
-		p[0] = {'tipo': 'numeral', 'id': ('t' + str(cont)) }
-		arch.write('MOD' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[1]['tipo'] ].has_key('%') and CuboSemantico[ p[1]['tipo'] ]['%'].has_key( p[3]['tipo'] )):
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['%'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
+			arch.write('MOD' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'MOD' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'%\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
+			exit()
 		cont = cont + 1
 
 	elif (p[2] == '=='):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('IGUALC' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[1]['tipo'] ].has_key('==') and CuboSemantico[ p[1]['tipo'] ]['=='].has_key( p[3]['tipo'] )):
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['=='][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
+			arch.write('IGUALC' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'IGUALC' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'==\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
+			exit()
 		cont = cont + 1
 	elif (p[2] == '!='):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('NOTIGUAL' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[1]['tipo'] ].has_key('!=') and CuboSemantico[ p[1]['tipo'] ]['!='].has_key( p[3]['tipo'] )):
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['!='][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
+			arch.write('NOTIGUAL' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'NOTIGUAL' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'!=\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
+			exit()
 		cont = cont + 1
 	elif (p[2] == '>'):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('MAYOR' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[1]['tipo'] ].has_key('>') and CuboSemantico[ p[1]['tipo'] ]['>'].has_key( p[3]['tipo'] )):
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['>'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
+			arch.write('MAYOR' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'MAYOR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'>\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
+			exit()
 		cont = cont + 1
 	elif (p[2] == '>='):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('MAYORIGUAL' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[1]['tipo'] ].has_key('>=') and CuboSemantico[ p[1]['tipo'] ]['>='].has_key( p[3]['tipo'] )):
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['>='][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
+			arch.write('MAYORIGUAL' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'MAYORIGUAL' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'>=\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
+			exit()
 		cont = cont + 1
 	elif (p[2] == '<'):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('MENOR' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[1]['tipo'] ].has_key('<') and CuboSemantico[ p[1]['tipo'] ]['<'].has_key( p[3]['tipo'] )):
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['<'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
+			arch.write('MENOR' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'MENOR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'<\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
+			exit()
 		cont = cont + 1
 	elif (p[2] == '<='):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('MENORIGUAL' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[1]['tipo'] ].has_key('<=') and CuboSemantico[ p[1]['tipo'] ]['<='].has_key( p[3]['tipo'] )):
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['<='][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
+			arch.write('MENORIGUAL' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'MENORIGUAL' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'<=\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
+			exit()
 		cont = cont + 1
 	elif (p[2] == '||'):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('OR' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[1]['tipo'] ].has_key('||') and CuboSemantico[ p[1]['tipo'] ]['||'].has_key( p[3]['tipo'] )):
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['||'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
+			arch.write('OR' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'OR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'||\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
+			exit()
 		cont = cont + 1
 	elif (p[2] == '&&'):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('AND' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[1]['tipo'] ].has_key('&&') and CuboSemantico[ p[1]['tipo'] ]['&&'].has_key( p[3]['tipo'] )):
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['&&'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
+			arch.write('AND' + '\t' + p[1]['id'] + '\t' +  p[3]['id'] + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'AND' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'&&\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
+			exit()
 		cont = cont + 1
 
 	print('exp_binaria')
@@ -503,13 +714,24 @@ def p_exp_unaria(p):
 			| MENOS exp %prec UMINUS
 			| PIZQ exp PDER'''
 	global cont
+	lineNumber = scanner.lexer.lineno
 	if (p[1] == '!'):
-		p[0] = {'tipo': 'bool', 'id': ('t' + str(cont)) }
-		arch.write('NOT' + '\t' + p[2]['id'] + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[2]['tipo'] ].has_key('!')):
+			p[0] = {'tipo': CuboSemantico[ p[2]['tipo'] ]['!'], 'id': ('t' + str(cont)) }
+			arch.write('NOT' + '\t' + p[2]['id'] + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'NOT' + '\t' + p[2]['tipo'] + '\t' +  '-' + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible type {1} with preceding operator \'!\'.').format(lineNumber, p[2]['tipo'])
+			exit()
 		cont = cont + 1
 	elif (p[1] == '-'):
-		p[0] = {'tipo': 'numeral', 'id': ('t' + str(cont)) }
-		arch.write('UMENOS' + '\t' + p[2]['id'] + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
+		if (CuboSemantico[ p[2]['tipo'] ].has_key('-') and CuboSemantico[ p[2]['tipo'] ]['-'].has_key('-')):
+			p[0] = {'tipo': CuboSemantico[ p[2]['tipo'] ]['-']['-'], 'id': ('t' + str(cont)) }
+			arch.write('UMENOS' + '\t' + p[2]['id'] + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
+			arch.write('\t' 'UMENOS' + '\t' + p[2]['tipo'] + '\t' +  '-' + '\t' + p[0]['tipo'] + '\n')
+		else:
+			print('Semantic error at line {0}, incompatible type {1} with preceding operator \'-\'.').format(lineNumber, p[2]['tipo'])
+			exit()
 		cont = cont + 1
 	elif (p[1] == '('):
 		p[0] = p[2]
@@ -531,28 +753,28 @@ def p_opciones(p):
 def p_cte_str(p):
 	'''cte_str : CTE_STR'''
 	print('cte_str')
-	p[0] = { 'tipo': 'cte_string', 'id': p[1] }
+	p[0] = { 'tipo': 'string', 'id': p[1] }
 
 def p_cte_char(p):
 	'''cte_char : CTE_CHAR'''
 	print('cte_char')
-	p[0] = { 'tipo': 'cte_char', 'id': p[1] }
+	p[0] = { 'tipo': 'char', 'id': p[1] }
 
 def p_cte_numeral(p):
 	'''cte_numeral : CTE_NUMERAL'''
 	print('cte_numeral')
-	p[0] = { 'tipo': 'cte_numeral', 'id': p[1] }
+	p[0] = { 'tipo': 'numeral', 'id': p[1] }
 
 def p_cte_real(p):
 	'''cte_real : CTE_REAL'''
 	print('cte_real')
-	p[0] = { 'tipo': 'cte_real', 'id': p[1] }
+	p[0] = { 'tipo': 'real', 'id': p[1] }
 
 def p_cte_bool(p):
 	'''cte_bool 	: TRUE
 					| FALSE'''
 	print('cte_bool')
-	p[0] = { 'tipo': 'cte_bool', 'id': p[1] }
+	p[0] = { 'tipo': 'bool', 'id': p[1] }
 
 def p_return(p):
 	'''return 	: RETURN exp PYC
@@ -566,9 +788,16 @@ def p_while(p):
 
 def p_asignacion(p):
 	'''asignacion 	: atom limpiarInvocador IGUAL exp PYC'''
-	#print(PilaO)
-	#print(POper)
-	#print(PilaO.top())
+	global cont
+	lineNumber = scanner.lexer.lineno
+	if (CuboSemantico[ p[1]['tipo'] ].has_key('=') and CuboSemantico[ p[1]['tipo'] ]['='].has_key( p[4]['tipo'] )):
+		p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['='][ p[4]['tipo'] ], 'id': ('t' + str(cont)) }
+		arch.write('IGUAL' + '\t' + p[4]['id'] + '\t' +  '-' + '\t' + p[1]['id'] + '\n')
+		arch.write('\t' 'IGUAL' + '\t' + p[4]['tipo'] + '\t' +  '-' + '\t' + p[1]['tipo'] + '\n')
+	else:
+		print('Semantic error at line {0}, incompatible type assignation of type {1} into type {2}.').format(lineNumber - 1, p[4]['tipo'], p[1]['tipo'])
+		exit()
+	cont = cont + 1
 	print('asignacion')
 
 def p_atom(p):
@@ -720,7 +949,8 @@ def p_checarAtributo(p):
 
 def p_condicion(p):
 	'''condicion 	: ciclo_cond ELSE LLIZQ ciclo_estatuto LLDER
-					| ciclo_cond ELSE LLIZQ LLDER'''
+					| ciclo_cond ELSE LLIZQ LLDER
+					| ciclo_cond'''
 	print('condicion')
 
 def p_ciclo_cond(p):

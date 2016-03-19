@@ -1,8 +1,8 @@
 class Persona {
-    hidden string nombre;
-    hidden numeral edad;
-    hidden Persona madre;
-    hidden Persona padre;
+    visible string nombre;
+    visible numeral edad;
+    visible Persona: madre;
+    visible Persona: padre;
     visible string getNombre() {
         return this.nombre;
     }
@@ -22,16 +22,26 @@ class Persona {
             this.madre = mad;
     }
     visible string getPadre() {
-            return this.Padre;
+            return this.padre;
     }
     visible without setPadre(string pad) {
             this.padre = pad;
     }
 }
 
+class Profesor under Persona {
+    visible string materia; 
+    visible string getMateria() {
+        return this.materia;
+    }
+    visible without setMateria(string mat) {
+            this.materia = mat;
+    }
+}
+
 class Estudiante under Persona {
-    hidden real calificacion;
-    hidden Profesor profe; 
+    visible real calificacion;
+    visible Profesor: profe; 
     visible real getCalif() {
             return this.calificacion;
     }
@@ -46,30 +56,16 @@ class Estudiante under Persona {
     }
 }
 
-class Profesor under Persona {
-    hidden string materia; 
-    visible string getMateria() {
-        return this.materia;
-    }
-    visible without setMateria(string mat) {
-            this.materia = mat;
-    }
-}
-
 class main {
     hidden numeral cont = 0;
-    visible Persona mama, papa;
-    hidden Persona arrP[2];
-    visible Profesor profe;
-    hidden Estudiante yo;
+    visible Persona: mama, papa;
+    hidden Persona: arrP[2];
+    visible Profesor: profe;
+    hidden Estudiante: yo;
     hidden string nombreProfe = "no lo se", nombre;
     visible numeral miEdad;
 
     visible without main() {
-        mama = new Persona();
-        papa = new Persona();
-        profe = new Profesor();
-        yo = new Estudiante();
         mama.setNombre("Laura");
         mama.setEdad(45);
         papa.setNombre("Pedro");
@@ -80,21 +76,21 @@ class main {
         profe.setMateria("Compiladores");
         yo.setNombre("Manolo");
         yo.setEdad(20);
-        yo.setProfe('c');
+        yo.setProfesor('c');
         if (nombreProfe == "Ra	ul" && 2 > 2) {
             output("La materia que da mi Profe es:");
         }
-        else if (yo.getEdad() >= 30 || mmm == exc.ttt()) {
-            out_str("Esta es mi verdadera edad:	5");
-            in_num(miEdad);
+        else if (yo.getEdad() >= 30) {
+            output("Esta es mi verdadera edad:	5");
+            input(miEdad);
             output( (miEdad*8-5)*2 < 0 && true);
         }
         else {
-            out_num( arrP[2].gg() );
+            output( mama.edad );
         }
 
-        while(cont < nombre.size){
-            out_str(nombre[cont]);
+        while(cont < 15){
+            output(papa.edad);
             cont = cont + 1;
         }
 

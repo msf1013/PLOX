@@ -71,15 +71,15 @@ def t_CTE_CHAR(t):
     return t
     #return { 'tipo': 'cte_char', 'id': t.value }
 
-def t_CTE_NUMERAL(t):
-    r'[0-9]+'
-    return t
-    #return { 'tipo': 'cte_numeral', 'id': t.value }
-
 def t_CTE_REAL(t):
     r'[0-9]+\.[0-9]+'
     return t
     #return { 'tipo': 'cte_real', 'id': t.value }
+
+def t_CTE_NUMERAL(t):
+    r'[0-9]+'
+    return t
+    #return { 'tipo': 'cte_numeral', 'id': t.value }
 
 # Caracteres ignorados
 t_ignore = " \t\r"

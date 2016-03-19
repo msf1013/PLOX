@@ -1,10 +1,62 @@
-UMENOS	fReal	-	t0
-POR	a	t0	t1
-MAS	laFunc	t1	t2
-ENTRE	h	k	t3
-POR	func	c	t4
-MOD	t4	6	t5
-MENOS	t3	t5	t6
-POR	t6	funcLoca	t7
-MENOS	t2	t7	t8
-MAS	t8	locote	t9
+UMENOS	g	-	t0
+	UMENOS	numeral	-	numeral
+IGUAL	t0	-	c
+	IGUAL	numeral	-	numeral
+UMENOS	fReal	-	t2
+	UMENOS	real	-	real
+POR	a	t2	t3
+	POR	numeral	real	real
+MAS	laFunc	t3	t4
+	MAS	real	real	real
+ENTRE	h	k	t5
+	ENTRE	numeral	real	real
+POR	func	c	t6
+	POR	numeral	numeral	numeral
+MOD	t6	6	t7
+	MOD	numeral	numeral	numeral
+MENOS	t5	t7	t8
+	MENOS	real	numeral	real
+POR	t8	funcLoca	t9
+	POR	real	numeral	real
+MENOS	t4	t9	t10
+	MENOS	real	real	real
+MAS	t10	locote	t11
+	MAS	real	numeral	real
+IGUAL	t11	-	y
+	IGUAL	real	-	real
+IGUALC	a	1.2	t13
+	IGUALC	numeral	real	bool
+NOTIGUAL	a	3	t14
+	NOTIGUAL	numeral	numeral	bool
+NOT	t14	-	t15
+	NOT	bool	-	bool
+MAYOR	2.5	2	t16
+	MAYOR	real	numeral	bool
+AND	t15	t16	t17
+	AND	bool	bool	bool
+OR	t13	t17	t18
+	OR	bool	bool	bool
+MAYORIGUAL	2.5	2	t19
+	MAYORIGUAL	real	numeral	bool
+MENOR	2.5	2	t20
+	MENOR	real	numeral	bool
+AND	t19	t20	t21
+	AND	bool	bool	bool
+OR	t18	t21	t22
+	OR	bool	bool	bool
+MENORIGUAL	2.5	2	t23
+	MENORIGUAL	real	numeral	bool
+NOT	true	-	t24
+	NOT	bool	-	bool
+AND	t23	t24	t25
+	AND	bool	bool	bool
+OR	t22	t25	t26
+	OR	bool	bool	bool
+POR	d	e	t27
+	POR	numeral	numeral	numeral
+MAS	g	t27	t28
+	MAS	numeral	numeral	numeral
+MAS	t28	5	t29
+	MAS	numeral	numeral	numeral
+IGUAL	t29	-	c
+	IGUAL	numeral	-	numeral
