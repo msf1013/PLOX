@@ -442,7 +442,9 @@ def p_params(p):
 
 def p_params_ciclo(p):
 	'''params_ciclo 	: tipo ID meterParametros
-						| params_ciclo COMA tipo ID meterParametros'''
+						| tipo ID CODER COIZQ meterParametros
+						| params_ciclo COMA tipo ID meterParametros
+						| params_ciclo COMA tipo ID CODER COIZQ meterParametros'''
 	print('params_ciclo')
 
 def p_meterParametros(p):

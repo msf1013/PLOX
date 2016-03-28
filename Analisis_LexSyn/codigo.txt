@@ -1,26 +1,22 @@
-POR	b	c	t0
+UMENOS	wiw.fReal	-	t0
+	UMENOS	real	-	real
+POR	a	t0	t1
+	POR	real	real	real
+MAS	ele.laFunc	t1	t2
+	MAS	real	real	real
+ENTRE	h	ele.k	t3
+	ENTRE	numeral	real	real
+POR	func	c	t4
 	POR	numeral	numeral	numeral
-MAS	a	t0	t1
-	MAS	numeral	numeral	numeral
-ENTRE	d	4	t2
-	ENTRE	numeral	numeral	numeral
-MENOS	t1	t2	t3
-	MENOS	numeral	numeral	numeral
-OUTPUT	-	-	t3
-	OUTPUT	-	-	numeral
-MAS	a	b	t4
-	MAS	numeral	numeral	numeral
-MAS	6	ole.locote	t5
-	MAS	numeral	numeral	numeral
-POR	t5	wiw.k	t6
-	POR	numeral	real	real
-MENOR	t4	t6	t7
-	MENOR	numeral	real	bool
-AND	false	t7	t8
-	AND	bool	bool	bool
-OR	true	t8	t9
-	OR	bool	bool	bool
-IGUAL	t9	-	ele.x
-	IGUAL	bool	-	bool
-INPUT	-	-	ele.x
-	INPUT	-	-	bool
+MOD	t4	6	t5
+	MOD	numeral	numeral	numeral
+MENOS	t3	t5	t6
+	MENOS	real	numeral	real
+POR	t6	ele.funcLoca	t7
+	POR	real	numeral	real
+MENOS	t2	t7	t8
+	MENOS	real	real	real
+MAS	t8	ole.locote	t9
+	MAS	real	numeral	real
+IGUAL	t9	-	a
+	IGUAL	real	-	real
