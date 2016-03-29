@@ -172,6 +172,7 @@ CuboSemantico['string']['=']['string'] = 'string'
 CuboSemantico['without'] = {}
 
 # Tabla semantica de clases a utilizar
+PSaltos = stack()
 DirClases = {}
 ClaseActual = ''
 MetodoActual = ''
@@ -180,6 +181,8 @@ AtributoAtom = ''
 AtributoTipo = ''
 MetodoNombre = ''
 MetodoTipo = ''
+Line = 0
+ResExp = {}
 
 arch = open('codigo.txt', 'w')
 
@@ -213,6 +216,9 @@ def p_declararClase(p):
 		print('Semantic error at line {0}, multiple declaration of Class {1}.').format(lineNumber, ClaseActual)
 		exit()
 	else:
+		CuboSemantico[ClaseActual] = {}
+		CuboSemantico[ClaseActual]['='] = {}
+		CuboSemantico[ClaseActual]['='][ClaseActual] = ClaseActual
 		DirClases[ClaseActual] = {'variables': { 'this' : {'tipo': ClaseActual, 'acceso' : 'hidden'} }, 'metodos': {}, 'ancestros': {}}
 
 def p_limpiarMetodoActual(p):
@@ -590,12 +596,15 @@ def p_exp_binaria(p):
 			| exp MENORIGUAL exp
 			| exp AND exp
 			| exp OR exp'''
+	global ResExp
 	global cont
+	global Line
 	lineNumber = scanner.lexer.lineno
 	if (p[2] == '+'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('+') and CuboSemantico[ p[1]['tipo'] ]['+'].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write('MAS' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'MAS' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'MAS' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'+\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
@@ -604,7 +613,8 @@ def p_exp_binaria(p):
 	elif (p[2] == '-'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('-') and CuboSemantico[ p[1]['tipo'] ]['-'].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['-'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write('MENOS' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'MENOS' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'MENOS' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'-\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
@@ -613,7 +623,8 @@ def p_exp_binaria(p):
 	elif (p[2] == '*'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('*') and CuboSemantico[ p[1]['tipo'] ]['*'].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['*'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write('POR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'POR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'POR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'*\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
@@ -622,7 +633,8 @@ def p_exp_binaria(p):
 	elif (p[2] == '/'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('/') and CuboSemantico[ p[1]['tipo'] ]['/'].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['/'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write('ENTRE' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'ENTRE' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'ENTRE' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'/\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
@@ -631,7 +643,8 @@ def p_exp_binaria(p):
 	elif (p[2] == '%'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('%') and CuboSemantico[ p[1]['tipo'] ]['%'].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['%'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write('MOD' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'MOD' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'MOD' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'%\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
@@ -641,7 +654,8 @@ def p_exp_binaria(p):
 	elif (p[2] == '=='):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('==') and CuboSemantico[ p[1]['tipo'] ]['=='].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['=='][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write('IGUALC' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'IGUALC' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'IGUALC' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'==\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
@@ -650,7 +664,8 @@ def p_exp_binaria(p):
 	elif (p[2] == '!='):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('!=') and CuboSemantico[ p[1]['tipo'] ]['!='].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['!='][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write('NOTIGUAL' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'NOTIGUAL' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'NOTIGUAL' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'!=\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
@@ -659,7 +674,8 @@ def p_exp_binaria(p):
 	elif (p[2] == '>'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('>') and CuboSemantico[ p[1]['tipo'] ]['>'].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['>'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write('MAYOR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'MAYOR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'MAYOR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'>\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
@@ -668,7 +684,8 @@ def p_exp_binaria(p):
 	elif (p[2] == '>='):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('>=') and CuboSemantico[ p[1]['tipo'] ]['>='].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['>='][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write('MAYORIGUAL' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'MAYORIGUAL' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'MAYORIGUAL' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'>=\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
@@ -677,7 +694,8 @@ def p_exp_binaria(p):
 	elif (p[2] == '<'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('<') and CuboSemantico[ p[1]['tipo'] ]['<'].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['<'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write('MENOR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'MENOR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'MENOR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'<\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
@@ -686,7 +704,8 @@ def p_exp_binaria(p):
 	elif (p[2] == '<='):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('<=') and CuboSemantico[ p[1]['tipo'] ]['<='].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['<='][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write('MENORIGUAL' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'MENORIGUAL' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'MENORIGUAL' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'<=\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
@@ -695,7 +714,8 @@ def p_exp_binaria(p):
 	elif (p[2] == '||'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('||') and CuboSemantico[ p[1]['tipo'] ]['||'].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['||'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write('OR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'OR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'OR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'||\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
@@ -704,25 +724,29 @@ def p_exp_binaria(p):
 	elif (p[2] == '&&'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('&&') and CuboSemantico[ p[1]['tipo'] ]['&&'].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['&&'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write('AND' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'AND' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'AND' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'&&\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
 			exit()
 		cont = cont + 1
-
+	ResExp = p[0]
 	print('exp_binaria')
 
 def p_exp_unaria(p):	
 	'''exp 	: NOT exp
 			| MENOS exp %prec UMINUS
 			| PIZQ exp PDER'''
+	global ResExp
 	global cont
+	global Line
 	lineNumber = scanner.lexer.lineno
 	if (p[1] == '!'):
 		if (CuboSemantico[ p[2]['tipo'] ].has_key('!')):
 			p[0] = {'tipo': CuboSemantico[ p[2]['tipo'] ]['!'], 'id': ('t' + str(cont)) }
-			arch.write('NOT' + '\t' + (p[2]['invocador']+'.'+p[2]['id'] if p[2].has_key('invocador') else p[2]['id']) + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'NOT' + '\t' + (p[2]['invocador']+'.'+p[2]['id'] if p[2].has_key('invocador') else p[2]['id']) + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'NOT' + '\t' + p[2]['tipo'] + '\t' +  '-' + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible type {1} with preceding operator \'!\'.').format(lineNumber, p[2]['tipo'])
@@ -731,7 +755,8 @@ def p_exp_unaria(p):
 	elif (p[1] == '-'):
 		if (CuboSemantico[ p[2]['tipo'] ].has_key('-') and CuboSemantico[ p[2]['tipo'] ]['-'].has_key('-')):
 			p[0] = {'tipo': CuboSemantico[ p[2]['tipo'] ]['-']['-'], 'id': ('t' + str(cont)) }
-			arch.write('UMENOS' + '\t' + (p[2]['invocador']+'.'+p[2]['id'] if p[2].has_key('invocador') else p[2]['id']) + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'UMENOS' + '\t' + (p[2]['invocador']+'.'+p[2]['id'] if p[2].has_key('invocador') else p[2]['id']) + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
+			Line = Line + 1;
 			arch.write('\t' 'UMENOS' + '\t' + p[2]['tipo'] + '\t' +  '-' + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible type {1} with preceding operator \'-\'.').format(lineNumber, p[2]['tipo'])
@@ -739,6 +764,7 @@ def p_exp_unaria(p):
 		cont = cont + 1
 	elif (p[1] == '('):
 		p[0] = p[2]
+	ResExp = p[0]
 	print('exp_unaria')
 
 def p_opciones(p):
@@ -749,9 +775,11 @@ def p_opciones(p):
 			| cte_bool
 			| atom limpiarInvocador
 			| llamada_func limpiarInvocador'''
+	global ResExp
 	print('OPCION')
 	print(p[1])
 	p[0] = p[1]
+	ResExp = p[0]
 	print('opciones')
 
 def p_cte_str(p):
@@ -786,20 +814,51 @@ def p_return(p):
 	print('return')
 
 def p_while(p):
-	'''while 	: WHILE PIZQ exp PDER LLIZQ ciclo_estatuto LLDER
-				| WHILE PIZQ exp PDER LLIZQ LLDER'''
+	'''while 	: WHILE while_1 PIZQ exp PDER while_2 LLIZQ ciclo_estatuto while_3 LLDER
+				| WHILE while_1 PIZQ exp PDER while_2 LLIZQ while_3 LLDER'''
 	print('while')
+
+def p_while_1(p):
+	'''while_1 : '''
+	global PSaltos
+	global Line
+	PSaltos.push(Line)
+
+def p_while_2(p):
+	'''while_2 : '''
+	global PSaltos
+	global Line
+	global ResExp
+	lineNumber = scanner.lexer.lineno
+	if (ResExp['tipo'] != 'bool'):
+		print('Semantic error at line {0}, expected "bool" expression, but "{1}" expression given in while loop condition.').format(lineNumber - 1, ResExp['tipo'])
+	arch.write(str(Line) + '\t' + 'GOTOF' + '\t' + ResExp['id'] + '\t' +  'missing' + '\t' + '-' + '\n')
+	Line = Line + 1;
+	PSaltos.push(Line - 1)
+
+def p_while_3(p):
+	'''while_3 : '''
+	global PSaltos
+	global Line
+	falso = PSaltos.pop()
+	retorno = PSaltos.pop()
+	arch.write(str(Line) + '\t' + 'GOTO' + '\t' + str(retorno) + '\t' +  '-' + '\t' + '-' + '\n')
+	Line = Line + 1;
+	arch.write(str(Line) + '\t' + 'RELLENA' + '\t' + str(falso) + '\t' +  str(Line) + '\t' + '-' + '\n')
+
 
 def p_asignacion(p):
 	'''asignacion 	: atom limpiarInvocador IGUAL exp PYC'''
 	global cont
+	global Line
 	lineNumber = scanner.lexer.lineno
 	if (CuboSemantico[ p[1]['tipo'] ].has_key('=') and CuboSemantico[ p[1]['tipo'] ]['='].has_key( p[4]['tipo'] )):
 		#p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['='][ p[4]['tipo'] ], 'id': ('t' + str(cont)) }
 		if (p[1].has_key('invocador')):
-			arch.write('IGUAL' + '\t' + p[4]['id'] + '\t' +  '-' + '\t' + (p[1]['invocador']+'.'+p[1]['id']) + '\n')
+			arch.write(str(Line) + '\t' + 'IGUAL' + '\t' + p[4]['id'] + '\t' +  '-' + '\t' + (p[1]['invocador']+'.'+p[1]['id']) + '\n')
 		else:
-			arch.write('IGUAL' + '\t' + p[4]['id'] + '\t' +  '-' + '\t' + p[1]['id'] + '\n')
+			arch.write(str(Line) + '\t' + 'IGUAL' + '\t' + p[4]['id'] + '\t' +  '-' + '\t' + p[1]['id'] + '\n')
+		Line = Line + 1;
 		arch.write('\t' 'IGUAL' + '\t' + p[4]['tipo'] + '\t' +  '-' + '\t' + p[1]['tipo'] + '\n')
 	else:
 		print('Semantic error at line {0}, incompatible type assignation of type {1} into type {2}.').format(lineNumber - 1, p[4]['tipo'], p[1]['tipo'])
@@ -969,16 +1028,20 @@ def p_ciclo_cond(p):
 
 def p_lectura(p):
 	'''lectura 	: INPUT PIZQ atom limpiarInvocador PDER PYC'''
+	global Line
 	if (p[3].has_key('invocador')):
-		arch.write('INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + (p[3]['invocador']+'.'+p[3]['id']) + '\n')
+		arch.write(str(Line) + '\t' + 'INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + (p[3]['invocador']+'.'+p[3]['id']) + '\n')
 	else:
-		arch.write('INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['id'] + '\n')
+		arch.write(str(Line) + '\t' + 'INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['id'] + '\n')
+	Line = Line + 1;
 	arch.write('\t' 'INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['tipo'] + '\n')
 	print('lectura')
 
 def p_escritura(p):
 	'''escritura 	: OUTPUT PIZQ exp PDER PYC'''
-	arch.write('OUTPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['id'] + '\n')
+	global Line
+	arch.write(str(Line) + '\t' + 'OUTPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['id'] + '\n')
+	Line = Line + 1;
 	arch.write('\t' 'OUTPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['tipo'] + '\n')
 	print('escritura')
 
