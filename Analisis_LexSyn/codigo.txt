@@ -6,20 +6,16 @@
 	OR	bool	bool	bool
 3	GOTOF	t1	missing	-
 4	MAS	a	c	t2
-	MAS	numeral	numeral	numeral
 5	IGUAL	t2	-	b
 	IGUAL	numeral	-	numeral
 6	MAS	a	b	t3
-	MAS	numeral	numeral	numeral
 7	MAYOR	t3	1	t4
 	MAYOR	numeral	numeral	bool
 8	GOTOF	t4	missing	-
 9	IGUAL	c	-	b
 	IGUAL	numeral	-	numeral
-10	GOTO	6	-	-
-11	RELLENA	8	11	-
-11	GOTO	1	-	-
-12	RELLENA	3	12	-
+10	GOTO	-	6	-
+11	GOTO	-	1	-
 12	ENTRE	c	4	t5
 	ENTRE	numeral	numeral	numeral
 13	MENOS	a	t5	t6

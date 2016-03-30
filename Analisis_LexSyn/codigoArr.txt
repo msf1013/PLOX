@@ -1,0 +1,15 @@
+0	IGUAL	50	-	a
+1	MAYOR	a	b	t0
+2	OR	t0	true	t1
+3	GOTOF	t1	12	-
+4	MAS	a	c	t2
+5	IGUAL	t2	-	b
+6	MAS	a	b	t3
+7	MAYOR	t3	1	t4
+8	GOTOF	t4	11	-
+9	IGUAL	c	-	b
+10	GOTO	-	6	-
+11	GOTO	-	1	-
+12	ENTRE	c	4	t5
+13	MENOS	a	t5	t6
+14	OUTPUT	-	-	t6
