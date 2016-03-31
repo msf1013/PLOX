@@ -184,6 +184,8 @@ MetodoTipo = ''
 Line = 0
 ResExp = {}
 Cuad = []
+Falsos = []
+Mark = 0
 
 arch = open('codigo.txt', 'w')
 
@@ -1035,17 +1037,62 @@ def p_checarAtributo(p):
 	AtributoAtom = atributo
 
 def p_condicion(p):
-	'''condicion 	: ciclo_cond ELSE LLIZQ ciclo_estatuto LLDER
-					| ciclo_cond ELSE LLIZQ LLDER
-					| ciclo_cond'''
+	'''condicion 	: ciclo_cond ELSE if_3 LLIZQ ciclo_estatuto LLDER if_4
+					| ciclo_cond ELSE if_3 LLIZQ LLDER if_4
+					| ciclo_cond if_4'''
 	print('condicion')
 
 def p_ciclo_cond(p):
-	'''ciclo_cond 	: IF PIZQ exp PDER LLIZQ ciclo_estatuto LLDER
-					| IF PIZQ exp PDER LLIZQ LLDER
-					| ciclo_cond ELSE IF PIZQ exp PDER LLIZQ ciclo_estatuto LLDER
-					| ciclo_cond ELSE IF PIZQ exp PDER LLIZQ LLDER'''
+	'''ciclo_cond 	: IF PIZQ exp PDER if_1 LLIZQ ciclo_estatuto if_2 LLDER
+					| IF PIZQ exp PDER if_1 LLIZQ if_2 LLDER
+					| ciclo_cond ELSE IF if_3 PIZQ exp PDER if_1 LLIZQ ciclo_estatuto if_2 LLDER
+					| ciclo_cond ELSE IF if_3 PIZQ exp PDER if_1 LLIZQ if_2 LLDER'''
 	print('ciclo_cond')
+
+def p_if_1(p):
+	'''if_1 : '''
+	global PSaltos
+	global Line
+	global ResExp
+	lineNumber = scanner.lexer.lineno
+	if (ResExp['tipo'] != 'bool'):
+		print('Semantic error at line {0}, expected "bool" expression, but "{1}" expression given in if condition.').format(lineNumber - 1, ResExp['tipo'])
+	arch.write(str(Line) + '\t' + 'GOTOF' + '\t' + ResExp['id'] + '\t' +  'missing' + '\t' + '-' + '\n')
+	Cuad.append(['GOTOF', ResExp['id'],  'missing', '-'])
+	Line = Line + 1;
+	PSaltos.push(Line - 1)
+
+def p_if_2(p):
+	'''if_2 : '''
+	global PSaltos
+	global Line
+	global Mark
+	falso = PSaltos.pop()
+	Cuad[falso][2] = Line
+	Mark = falso
+
+def p_if_3(p):
+	'''if_3 : '''
+	global PSaltos
+	global Line
+	global Falsos
+	global Mark
+	arch.write(str(Line) + '\t' + 'GOTO' + '\t' + '-'+ '\t' +  'missing' + '\t' + '-' + '\n')
+	Cuad.append(['GOTO', '-',  'missing', '-'])
+	Line = Line + 1;
+	Cuad[Mark][2] = Line
+	PSaltos.push(Line - 1)
+	Falsos.append(Line - 1)
+
+def p_if_4(p):
+	'''if_4 : '''
+	global PSaltos
+	global Line
+	global Falsos
+	for falso in Falsos:
+		PSaltos.pop()
+		Cuad[falso][2] = Line
+	Falsos = []
 
 def p_lectura(p):
 	'''lectura 	: INPUT PIZQ atom limpiarInvocador PDER PYC'''

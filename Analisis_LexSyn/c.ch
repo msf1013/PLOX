@@ -45,9 +45,21 @@ class main {
 			if(3 > 2) {
 				c = g + d * e + 5;
 			}
-			else {
+			else if(2 < 3){
 				c = g + d * e + 5;
 			}
+			else if("gg" == "gg"){
+				c = -g;
+			}
+			else {
+				g = -c;
+			}
+        }
+        else {
+        	c = -g;
+        }
+        while (55 < ele.laFunc()) {
+        	c = g + d * e + 5;
         }
         input(ele.wow);
 	}
