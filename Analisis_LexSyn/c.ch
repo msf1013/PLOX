@@ -42,7 +42,12 @@ class main {
 		output(y - 8 * ((678 % wiw.wow))+ 1);
 		y = ele.laFunc() + a * -wiw.fReal() - (h / ele.k - func() * c % 6) * ele.funcLoca() + ole.locote;
 		if (a == 1.2 || !(a != 3) && 2.5 > 2 || 2.5 >= 2 && 2.5 < 2 || 2.5 <= 2 && !true) {
-            c = g + d * e + 5;
+			if(3 > 2) {
+				c = g + d * e + 5;
+			}
+			else {
+				c = g + d * e + 5;
+			}
         }
         input(ele.wow);
 	}

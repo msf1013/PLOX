@@ -54,7 +54,7 @@ class main {
 		string l;
 		wuwu : g, lel;
 		chifo : Delga;
-		le = (34 * le ) -g.main21();
+		le = ((34 + le / 3.5) -g.main21()) + Delga.a;
 		output(a);
 
 	}
