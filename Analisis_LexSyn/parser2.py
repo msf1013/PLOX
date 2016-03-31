@@ -936,7 +936,7 @@ def p_checarAtributo2(p):
 			else:
 				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 222').format(lineNumber, atributo)
 				exit()
-	elif (Invocador == 'THIS'):
+	elif (Invocador == 'this'):
 		if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
 			AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
 		elif( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
@@ -1001,7 +1001,7 @@ def p_checarAtributo(p):
 			else:
 				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 222').format(lineNumber, atributo)
 				exit()
-	elif (Invocador == 'THIS'):
+	elif (Invocador == 'this'):
 		if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
 			AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
 		elif( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
