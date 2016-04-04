@@ -1,6 +1,7 @@
 import ply.yacc as yacc
 import os.path
 import scanner
+import copy
 tokens = scanner.tokens
 
 # Implementacion de STACK
@@ -187,6 +188,33 @@ Cuad = []
 Falsos = []
 Mark = 0
 
+TiposVar = ['numeral', 'float', 'string', 'bool', 'char']
+
+DirsClase = {}
+DirsMetodo = {}
+
+def initDirsClase ():
+	global DirsClase
+	DirsClase['numeral'] = 1001
+	DirsClase['float'] = 4001
+	DirsClase['string'] = 7001
+	DirsClase['bool'] = 10001
+	DirsClase['char'] = 13001
+	DirsClase['obj'] = {}
+
+def initDirsMetodo ():
+	global DirsClase
+	DirsMetodo['numeral'] = 16001
+	DirsMetodo['float'] = 19001
+	DirsMetodo['string'] = 22001
+	DirsMetodo['bool'] = 25001
+	DirsMetodo['char'] = 28001
+	DirsMetodo['obj'] = {}
+
+def esTipoBasico(tipo):
+	global TiposVar 
+	return (tipo in TiposVar) 
+
 arch = open('codigo.txt', 'w')
 
 # Global variable to store where the syntax error was trigger
@@ -222,7 +250,9 @@ def p_declararClase(p):
 		CuboSemantico[ClaseActual] = {}
 		CuboSemantico[ClaseActual]['='] = {}
 		CuboSemantico[ClaseActual]['='][ClaseActual] = ClaseActual
-		DirClases[ClaseActual] = {'variables': { 'this' : {'tipo': ClaseActual, 'acceso' : 'hidden'} }, 'metodos': {}, 'ancestros': {}}
+		initDirsClase()
+		DirClases[ClaseActual] = {'variables': { 'this' : {'tipo': ClaseActual, 'acceso' : 'hidden'} },
+		 'vars' : { 'numeral' : [], 'float' : [], 'string' : [], 'char' : [], 'bool' : [] }, 'metodos': {}, 'ancestros': {}}
 
 def p_limpiarMetodoActual(p):
 	'''limpiarMetodoActual : '''
@@ -255,6 +285,9 @@ def p_agregaAncestro(p):
 		print('Semantic error at line {0}, method {1} already declared in Class Hierarchy.').format(lineNumber, ClaseActual)
 		exit()
 	else:
+		for tipo in TiposVar:
+			DirClases[ClaseActual]['vars'][tipo] = copy.deepcopy(DirClases[ancestro]['vars'][tipo])
+			DirsClase[tipo] = DirsClase[tipo] + len(DirClases[ClaseActual]['vars'][tipo])
 		DirClases[ClaseActual]['ancestros'] = DirClases[ancestro]['ancestros']
 		DirClases[ClaseActual]['ancestros'][ancestro] = DirClases[ancestro]
 
@@ -322,6 +355,10 @@ def p_declararVariable(p):
 	global ClaseActual
 	global MetodoActual
 	global DirClases
+
+	global DirsClase 
+	global DirsMetodo
+
 	lineNumber = scanner.lexer.lineno
 	var = scanner.ultimoId
 	if(DirClases.has_key(var)):
@@ -337,10 +374,37 @@ def p_declararVariable(p):
 		print('Semantic error at line {0}, variable {1} already declared.').format(lineNumber, var)
 		exit()
 	else:
+		tipo = scanner.ultimoTipo
+		# Variable de clase
 		if(MetodoActual == ''):
 			DirClases[ClaseActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : scanner.ultimoAcceso}
+			if (esTipoBasico(tipo)):
+				DirClases[ClaseActual]['vars'][tipo].append( {'id' : var, "dir" : DirsClase[tipo]} )
+				DirsClase[tipo] = DirsClase[tipo] + 1
+			else:
+				print('TIPO: ' + tipo)
+				print(DirClases[tipo]['vars'])
+				for tipoVariable in TiposVar:
+					for variable in DirClases[tipo]['vars'][tipoVariable]:
+						print("LOL")
+						print(tipo)
+						print(ClaseActual)
+						print(var)
+						print(variable['id'])
+						DirsClase[tipoVariable]
+						DirClases[ClaseActual]['vars'][tipoVariable].append( {'id' : (var + '.' + variable['id']), "dir" : DirsClase[tipoVariable]} )
+						DirsClase[tipoVariable] = DirsClase[tipoVariable] + 1
+		# Variable de metodo
 		else:
 			DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : 'hidden'}
+			if (esTipoBasico(tipo)):
+				DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo].append( {'id' : var, "dir" : DirsMetodo[tipo]} )
+				DirsMetodo[tipo] = DirsMetodo[tipo] + 1
+			else:
+				for tipoVariable in TiposVar:
+					for variable in DirClases[tipo]['vars'][tipoVariable]:
+						DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipoVariable].append( {'id' : (var + '.' + variable['id']), "dir" : DirsMetodo[tipoVariable]} )
+						DirsMetodo[tipoVariable] = DirsMetodo[tipoVariable] + 1
 
 
 def checarAncestros(ancestros, var, lineNumber, tipo):
@@ -428,6 +492,7 @@ def p_declararMetodo(p):
 	lineNumber = scanner.lexer.lineno
 	retorno = scanner.ultimoTipo
 	MetodoActual = scanner.ultimoId
+	initDirsMetodo()
 	if(DirClases.has_key(MetodoActual) and MetodoActual != 'main'):
 		print('Semantic error at line {0}, method {1} declared but Class {1} already exists.').format(lineNumber, MetodoActual)
 		exit()
@@ -438,7 +503,8 @@ def p_declararMetodo(p):
 		print('Semantic error at line {0}, method {1} already declared.').format(lineNumber, MetodoActual)
 		exit()
 	else:
-		DirClases[ClaseActual]['metodos'][MetodoActual] = {'variables' : {}, 'parametros' : [], 'retorno': retorno, 'acceso' : scanner.ultimoAcceso}
+		DirClases[ClaseActual]['metodos'][MetodoActual] = {'variables' : {}, 'parametros' : [],
+		'vars' : { 'numeral' : [], 'float' : [], 'string' : [], 'char' : [], 'bool' : [] }, 'retorno': retorno, 'acceso' : scanner.ultimoAcceso}
 
 def p_main(p):
 	'''main 	: acceso WITHOUT MAIN declararMetodo PIZQ PDER cuerpo_func'''
@@ -466,6 +532,9 @@ def p_meterParametros(p):
 	tipo = scanner.ultimoTipo
 	DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][parametro] = {'tipo':tipo, 'acceso':'hidden'}
 	DirClases[ClaseActual]['metodos'][MetodoActual]['parametros'].append([tipo, parametro])
+
+	DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo].append( {'id' : parametro, "dir" : DirsMetodo[tipo]} )
+	DirsMetodo[tipo] = DirsMetodo[tipo] + 1
 
 def p_cuerpo_func(p):
 	'''cuerpo_func 	: LLIZQ ciclo_vars_func ciclo_estatuto LLDER
@@ -1144,6 +1213,48 @@ else:
 	print("Couldn't open file specified")
 
 arch2 = open('codigoArr.txt', 'w')
+
+print('Animal')
+print(DirClases['Animal']['vars'])
+print('')
+print('Perro')
+print(DirClases['Perro']['vars'])
+print('')
+print('Persona')
+print(DirClases['Persona']['vars'])
+print('')
+print('Estudiante')
+print(DirClases['Estudiante']['vars'])
+print('')
+print('')
+
+print('auxEdad')
+print(DirClases['Persona']['metodos']['auxEdad']['vars'])
+#print(DirClases['Persona']['metodos']['auxEdad'])
+print('')
+print('getEdad')
+print(DirClases['Persona']['metodos']['getEdad']['vars'])
+#print(DirClases['Persona']['metodos']['getEdad'])
+print('')
+print('setNombre')
+print(DirClases['Persona']['metodos']['setNombre']['vars'])
+#print(DirClases['Persona']['metodos']['setNombre'])
+print('')
+print('setEdad')
+print(DirClases['Persona']['metodos']['setEdad']['vars'])
+#print(DirClases['Persona']['metodos']['setEdad'])
+print('')
+print('')
+
+print('setMaterias')
+print(DirClases['Estudiante']['metodos']['setMaterias']['vars'])
+#print(DirClases['Estudiante']['metodos']['setMaterias'])
+print('')
+print('getMaterias')
+print(DirClases['Estudiante']['metodos']['getMaterias']['vars'])
+#print(DirClases['Estudiante']['metodos']['getMaterias'])
+print('')
+
 
 for i in range(0, len(Cuad)):
 	arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + str(Cuad[i][1]) + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')
