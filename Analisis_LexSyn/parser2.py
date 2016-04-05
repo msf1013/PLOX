@@ -1100,10 +1100,15 @@ def p_atom(p):
 	global Invocador
 	global AtributoAtom
 	global AtributoTipo
+	lineNumber = scanner.lexer.lineno
 	if (Invocador != ''):
 		# Buscar en clase actual
 		if (Invocador == 'this'):
-			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][AtributoAtom] }
+			if (esTipoBasico(AtributoTipo)):
+				p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][AtributoAtom] }
+			else:
+				print("Semantic error at line {0}, THIS -> X can't refer to instances of Class {1}").format(lineNumber, AtributoTipo)
+				exit()
 		# Buscar en instancia : metodo
 		elif (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(Invocador)):
 			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][AtributoTipo][Invocador + '.' + AtributoAtom] }
@@ -1112,6 +1117,9 @@ def p_atom(p):
 			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][Invocador + '.' + AtributoAtom] }
 	else:
 		# Buscar en metodo actual
+		print(ClaseActual)
+		print(MetodoActual)
+		print(AtributoAtom)
 		if (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(AtributoAtom)):
 			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][AtributoTipo][AtributoAtom] }
 		# Buscar en clase actual
@@ -1251,7 +1259,7 @@ def p_checarAtributo(p):
 		else:
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
 			exit()
-		InvocadorTipo = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+		InvocadorTipo = claseAux
 	AtributoAtom = atributo
 
 def p_condicion(p):
@@ -1320,7 +1328,7 @@ def p_lectura(p):
 		#arch.write(str(Line) + '\t' + 'INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + (p[3]['invocador']+'.'+p[3]['id']) + '\n')
 		Cuad.append(['INPUT','-', '-', (p[3]['invocador']+'.'+p[3]['id'])])
 	else:
-		arch.write(str(Line) + '\t' + 'INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['id'] + '\n')
+		#arch.write(str(Line) + '\t' + 'INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['id'] + '\n')
 		Cuad.append(['INPUT','-', '-', p[3]['id']])
 	Line = Line + 1;
 	#arch.write('\t' 'INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['tipo'] + '\n')

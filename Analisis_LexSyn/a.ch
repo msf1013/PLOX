@@ -9,10 +9,10 @@ class Persona {
 
 class Estudiante under Persona {
 
-    visible Persona : persona, chavo = persona;
+    visible Persona : persona;
 
 	hidden real chofo;
-	visible real getCalif() {
+	visible string getCalif() {
 			Persona : calificacion;
 	        return this.calificacion;
 	}
@@ -20,7 +20,7 @@ class Estudiante under Persona {
 			this.calificacion = calif;
 	}
 	visible numeral getProfesor() {
-	        return this.persona;
+	        return persona.jj;
 	}
 	visible without setProfesor(string pro) {
 	        this.calificacion = pro;

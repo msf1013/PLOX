@@ -1,8 +1,5 @@
-chefe : 0
-auxEdad : 3
-getEdad : 7
-setNombre : 12
-setEdad : 16
-setMaterias : 18
-getMaterias : 24
-main : 25
+funcLoca : 0
+fReal : 1
+laFunc : 2
+func : 7
+main : 9
