@@ -1,27 +1,8 @@
-0	IGUAL	edad	-	this.edad
-	IGUAL	numeral	-	numeral
-1	IGUAL	auxEdad	-	e
-	IGUAL	numeral	-	numeral
-2	MENOS	edad	this.edad	t0
-	MENOS	numeral	numeral	numeral
-3	MAS	t0	e	t1
-4	IGUAL	nombre	-	this.nombre
-	IGUAL	string	-	string
-5	IGUAL	e	-	edad
-	IGUAL	numeral	-	numeral
-6	POR	45	1	t2
-	POR	numeral	numeral	numeral
-7	MENOS	56	t2	t3
-	MENOS	numeral	numeral	numeral
-8	MAS	t3	1	t4
-9	IGUAL	t4	-	m
-	IGUAL	numeral	-	numeral
-10	IGUAL	m	-	this.materias
-	IGUAL	numeral	-	numeral
-11	POR	1	3	t5
-	POR	numeral	numeral	numeral
-12	MAS	yo.getEdad	t5	t6
-13	IGUAL	t6	-	edad
-	IGUAL	numeral	-	numeral
-14	OUTPUT	-	-	edad
-	OUTPUT	-	-	numeral
+chefe : 0
+auxEdad : 3
+getEdad : 7
+setNombre : 12
+setEdad : 16
+setMaterias : 18
+getMaterias : 24
+main : 25

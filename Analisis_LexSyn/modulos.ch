@@ -4,7 +4,14 @@ class Animal {
 
 class Perro under Animal {
     visible numeral edad;
-    visible numeral hijos;
+    hidden numeral hijos;
+
+    hidden char chefe() {
+        char c;
+        c = 'c';
+        return c;
+    }
+
 }
 
 class Persona {
@@ -17,8 +24,9 @@ class Persona {
     visible string apellido;
     hidden Perro : puchi;
 
-    hidden numeral auxEdad(numeral edad) {
-        this.edad = edad;
+    hidden numeral auxEdad(numeral ee) {
+        this.edad = ee;
+        edad = ee;
         return edad;
     }
     
@@ -26,7 +34,7 @@ class Persona {
         numeral e;
         Perro : puchi2;
         e = auxEdad(this.edad);
-        return edad - this.edad + e;
+        return edad - this.edad + puchi.edad;
     }
 
     visible without setNombre(string nombre, char ch, numeral nume) {
@@ -34,9 +42,11 @@ class Persona {
         string loco;
         numeral cuatro;
         this.nombre = nombre;
+        return;
+        this.nombre = nombre;
     }
 
-    visible without setEdad(numeral e) {
+    visible bool setEdad(numeral e) {
         edad = e;
     }
 
@@ -47,26 +57,28 @@ class Estudiante under Persona {
     hidden Perro : nicky;
     hidden Persona : maestro;
 
-    visible numeral setMaterias(numeral m) {
+    visible real setMaterias(numeral m) {
         string loca;
         numeral num;
         m = 56 - 45 * 1 + 1;
         this.materias = m;
     }
-    visible without getMaterias() {
-        return this.edad;
+    visible string getMaterias() {
+        string wow = "chefe";
+
     }
 }
 
 class main {
     
     hidden Persona : yo;
+    hidden Persona : pucho;
 
     visible without main () {
         numeral edad;
 
         yo.setEdad(23);
-        edad = yo.getEdad() + 1 * 3;
+        edad = yo.getEdad() + 1 * 3 + pucho.edad;
         output(edad);
     }
 

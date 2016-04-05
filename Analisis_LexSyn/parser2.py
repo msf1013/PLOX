@@ -178,6 +178,7 @@ DirClases = {}
 ClaseActual = ''
 MetodoActual = ''
 Invocador = ''
+InvocadorTipo = ''
 AtributoAtom = ''
 AtributoTipo = ''
 MetodoNombre = ''
@@ -188,15 +189,18 @@ Cuad = []
 Falsos = []
 Mark = 0
 
-TiposVar = ['numeral', 'float', 'string', 'bool', 'char']
+TiposVar = ['numeral', 'real', 'string', 'bool', 'char']
 
 DirsClase = {}
 DirsMetodo = {}
+DirsMetodoTemp = {}
+DirsConstMap = {}
+DirsConst = {}
 
 def initDirsClase ():
 	global DirsClase
 	DirsClase['numeral'] = 1001
-	DirsClase['float'] = 4001
+	DirsClase['real'] = 4001
 	DirsClase['string'] = 7001
 	DirsClase['bool'] = 10001
 	DirsClase['char'] = 13001
@@ -205,11 +209,39 @@ def initDirsClase ():
 def initDirsMetodo ():
 	global DirsClase
 	DirsMetodo['numeral'] = 16001
-	DirsMetodo['float'] = 19001
+	DirsMetodo['real'] = 19001
 	DirsMetodo['string'] = 22001
 	DirsMetodo['bool'] = 25001
 	DirsMetodo['char'] = 28001
 	DirsMetodo['obj'] = {}
+
+def initDirsMetodoTemp ():
+	global DirsClaseTemp
+	DirsMetodoTemp['numeral'] = 31001
+	DirsMetodoTemp['real'] = 36001
+	DirsMetodoTemp['string'] = 41001
+	DirsMetodoTemp['bool'] = 46001
+	DirsMetodoTemp['char'] = 51001
+	DirsMetodoTemp['obj'] = {}
+
+
+DirsConst['numeral'] = 56002
+DirsConst['real'] = 61002
+DirsConst['string'] = 66002
+DirsConst['bool'] = 71002
+DirsConst['char'] = 76002
+#
+DirsConstMap['numeral'] = {}
+DirsConstMap['real'] = {}
+DirsConstMap['string'] = {}
+DirsConstMap['bool'] = {}
+DirsConstMap['char'] = {}
+#
+DirsConstMap['numeral']['0'] = 56001
+DirsConstMap['real']['0'] = 61001
+DirsConstMap['string'][''] = 66001
+DirsConstMap['bool']['false'] = 71001
+DirsConstMap['char']['0'] = 76001
 
 def esTipoBasico(tipo):
 	global TiposVar 
@@ -235,6 +267,8 @@ def p_clase(p):
 			 | CLASS ID declararClase herencia LLIZQ ciclo_vars LLDER limpiarMetodoActual
 			 | CLASS ID declararClase herencia LLIZQ ciclo_func LLDER limpiarMetodoActual
 			 | CLASS ID declararClase herencia LLIZQ LLDER limpiarMetodoActual'''
+	global ClaseActual
+	DirClases[ClaseActual]['estatus'] = 'completa'
 	print('clase')
 
 def p_declararClase(p):
@@ -252,7 +286,7 @@ def p_declararClase(p):
 		CuboSemantico[ClaseActual]['='][ClaseActual] = ClaseActual
 		initDirsClase()
 		DirClases[ClaseActual] = {'variables': { 'this' : {'tipo': ClaseActual, 'acceso' : 'hidden'} },
-		 'vars' : { 'numeral' : [], 'float' : [], 'string' : [], 'char' : [], 'bool' : [] }, 'metodos': {}, 'ancestros': {}}
+		 'vars' : { 'numeral' : {}, 'real' : {}, 'string' : {}, 'char' : {}, 'bool' : {} }, 'metodos': {}, 'ancestros': {}, 'estatus' : 'procesando'}
 
 def p_limpiarMetodoActual(p):
 	'''limpiarMetodoActual : '''
@@ -322,9 +356,12 @@ def p_revisarExistenciaClase(p):
 	global ClaseActual
 	global DirClases
 	tipo = scanner.ultimoId
+	lineNumber = scanner.lexer.lineno
 	if(not DirClases.has_key(tipo)):
-		lineNumber = scanner.lexer.lineno
 		print('Semantic error at line {0}, Class {1} not declared but being instanced.').format(lineNumber, tipo)
+		exit()
+	elif (DirClases[tipo]['estatus'] == 'procesando'):
+		print('Semantic error at line {0}, trying to instantiate Class {1} but its Class definition is incomplete.').format(lineNumber, tipo)
 		exit()
 	else:
 		scanner.ultimoTipo = tipo
@@ -379,31 +416,25 @@ def p_declararVariable(p):
 		if(MetodoActual == ''):
 			DirClases[ClaseActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : scanner.ultimoAcceso}
 			if (esTipoBasico(tipo)):
-				DirClases[ClaseActual]['vars'][tipo].append( {'id' : var, "dir" : DirsClase[tipo]} )
+				DirClases[ClaseActual]['vars'][tipo][var] = DirsClase[tipo]
 				DirsClase[tipo] = DirsClase[tipo] + 1
 			else:
 				print('TIPO: ' + tipo)
 				print(DirClases[tipo]['vars'])
 				for tipoVariable in TiposVar:
 					for variable in DirClases[tipo]['vars'][tipoVariable]:
-						print("LOL")
-						print(tipo)
-						print(ClaseActual)
-						print(var)
-						print(variable['id'])
-						DirsClase[tipoVariable]
-						DirClases[ClaseActual]['vars'][tipoVariable].append( {'id' : (var + '.' + variable['id']), "dir" : DirsClase[tipoVariable]} )
+						DirClases[ClaseActual]['vars'][tipoVariable][var + '.' + variable] = DirsClase[tipoVariable]
 						DirsClase[tipoVariable] = DirsClase[tipoVariable] + 1
 		# Variable de metodo
 		else:
 			DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : 'hidden'}
 			if (esTipoBasico(tipo)):
-				DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo].append( {'id' : var, "dir" : DirsMetodo[tipo]} )
+				DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][var] = DirsMetodo[tipo]
 				DirsMetodo[tipo] = DirsMetodo[tipo] + 1
 			else:
 				for tipoVariable in TiposVar:
 					for variable in DirClases[tipo]['vars'][tipoVariable]:
-						DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipoVariable].append( {'id' : (var + '.' + variable['id']), "dir" : DirsMetodo[tipoVariable]} )
+						DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipoVariable][var + '.' + variable] = DirsMetodo[tipoVariable]
 						DirsMetodo[tipoVariable] = DirsMetodo[tipoVariable] + 1
 
 
@@ -482,6 +513,7 @@ def p_func(p):
 	for par in DirClases[ClaseActual]['metodos'][MetodoActual]['parametros']:
 		print(par[0] + " " + par[1])
 	print('---2---')
+	initDirsMetodoTemp()
 	print('func')
 
 def p_declararMetodo(p):
@@ -493,6 +525,7 @@ def p_declararMetodo(p):
 	retorno = scanner.ultimoTipo
 	MetodoActual = scanner.ultimoId
 	initDirsMetodo()
+	initDirsMetodoTemp()
 	if(DirClases.has_key(MetodoActual) and MetodoActual != 'main'):
 		print('Semantic error at line {0}, method {1} declared but Class {1} already exists.').format(lineNumber, MetodoActual)
 		exit()
@@ -503,8 +536,8 @@ def p_declararMetodo(p):
 		print('Semantic error at line {0}, method {1} already declared.').format(lineNumber, MetodoActual)
 		exit()
 	else:
-		DirClases[ClaseActual]['metodos'][MetodoActual] = {'variables' : {}, 'parametros' : [],
-		'vars' : { 'numeral' : [], 'float' : [], 'string' : [], 'char' : [], 'bool' : [] }, 'retorno': retorno, 'acceso' : scanner.ultimoAcceso}
+		DirClases[ClaseActual]['metodos'][MetodoActual] = {'variables' : {}, 'parametros' : [], 'params' : [],
+		'vars' : { 'numeral' : {}, 'real' : {}, 'string' : {}, 'char' : {}, 'bool' : {} }, 'retorno': retorno, 'acceso' : scanner.ultimoAcceso}
 
 def p_main(p):
 	'''main 	: acceso WITHOUT MAIN declararMetodo PIZQ PDER cuerpo_func'''
@@ -533,15 +566,40 @@ def p_meterParametros(p):
 	DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][parametro] = {'tipo':tipo, 'acceso':'hidden'}
 	DirClases[ClaseActual]['metodos'][MetodoActual]['parametros'].append([tipo, parametro])
 
-	DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo].append( {'id' : parametro, "dir" : DirsMetodo[tipo]} )
+	DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][parametro] = DirsMetodo[tipo]
 	DirsMetodo[tipo] = DirsMetodo[tipo] + 1
 
+	DirClases[ClaseActual]['metodos'][MetodoActual]['params'].append(tipo)
+
 def p_cuerpo_func(p):
-	'''cuerpo_func 	: LLIZQ ciclo_vars_func ciclo_estatuto LLDER
-					| LLIZQ ciclo_vars_func LLDER
-					| LLIZQ ciclo_estatuto LLDER
-					| LLIZQ LLDER'''
+	'''cuerpo_func 	: inicioFunc LLIZQ ciclo_vars_func ciclo_estatuto LLDER
+					| inicioFunc LLIZQ ciclo_vars_func LLDER
+					| inicioFunc LLIZQ ciclo_estatuto LLDER
+					| inicioFunc LLIZQ LLDER'''
+	global ClaseActual
+	global MetodoActual
+	lineNumber = scanner.lexer.lineno
+	refTipo = DirClases[ClaseActual]['metodos'][MetodoActual]['retorno']
+	if (refTipo == 'numeral'):
+		Cuad.append(['RETURN', DirsConstMap['numeral']['0'], '-', '-'])
+	elif (refTipo == 'real'):
+		Cuad.append(['RETURN', DirsConstMap['real']['0'], '-', '-'])
+	elif (refTipo == 'bool'):
+		Cuad.append(['RETURN', DirsConstMap['bool']['false'], '-', '-'])
+	elif (refTipo == 'char'):
+		Cuad.append(['RETURN', DirsConstMap['char']['0'], '-', '-'])
+	elif (refTipo == 'string'):
+		Cuad.append(['RETURN', DirsConstMap['string'][""], '-', '-'])
+	else:
+		Cuad.append(['RETURN', '-',  '-', '-'])
 	print('cuerpo_func')
+
+def p_inicioFunc(p):
+	'''inicioFunc : '''
+	global ClaseActual
+	global MetodoActual
+	DirClases[ClaseActual]['metodos'][MetodoActual]['inicio'] = len(Cuad)
+	arch.write(MetodoActual + " : " + str(len(Cuad)) + "\n")
 
 def p_ciclo_vars_func(p):
 	'''ciclo_vars_func 	: vars
@@ -671,11 +729,13 @@ def p_exp_binaria(p):
 	global ResExp
 	global cont
 	global Line
+	global DirsMetodoTemp
 	lineNumber = scanner.lexer.lineno
 	if (p[2] == '+'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('+') and CuboSemantico[ p[1]['tipo'] ]['+'].has_key( p[3]['tipo'] )):
-			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'MAS' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ]] }
+			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ]] + 1
+			#arch.write(str(Line) + '\t' + 'MAS' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
 			Cuad.append(['MAS', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
 			#arch.write('\t' 'MAS' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
@@ -685,44 +745,48 @@ def p_exp_binaria(p):
 		cont = cont + 1
 	elif (p[2] == '-'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('-') and CuboSemantico[ p[1]['tipo'] ]['-'].has_key( p[3]['tipo'] )):
-			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['-'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'MENOS' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['-'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['-'][ p[3]['tipo'] ]] }
+			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['-'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['-'][ p[3]['tipo'] ]] + 1
+			#arch.write(str(Line) + '\t' + 'MENOS' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
 			Cuad.append(['MENOS', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'MENOS' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'MENOS' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'-\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
 			exit()
 		cont = cont + 1
 	elif (p[2] == '*'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('*') and CuboSemantico[ p[1]['tipo'] ]['*'].has_key( p[3]['tipo'] )):
-			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['*'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'POR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['*'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['*'][ p[3]['tipo'] ]] }
+			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['*'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['*'][ p[3]['tipo'] ]] + 1
+			#arch.write(str(Line) + '\t' + 'POR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
 			Cuad.append(['POR', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'POR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'POR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'*\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
 			exit()
 		cont = cont + 1
 	elif (p[2] == '/'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('/') and CuboSemantico[ p[1]['tipo'] ]['/'].has_key( p[3]['tipo'] )):
-			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['/'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'ENTRE' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['/'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['/'][ p[3]['tipo'] ]] }
+			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['/'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['/'][ p[3]['tipo'] ]] + 1
+			#arch.write(str(Line) + '\t' + 'ENTRE' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
 			Cuad.append(['ENTRE', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'ENTRE' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'ENTRE' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'/\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
 			exit()
 		cont = cont + 1
 	elif (p[2] == '%'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('%') and CuboSemantico[ p[1]['tipo'] ]['%'].has_key( p[3]['tipo'] )):
-			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['%'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'MOD' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['%'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['%'][ p[3]['tipo'] ]] }
+			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['%'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['%'][ p[3]['tipo'] ]] + 1
+			#arch.write(str(Line) + '\t' + 'MOD' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
 			Cuad.append(['MOD', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'MOD' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'MOD' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'%\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
 			exit()
@@ -730,88 +794,96 @@ def p_exp_binaria(p):
 
 	elif (p[2] == '=='):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('==') and CuboSemantico[ p[1]['tipo'] ]['=='].has_key( p[3]['tipo'] )):
-			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['=='][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'IGUALC' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['=='][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['=='][ p[3]['tipo'] ]] }
+			#arch.write(str(Line) + '\t' + 'IGUALC' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['=='][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['=='][ p[3]['tipo'] ]] + 1
 			Cuad.append(['IGUALC', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'IGUALC' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'IGUALC' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'==\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
 			exit()
 		cont = cont + 1
 	elif (p[2] == '!='):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('!=') and CuboSemantico[ p[1]['tipo'] ]['!='].has_key( p[3]['tipo'] )):
-			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['!='][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'NOTIGUAL' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['!='][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['!='][ p[3]['tipo'] ]] }
+			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['!='][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['!='][ p[3]['tipo'] ]] + 1
+			#arch.write(str(Line) + '\t' + 'NOTIGUAL' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
 			Cuad.append(['NOTIGUAL', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'NOTIGUAL' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'NOTIGUAL' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'!=\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
 			exit()
 		cont = cont + 1
 	elif (p[2] == '>'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('>') and CuboSemantico[ p[1]['tipo'] ]['>'].has_key( p[3]['tipo'] )):
-			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['>'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'MAYOR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['>'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['>'][ p[3]['tipo'] ]] }
+			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['>'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['>'][ p[3]['tipo'] ]] + 1
+			#arch.write(str(Line) + '\t' + 'MAYOR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
 			Cuad.append(['MAYOR', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'MAYOR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'MAYOR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'>\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
 			exit()
 		cont = cont + 1
 	elif (p[2] == '>='):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('>=') and CuboSemantico[ p[1]['tipo'] ]['>='].has_key( p[3]['tipo'] )):
-			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['>='][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'MAYORIGUAL' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['>='][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['>='][ p[3]['tipo'] ]] }
+			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['>='][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['>='][ p[3]['tipo'] ]] + 1
+			#arch.write(str(Line) + '\t' + 'MAYORIGUAL' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
 			Cuad.append(['MAYORIGUAL', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'MAYORIGUAL' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'MAYORIGUAL' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'>=\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
 			exit()
 		cont = cont + 1
 	elif (p[2] == '<'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('<') and CuboSemantico[ p[1]['tipo'] ]['<'].has_key( p[3]['tipo'] )):
-			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['<'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'MENOR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['<'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['<'][ p[3]['tipo'] ]] }
+			#arch.write(str(Line) + '\t' + 'MENOR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['<'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['<'][ p[3]['tipo'] ]] + 1
 			Cuad.append(['MENOR', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'MENOR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'MENOR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'<\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
 			exit()
 		cont = cont + 1
 	elif (p[2] == '<='):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('<=') and CuboSemantico[ p[1]['tipo'] ]['<='].has_key( p[3]['tipo'] )):
-			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['<='][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'MENORIGUAL' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['<='][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['<='][ p[3]['tipo'] ]] }
+			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['<='][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['<='][ p[3]['tipo'] ]] + 1
+			#arch.write(str(Line) + '\t' + 'MENORIGUAL' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
 			Cuad.append(['MENORIGUAL', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'MENORIGUAL' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'MENORIGUAL' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'<=\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
 			exit()
 		cont = cont + 1
 	elif (p[2] == '||'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('||') and CuboSemantico[ p[1]['tipo'] ]['||'].has_key( p[3]['tipo'] )):
-			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['||'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'OR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['||'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['||'][ p[3]['tipo'] ]] }
+			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['||'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['||'][ p[3]['tipo'] ]] + 1
+			#arch.write(str(Line) + '\t' + 'OR' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
 			Cuad.append(['OR', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'OR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'OR' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'||\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
 			exit()
 		cont = cont + 1
 	elif (p[2] == '&&'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('&&') and CuboSemantico[ p[1]['tipo'] ]['&&'].has_key( p[3]['tipo'] )):
-			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['&&'][ p[3]['tipo'] ], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'AND' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['&&'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['&&'][ p[3]['tipo'] ]] }
+			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['&&'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['&&'][ p[3]['tipo'] ]] + 1
+			#arch.write(str(Line) + '\t' + 'AND' + '\t' + (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']) + '\t' + (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']) + '\t' + p[0]['id'] + '\n')
 			Cuad.append(['AND', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'AND' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'AND' + '\t' + p[1]['tipo'] + '\t' +  p[3]['tipo'] + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'&&\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])
 			exit()
@@ -829,22 +901,24 @@ def p_exp_unaria(p):
 	lineNumber = scanner.lexer.lineno
 	if (p[1] == '!'):
 		if (CuboSemantico[ p[2]['tipo'] ].has_key('!')):
-			p[0] = {'tipo': CuboSemantico[ p[2]['tipo'] ]['!'], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'NOT' + '\t' + (p[2]['invocador']+'.'+p[2]['id'] if p[2].has_key('invocador') else p[2]['id']) + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[2]['tipo'] ]['!'], 'id': DirsMetodoTemp[CuboSemantico[ p[2]['tipo'] ]['!']] }
+			DirsMetodoTemp[CuboSemantico[ p[2]['tipo'] ]['!']] = DirsMetodoTemp[CuboSemantico[ p[2]['tipo'] ]['!']] + 1
+			#arch.write(str(Line) + '\t' + 'NOT' + '\t' + (p[2]['invocador']+'.'+p[2]['id'] if p[2].has_key('invocador') else p[2]['id']) + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
 			Cuad.append(['NOT', (p[2]['invocador']+'.'+p[2]['id'] if p[2].has_key('invocador') else p[2]['id']), '-', p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'NOT' + '\t' + p[2]['tipo'] + '\t' +  '-' + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'NOT' + '\t' + p[2]['tipo'] + '\t' +  '-' + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible type {1} with preceding operator \'!\'.').format(lineNumber, p[2]['tipo'])
 			exit()
 		cont = cont + 1
 	elif (p[1] == '-'):
 		if (CuboSemantico[ p[2]['tipo'] ].has_key('-') and CuboSemantico[ p[2]['tipo'] ]['-'].has_key('-')):
-			p[0] = {'tipo': CuboSemantico[ p[2]['tipo'] ]['-']['-'], 'id': ('t' + str(cont)) }
-			arch.write(str(Line) + '\t' + 'UMENOS' + '\t' + (p[2]['invocador']+'.'+p[2]['id'] if p[2].has_key('invocador') else p[2]['id']) + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
+			p[0] = {'tipo': CuboSemantico[ p[2]['tipo'] ]['-']['-'], 'id': DirsMetodoTemp[CuboSemantico[ p[2]['tipo'] ]['-']['-']] }
+			DirsMetodoTemp[CuboSemantico[ p[2]['tipo'] ]['-']['-']] = DirsMetodoTemp[CuboSemantico[ p[2]['tipo'] ]['-']['-']] + 1
+			#arch.write(str(Line) + '\t' + 'UMENOS' + '\t' + (p[2]['invocador']+'.'+p[2]['id'] if p[2].has_key('invocador') else p[2]['id']) + '\t' +  '-' + '\t' + p[0]['id'] + '\n')
 			Cuad.append(['UMENOS', (p[2]['invocador']+'.'+p[2]['id'] if p[2].has_key('invocador') else p[2]['id']), '-', p[0]['id']])
 			Line = Line + 1;
-			arch.write('\t' 'UMENOS' + '\t' + p[2]['tipo'] + '\t' +  '-' + '\t' + p[0]['tipo'] + '\n')
+			#arch.write('\t' 'UMENOS' + '\t' + p[2]['tipo'] + '\t' +  '-' + '\t' + p[0]['tipo'] + '\n')
 		else:
 			print('Semantic error at line {0}, incompatible type {1} with preceding operator \'-\'.').format(lineNumber, p[2]['tipo'])
 			exit()
@@ -872,32 +946,84 @@ def p_opciones(p):
 def p_cte_str(p):
 	'''cte_str : CTE_STR'''
 	print('cte_str')
-	p[0] = { 'tipo': 'string', 'id': p[1] }
+	global DirsConst
+	global DirsConstMap
+	if p[1] in DirsConstMap['string']:
+		p[0] = { 'tipo': 'string', 'id': DirsConstMap['string'][ p[1] ] }
+	else:
+		p[0] = { 'tipo': 'string', 'id': DirsConst['string'] }
+		DirsConstMap['string'][p[1]] = DirsConst['string']
+		DirsConst['string'] = DirsConst['string'] + 1 
 
 def p_cte_char(p):
 	'''cte_char : CTE_CHAR'''
 	print('cte_char')
-	p[0] = { 'tipo': 'char', 'id': p[1] }
+	global DirsConst
+	global DirsConstMap
+	if p[1] in DirsConstMap['char']:
+		p[0] = { 'tipo': 'char', 'id': DirsConstMap['char'][ p[1] ] }
+	else:
+		p[0] = { 'tipo': 'char', 'id': DirsConst['char'] }
+		DirsConstMap['char'][p[1]] = DirsConst['char']
+		DirsConst['char'] = DirsConst['char'] + 1
 
 def p_cte_numeral(p):
 	'''cte_numeral : CTE_NUMERAL'''
 	print('cte_numeral')
-	p[0] = { 'tipo': 'numeral', 'id': p[1] }
+	global DirsConst
+	global DirsConstMap
+	if p[1] in DirsConstMap['numeral']:
+		p[0] = { 'tipo': 'numeral', 'id': DirsConstMap['numeral'][ p[1] ] }
+	else:
+		p[0] = { 'tipo': 'numeral', 'id': DirsConst['numeral'] }
+		DirsConstMap['numeral'][p[1]] = DirsConst['numeral']
+		DirsConst['numeral'] = DirsConst['numeral'] + 1
 
 def p_cte_real(p):
 	'''cte_real : CTE_REAL'''
 	print('cte_real')
-	p[0] = { 'tipo': 'real', 'id': p[1] }
+	global DirsConst
+	global DirsConstMap
+	if p[1] in DirsConstMap['real']:
+		p[0] = { 'tipo': 'real', 'id': DirsConstMap['real'][ p[1] ] }
+	else:
+		p[0] = { 'tipo': 'real', 'id': DirsConst['real'] }
+		DirsConstMap['real'][p[1]] = DirsConst['real']
+		DirsConst['real'] = DirsConst['real'] + 1
 
 def p_cte_bool(p):
 	'''cte_bool 	: TRUE
 					| FALSE'''
 	print('cte_bool')
-	p[0] = { 'tipo': 'bool', 'id': p[1] }
+	global DirsConst
+	global DirsConstMap
+	if p[1] in DirsConstMap['bool']:
+		p[0] = { 'tipo': 'bool', 'id': DirsConstMap['bool'][ p[1] ] }
+	else:
+		p[0] = { 'tipo': 'bool', 'id': DirsConst['bool'] }
+		DirsConstMap['bool'][p[1]] = DirsConst['bool']
+		DirsConst['bool'] = DirsConst['bool'] + 1
 
-def p_return(p):
-	'''return 	: RETURN exp PYC
-				| RETURN PYC'''
+def p_return_exp(p):
+	'''return 	: RETURN exp PYC'''
+	global ClaseActual
+	global MetodoActual
+	lineNumber = scanner.lexer.lineno
+	if (p[2]['tipo'] != DirClases[ClaseActual]['metodos'][MetodoActual]['retorno'] ):
+		print('Semantic error at line {0}, expected "{1}" return, but got "{2}" expression.').format(lineNumber - 1, DirClases[ClaseActual]['metodos'][MetodoActual]['retorno'], p[2]['tipo'])
+		exit()
+	Cuad.append(['RETURN', p[2]['id'],  '-', '-'])
+	print('return')
+
+def p_return_null(p):
+	'''return 	: RETURN PYC'''
+	global ClaseActual
+	global MetodoActual
+	lineNumber = scanner.lexer.lineno
+	if (not DirClases[ClaseActual]['metodos'][MetodoActual]['retorno'] == 'without'):
+		print('Semantic error at line {0}, expected "{1}" return expression, but got "without" return.').format(lineNumber - 1, DirClases[ClaseActual]['metodos'][MetodoActual]['retorno'])
+		exit()
+	Cuad.append(['RETURN', '-',  '-', '-'])
 	print('return')
 
 def p_while(p):
@@ -919,7 +1045,8 @@ def p_while_2(p):
 	lineNumber = scanner.lexer.lineno
 	if (ResExp['tipo'] != 'bool'):
 		print('Semantic error at line {0}, expected "bool" expression, but "{1}" expression given in while loop condition.').format(lineNumber - 1, ResExp['tipo'])
-	arch.write(str(Line) + '\t' + 'GOTOF' + '\t' + ResExp['id'] + '\t' +  'missing' + '\t' + '-' + '\n')
+		exit()
+	#arch.write(str(Line) + '\t' + 'GOTOF' + '\t' + ResExp['id'] + '\t' +  'missing' + '\t' + '-' + '\n')
 	Cuad.append(['GOTOF', ResExp['id'],  'missing', '-'])
 	Line = Line + 1;
 	PSaltos.push(Line - 1)
@@ -930,7 +1057,7 @@ def p_while_3(p):
 	global Line
 	falso = PSaltos.pop()
 	retorno = PSaltos.pop()
-	arch.write(str(Line) + '\t' + 'GOTO' + '\t' + '-' + '\t' +  str(retorno) + '\t' + '-' + '\n')
+	#arch.write(str(Line) + '\t' + 'GOTO' + '\t' + '-' + '\t' +  str(retorno) + '\t' + '-' + '\n')
 	Cuad.append(['GOTO', '-', retorno, '-'])
 	Line = Line + 1;
 	Cuad[falso][2] = Line
@@ -945,13 +1072,13 @@ def p_asignacion(p):
 	if (CuboSemantico[ p[1]['tipo'] ].has_key('=') and CuboSemantico[ p[1]['tipo'] ]['='].has_key( p[4]['tipo'] )):
 		#p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['='][ p[4]['tipo'] ], 'id': ('t' + str(cont)) }
 		if (p[1].has_key('invocador')):
-			arch.write(str(Line) + '\t' + 'IGUAL' + '\t' + p[4]['id'] + '\t' +  '-' + '\t' + (p[1]['invocador']+'.'+p[1]['id']) + '\n')
+			#arch.write(str(Line) + '\t' + 'IGUAL' + '\t' + p[4]['id'] + '\t' +  '-' + '\t' + (p[1]['invocador']+'.'+p[1]['id']) + '\n')
 			Cuad.append(['IGUAL', p[4]['id'], '-', (p[1]['invocador']+'.'+p[1]['id'])])
 		else:
-			arch.write(str(Line) + '\t' + 'IGUAL' + '\t' + p[4]['id'] + '\t' +  '-' + '\t' + p[1]['id'] + '\n')
+			#arch.write(str(Line) + '\t' + 'IGUAL' + '\t' + p[4]['id'] + '\t' +  '-' + '\t' + p[1]['id'] + '\n')
 			Cuad.append(['IGUAL', p[4]['id'], '-', p[1]['id']])
 		Line = Line + 1;
-		arch.write('\t' 'IGUAL' + '\t' + p[4]['tipo'] + '\t' +  '-' + '\t' + p[1]['tipo'] + '\n')
+		#arch.write('\t' 'IGUAL' + '\t' + p[4]['tipo'] + '\t' +  '-' + '\t' + p[1]['tipo'] + '\n')
 	else:
 		print('Semantic error at line {0}, incompatible type assignation of type {1} into type {2}.').format(lineNumber - 1, p[4]['tipo'], p[1]['tipo'])
 		exit()
@@ -967,11 +1094,29 @@ def p_atom(p):
 			| ID definirInvocador COIZQ exp CODER checarAtributo2
 			| THIS PUNTO definirInvocador ID checarAtributo
 			| THIS PUNTO definirInvocador ID checarAtributo COIZQ exp CODER '''
+	global ClaseActual
+	global MetodoActual
+	global InvocadorTipo
+	global Invocador
+	global AtributoAtom
+	global AtributoTipo
 	if (Invocador != ''):
-		print(Invocador)
-		p[0] = { 'tipo': AtributoTipo, 'id': AtributoAtom, "invocador": Invocador }
+		# Buscar en clase actual
+		if (Invocador == 'this'):
+			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][AtributoAtom] }
+		# Buscar en instancia : metodo
+		elif (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(Invocador)):
+			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][AtributoTipo][Invocador + '.' + AtributoAtom] }
+		# Buscar en instancia : clase
+		else:
+			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][Invocador + '.' + AtributoAtom] }
 	else:
-		p[0] = { 'tipo': AtributoTipo, 'id': AtributoAtom }
+		# Buscar en metodo actual
+		if (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(AtributoAtom)):
+			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][AtributoTipo][AtributoAtom] }
+		# Buscar en clase actual
+		else:
+			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][AtributoAtom] }
 	print('atom')
 
 def p_checarAtributo2(p):
@@ -980,6 +1125,7 @@ def p_checarAtributo2(p):
 	global MetodoActual
 	global DirClases
 	global Invocador
+	global InvocadorTipo
 	global AtributoAtom
 	global AtributoTipo
 	lineNumber = scanner.lexer.lineno
@@ -1038,6 +1184,7 @@ def p_checarAtributo2(p):
 		else:
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
 			exit()
+		InvocadorTipo = DirClases[ClaseActual]['variables'][Invocador]['tipo']
 	AtributoAtom = atributo
 
 def p_checarAtributo(p):
@@ -1046,6 +1193,7 @@ def p_checarAtributo(p):
 	global MetodoActual
 	global DirClases
 	global Invocador
+	global InvocadorTipo
 	global AtributoAtom
 	global AtributoTipo
 	lineNumber = scanner.lexer.lineno
@@ -1103,6 +1251,7 @@ def p_checarAtributo(p):
 		else:
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
 			exit()
+		InvocadorTipo = DirClases[ClaseActual]['variables'][Invocador]['tipo']
 	AtributoAtom = atributo
 
 def p_condicion(p):
@@ -1126,7 +1275,8 @@ def p_if_1(p):
 	lineNumber = scanner.lexer.lineno
 	if (ResExp['tipo'] != 'bool'):
 		print('Semantic error at line {0}, expected "bool" expression, but "{1}" expression given in if condition.').format(lineNumber - 1, ResExp['tipo'])
-	arch.write(str(Line) + '\t' + 'GOTOF' + '\t' + ResExp['id'] + '\t' +  'missing' + '\t' + '-' + '\n')
+		exit()
+	#arch.write(str(Line) + '\t' + 'GOTOF' + '\t' + ResExp['id'] + '\t' +  'missing' + '\t' + '-' + '\n')
 	Cuad.append(['GOTOF', ResExp['id'],  'missing', '-'])
 	Line = Line + 1;
 	PSaltos.push(Line - 1)
@@ -1146,7 +1296,7 @@ def p_if_3(p):
 	global Line
 	global Falsos
 	global Mark
-	arch.write(str(Line) + '\t' + 'GOTO' + '\t' + '-'+ '\t' +  'missing' + '\t' + '-' + '\n')
+	#arch.write(str(Line) + '\t' + 'GOTO' + '\t' + '-'+ '\t' +  'missing' + '\t' + '-' + '\n')
 	Cuad.append(['GOTO', '-',  'missing', '-'])
 	Line = Line + 1;
 	Cuad[Mark][2] = Line
@@ -1167,22 +1317,22 @@ def p_lectura(p):
 	'''lectura 	: INPUT PIZQ atom limpiarInvocador PDER PYC'''
 	global Line
 	if (p[3].has_key('invocador')):
-		arch.write(str(Line) + '\t' + 'INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + (p[3]['invocador']+'.'+p[3]['id']) + '\n')
+		#arch.write(str(Line) + '\t' + 'INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + (p[3]['invocador']+'.'+p[3]['id']) + '\n')
 		Cuad.append(['INPUT','-', '-', (p[3]['invocador']+'.'+p[3]['id'])])
 	else:
 		arch.write(str(Line) + '\t' + 'INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['id'] + '\n')
 		Cuad.append(['INPUT','-', '-', p[3]['id']])
 	Line = Line + 1;
-	arch.write('\t' 'INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['tipo'] + '\n')
+	#arch.write('\t' 'INPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['tipo'] + '\n')
 	print('lectura')
 
 def p_escritura(p):
 	'''escritura 	: OUTPUT PIZQ exp PDER PYC'''
 	global Line
-	arch.write(str(Line) + '\t' + 'OUTPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['id'] + '\n')
+	#arch.write(str(Line) + '\t' + 'OUTPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['id'] + '\n')
 	Cuad.append(['OUTPUT','-', '-', p[3]['id']])
 	Line = Line + 1;
-	arch.write('\t' 'OUTPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['tipo'] + '\n')
+	#arch.write('\t' 'OUTPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['tipo'] + '\n')
 	print('escritura')
 
 # Function to serve as an empty word
@@ -1226,6 +1376,9 @@ print('')
 print('Estudiante')
 print(DirClases['Estudiante']['vars'])
 print('')
+print('main')
+print(DirClases['main']['vars'])
+print('')
 print('')
 
 print('auxEdad')
@@ -1255,6 +1408,11 @@ print(DirClases['Estudiante']['metodos']['getMaterias']['vars'])
 #print(DirClases['Estudiante']['metodos']['getMaterias'])
 print('')
 
+print('main')
+print(DirClases['main']['metodos']['main']['vars'])
+#print(DirClases['Estudiante']['metodos']['getMaterias'])
+print('')
+
 
 for i in range(0, len(Cuad)):
-	arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + str(Cuad[i][1]) + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')
+	arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + '\t' + str(Cuad[i][1]) + '\t' + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')
