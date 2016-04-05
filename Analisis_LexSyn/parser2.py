@@ -207,7 +207,7 @@ def initDirsClase ():
 	DirsClase['obj'] = {}
 
 def initDirsMetodo ():
-	global DirsClase
+	global DirsMetodo
 	DirsMetodo['numeral'] = 16001
 	DirsMetodo['real'] = 19001
 	DirsMetodo['string'] = 22001
@@ -216,7 +216,7 @@ def initDirsMetodo ():
 	DirsMetodo['obj'] = {}
 
 def initDirsMetodoTemp ():
-	global DirsClaseTemp
+	global DirsMetodoTemp
 	DirsMetodoTemp['numeral'] = 31001
 	DirsMetodoTemp['real'] = 36001
 	DirsMetodoTemp['string'] = 41001
