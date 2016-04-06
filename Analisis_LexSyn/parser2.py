@@ -296,7 +296,9 @@ def p_limpiarMetodoActual(p):
 def p_limpiarInvocador(p):
 	'''limpiarInvocador : '''
 	global Invocador
+	global InvocadorTipo
 	Invocador = ''
+	InvocadorTipo = ''
 
 def p_herencia(p):
 	'''herencia : empty
@@ -324,6 +326,11 @@ def p_agregaAncestro(p):
 			DirsClase[tipo] = DirsClase[tipo] + len(DirClases[ClaseActual]['vars'][tipo])
 		DirClases[ClaseActual]['ancestros'] = DirClases[ancestro]['ancestros']
 		DirClases[ClaseActual]['ancestros'][ancestro] = DirClases[ancestro]
+		DirClases[ClaseActual]['padre'] = ancestro
+		print('+++')
+		print(ClaseActual)
+		print(DirClases[ClaseActual]['ancestros'])
+		print('+++')
 
 def p_ciclo_vars(p):
 	'''ciclo_vars 	: acceso vars
@@ -422,7 +429,7 @@ def p_declararVariable(p):
 				print('TIPO: ' + tipo)
 				print(DirClases[tipo]['vars'])
 				for tipoVariable in TiposVar:
-					for variable in DirClases[tipo]['vars'][tipoVariable]:
+					for variable in sorted(DirClases[tipo]['vars'][tipoVariable], key = DirClases[tipo]['vars'][tipoVariable].get):
 						DirClases[ClaseActual]['vars'][tipoVariable][var + '.' + variable] = DirsClase[tipoVariable]
 						DirsClase[tipoVariable] = DirsClase[tipoVariable] + 1
 		# Variable de metodo
@@ -433,7 +440,7 @@ def p_declararVariable(p):
 				DirsMetodo[tipo] = DirsMetodo[tipo] + 1
 			else:
 				for tipoVariable in TiposVar:
-					for variable in DirClases[tipo]['vars'][tipoVariable]:
+					for variable in sorted(DirClases[tipo]['vars'][tipoVariable], key = DirClases[tipo]['vars'][tipoVariable].get):
 						DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipoVariable][var + '.' + variable] = DirsMetodo[tipoVariable]
 						DirsMetodo[tipoVariable] = DirsMetodo[tipoVariable] + 1
 
@@ -458,6 +465,8 @@ def checarAncestros(ancestros, var, lineNumber, tipo):
 def checarAtributoAncestros(ancestros, var, lineNumber):
 	listaAn = ancestros.items()
 	for item in listaAn:
+		print('---')
+		print(item[1])
 		if (item[1]['variables'].has_key(var)):
 			return True
 	return False
@@ -622,18 +631,76 @@ def p_estatuto(p):
 					| return'''
 	print('estatuto')
 
-def p_llamada_func(p):
-	'''llamada_func : ID checarFuncion PIZQ exp_ciclo PDER
-					| ID PUNTO definirInvocador ID checarFuncion PIZQ exp_ciclo PDER
-					| ID definirInvocador COIZQ exp CODER PUNTO ID checarFuncion PIZQ exp_ciclo PDER
-					| ID checarFuncion PIZQ PDER
-					| ID PUNTO definirInvocador ID checarFuncion PIZQ PDER
-					| ID definirInvocador COIZQ exp CODER PUNTO ID checarFuncion PIZQ PDER'''
-	if (Invocador != ''):
-		p[0] = { 'tipo': MetodoTipo, 'id': MetodoNombre, "invocador": Invocador, 'esFuncion' : True }
-	else:
-		p[0] = { 'tipo': MetodoTipo, 'id': MetodoNombre, 'esFuncion' : True }
+PilaLlamadas = stack()
+
+def p_llamada_func_invocador(p):
+	'''llamada_func : ID PUNTO definirInvocador ID checarFuncion generaEra PIZQ exp_ciclo PDER generarGosub
+					| ID definirInvocador COIZQ exp CODER PUNTO ID checarFuncion generaEra PIZQ exp_ciclo PDER generarGosub
+					| ID PUNTO definirInvocador ID checarFuncion generaEra PIZQ PDER generarGosub
+					| ID definirInvocador COIZQ exp CODER PUNTO ID checarFuncion generaEra PIZQ PDER generarGosub'''
+	pos = len(p) - 1
+	p[0] = { 'tipo': p[pos]['tipo'], 'id': p[pos]['id'], 'esFuncion' : True }
+	#p[0] = { 'tipo': p[pos]['tipo'], 'id': p[pos]['id'], "invocador": p[pos]['invocador'], 'esFuncion' : True }
 	print('llamada_func')
+
+def p_llamada_func_sin_invocador(p):
+	'''llamada_func : ID checarFuncion generaEra PIZQ exp_ciclo PDER generarGosub
+					| ID checarFuncion generaEra PIZQ PDER generarGosub'''
+	pos = len(p) - 1
+	p[0] = { 'tipo': p[pos]['tipo'], 'id': p[pos]['id'], 'esFuncion' : True }
+	print('llamada_func')
+
+def devuelveMetodo(clase, metodo):
+	if (DirClases[clase]['metodos'].has_key(metodo)):
+		return DirClases[clase]['metodos'][metodo]
+	else:
+		return devuelveMetodo(DirClases[clase]['padre'],metodo)
+
+def p_generaGosub(p):
+	'''generarGosub : '''
+	lineNumber = scanner.lexer.lineno
+	global PilaLlamadas
+	actual = PilaLlamadas.top()
+	clase = ''
+	metodo = actual['id']
+	
+	if ( actual.has_key('invocador') ):
+		clase = actual['invocadorTipo']
+	else:
+		clase = ClaseActual
+
+	dirInicio = devuelveMetodo(clase, metodo)['inicio']
+
+	if ( len( devuelveMetodo(clase, metodo)['params'] ) > actual['numP'] ):
+		print('Semantic error at line {0}, less parameters than expected passed to \'{1}\' method of Class \'{2}\'.').format(lineNumber, metodo, clase)
+		exit()
+	
+	tipo = devuelveMetodo(clase, metodo)['retorno']
+	id = -1
+	if (tipo != 'without'):
+		id = DirsMetodoTemp[tipo]
+		DirsMetodoTemp[tipo] = DirsMetodoTemp[tipo] + 1
+		Cuad.append(['GOSUB', metodo, dirInicio, id])
+	else:
+		Cuad.append(['GOSUB', metodo, dirInicio, '-'])
+	
+	if (actual.has_key('invocador')):
+		p[0] = {'tipo' : tipo, 'id' : id, 'invocador' : actual['invocador'] }
+	else:
+		p[0] = {'tipo' : tipo, 'id' : id}
+	
+	PilaLlamadas.pop()
+	print('generarGosub')
+
+def p_generaEra(p):
+	'''generaEra : '''
+	global PilaLlamadas
+	if (Invocador != ''):
+		PilaLlamadas.push( {'id': MetodoNombre, "invocador": Invocador, "invocadorTipo": InvocadorTipo, 'numP': 0} )
+	else:
+		PilaLlamadas.push( {'id': MetodoNombre, 'numP': 0} )
+	Cuad.append(['ERA', MetodoNombre, '-', '-'])
+	print('generaEra')
 
 def p_checarFuncion(p):
 	'''checarFuncion : '''
@@ -641,6 +708,7 @@ def p_checarFuncion(p):
 	global MetodoActual
 	global DirClases
 	global Invocador
+	global InvocadorTipo
 	global MetodoNombre
 	global MetodoTipo
 	lineNumber = scanner.lexer.lineno
@@ -663,7 +731,6 @@ def p_checarFuncion(p):
 				claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
 		else:
 			claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
-
 		if ( DirClases[claseAux]['metodos'].has_key(func) ):
 			if ( not (DirClases[claseAux]['metodos'][func]['acceso'] == 'visible') ):
 				print('Semantic error at line {0}, method {1} is hidden').format(lineNumber, func)
@@ -677,6 +744,7 @@ def p_checarFuncion(p):
 		else:
 			print('Semantic error at line {0}, method {1} not associated with Object {2}.').format(lineNumber, func, Invocador)
 			exit()
+		InvocadorTipo = claseAux
 	MetodoNombre = func			
 
 def p_definirInvocador(p):
@@ -695,9 +763,132 @@ def p_definirInvocador(p):
 		print('Semantic error at line {0}, Class instance {1} not found.').format(lineNumber, Invocador)
 		exit()
 
-def p_exp_ciclo(p):
-	'''exp_ciclo 	: exp
-					| exp_ciclo COMA exp'''
+def devuelveParams(clase, metodo):
+	if (DirClases[clase]['metodos'].has_key(metodo)):
+		return DirClases[clase]['metodos'][metodo]['params']
+	else:
+		return devuelveParams(DirClases[clase]['padre'],metodo)
+
+def devuelveParametros(clase, metodo):
+	if (DirClases[clase]['metodos'].has_key(metodo)):
+		return DirClases[clase]['metodos'][metodo]['parametros']
+	else:
+		return devuelveParametros(DirClases[clase]['padre'],metodo)
+
+def devuelveVars(clase, metodo):
+	if (DirClases[clase]['metodos'].has_key(metodo)):
+		return DirClases[clase]['metodos'][metodo]['vars']
+	else:
+		return devuelveVars(DirClases[clase]['padre'],metodo)
+
+
+def p_exp_ciclo_1(p):
+	'''exp_ciclo 	: exp'''
+	global PilaLlamadas
+	actual = PilaLlamadas.top()
+	lineNumber = scanner.lexer.lineno
+	if(actual.has_key('invocadorTipo')):
+		#print('---')
+		#print(actual['invocador'])
+		#print(actual['invocadorTipo'])
+		#print(actual['id'])
+		#print( DirClases[actual['invocadorTipo']]['metodos'] )
+		#print(DirClases['main']['variables'])
+		#print(lineNumber)
+		if(actual['numP'] >= len(DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['params'])):
+			print('Semantic error at line {0}, more parameters given than the {1} specified for function {2} of Class {3}.').format(lineNumber, len(DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['params']), actual['id'], actual['invocadorTipo'])
+			exit()
+		else:
+			listaTipos = copy.deepcopy(DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['params'])
+			#listaTipos.reverse()
+			if(p[1]['tipo'] != listaTipos[actual['numP']]):
+				print(listaTipos)
+				print(actual['numP'])
+				print(p[1]['tipo'])
+				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[1]['tipo'], listaTipos[actual['numP']])
+				exit()
+			else:
+				tipo = DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['parametros'][actual['numP']][0]
+				nombreVar = DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['parametros'][actual['numP']][1]
+				Cuad.append(['PARAM', p[1]['id'], '-', DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['vars'][tipo][nombreVar]])
+	else:
+		print('---')
+		print(actual['numP'])
+		print(actual['id'])
+		print(ClaseActual)
+		print(DirClases[ClaseActual]['metodos'])
+		if(actual['numP'] >= len( devuelveParams(ClaseActual, actual['id']) )):
+			print('Semantic error at line {0}, more parameters given than the {1} specified for function {2} of Class {3}.').format(lineNumber, len(devuelveParams(ClaseActual, actual['id'])), actual['id'], ClaseActual)
+			exit()
+		else:
+			listaTipos = copy.deepcopy(devuelveParams(ClaseActual, actual['id']))
+			#listaTipos.reverse()
+			#print('---')
+			#print(p[1]['tipo'])
+			#print(actual['numP'])
+			#print(DirClases[ClaseActual]['metodos'][actual['id']]['params'])
+			#print(listaTipos)
+			if(p[1]['tipo'] != listaTipos[actual['numP']]):
+				print(listaTipos)
+				print(actual['numP'])
+				print(p[1]['tipo'])
+				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[1]['tipo'], listaTipos[actual['numP']])
+				exit()
+			else:
+				print('---')
+				tipo = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][0]
+				nombreVar = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][1]
+				print(tipo)
+				print(nombreVar)
+				print(devuelveVars(ClaseActual, actual['id']))
+				Cuad.append(['PARAM', p[1]['id'], '-', devuelveVars(ClaseActual, actual['id'])[tipo][nombreVar]])
+	actual['numP'] = actual['numP'] + 1
+	PilaLlamadas.pop()
+	PilaLlamadas.push(actual)
+	print('exp_ciclo')
+
+def p_exp_ciclo_2(p):
+	'''exp_ciclo 	: exp_ciclo COMA exp'''
+	lineNumber = scanner.lexer.lineno
+	global PilaLlamadas
+	actual = PilaLlamadas.top()
+	if(actual.has_key('invocadorTipo')):
+		if(actual['numP'] >= len(DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['params'])):
+			print('Semantic error at line {0}, more parameters given than the {1} specified for function {2} of Class {3}.').format(lineNumber, len(DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['params']), actual['id'], actual['invocadorTipo'])
+			exit()
+		else:
+			listaTipos = copy.deepcopy(DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['params'])
+			#listaTipos.reverse()
+			if(p[3]['tipo'] != listaTipos[actual['numP']]):
+				print(listaTipos)
+				print(actual['numP'])
+				print(p[3]['tipo'])
+				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[3]['tipo'], listaTipos[actual['numP']])
+				exit()
+			else:
+				tipo = DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['parametros'][actual['numP']][0]
+				nombreVar = DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['parametros'][actual['numP']][1]
+				Cuad.append(['PARAM', p[3]['id'], '-', DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['vars'][tipo][nombreVar]])
+	else:
+		if(actual['numP'] >= len(devuelveParams(ClaseActual, actual['id']))):
+			print('Semantic error at line {0}, more parameters given than the {1} specified for function {2} of Class {3}.').format(lineNumber, len(devuelveParams(ClaseActual, actual['id'])), actual['id'], ClaseActual)
+			exit()
+		else:
+			listaTipos = copy.deepcopy(devuelveParams(ClaseActual, actual['id']))
+			#listaTipos.reverse()
+			if(p[3]['tipo'] != listaTipos[actual['numP']]):
+				print(listaTipos)
+				print(actual['numP'])
+				print(p[3]['tipo'])
+				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[3]['tipo'], listaTipos[actual['numP']])
+				exit()
+			else:
+				tipo = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][0]
+				nombreVar = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][1]
+				Cuad.append(['PARAM', p[3]['id'], '-', devuelveVars(ClaseActual, actual['id'])[tipo][nombreVar]])
+	actual['numP'] = actual['numP'] + 1
+	PilaLlamadas.pop()
+	PilaLlamadas.push(actual)
 	print('exp_ciclo')
 
 precedence = (
@@ -1241,10 +1432,16 @@ def p_checarAtributo(p):
 		if (MetodoActual != ''):
 			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(Invocador) ):
 				claseAux = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo']
-			else:
+			elif ( DirClases[ClaseActual]['variables'].has_key(Invocador) ):
 				claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], Invocador, lineNumber)):
+				claseAux = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], Invocador, lineNumber)
 		else:
-			claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+			if ( DirClases[ClaseActual]['variables'].has_key(Invocador) ):
+				claseAux = DirClases[ClaseActual]['variables'][Invocador]['tipo']
+			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], Invocador, lineNumber)):
+				claseAux = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], Invocador, lineNumber)
+
 
 		if ( DirClases[claseAux]['variables'].has_key(atributo) ):
 			if ( not (DirClases[claseAux]['variables'][atributo]['acceso'] == 'visible') ):
@@ -1384,9 +1581,6 @@ print('')
 print('Estudiante')
 print(DirClases['Estudiante']['vars'])
 print('')
-print('main')
-print(DirClases['main']['vars'])
-print('')
 print('')
 
 print('auxEdad')
@@ -1397,30 +1591,17 @@ print('getEdad')
 print(DirClases['Persona']['metodos']['getEdad']['vars'])
 #print(DirClases['Persona']['metodos']['getEdad'])
 print('')
-print('setNombre')
-print(DirClases['Persona']['metodos']['setNombre']['vars'])
-#print(DirClases['Persona']['metodos']['setNombre'])
-print('')
-print('setEdad')
-print(DirClases['Persona']['metodos']['setEdad']['vars'])
-#print(DirClases['Persona']['metodos']['setEdad'])
-print('')
 print('')
 
 print('setMaterias')
 print(DirClases['Estudiante']['metodos']['setMaterias']['vars'])
 #print(DirClases['Estudiante']['metodos']['setMaterias'])
 print('')
-print('getMaterias')
-print(DirClases['Estudiante']['metodos']['getMaterias']['vars'])
-#print(DirClases['Estudiante']['metodos']['getMaterias'])
 print('')
 
 print('main')
 print(DirClases['main']['metodos']['main']['vars'])
 #print(DirClases['Estudiante']['metodos']['getMaterias'])
-print('')
-
 
 for i in range(0, len(Cuad)):
 	arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + '\t' + str(Cuad[i][1]) + '\t' + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')

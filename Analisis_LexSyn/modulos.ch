@@ -69,6 +69,11 @@ class Estudiante under Persona {
     }
 }
 
+class Amigo under Estudiante {
+    visible numeral ido;
+    
+}
+
 class main {
     
     hidden Persona : yo;

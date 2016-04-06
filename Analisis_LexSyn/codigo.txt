@@ -1,8 +1,4 @@
-chefe : 0
-auxEdad : 3
-getEdad : 7
-setNombre : 12
-setEdad : 16
-setMaterias : 18
-getMaterias : 24
-main : 25
+auxEdad : 0
+getEdad : 3
+setMaterias : 7
+main : 30
