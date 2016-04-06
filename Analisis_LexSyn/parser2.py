@@ -795,11 +795,11 @@ def p_exp_ciclo_1(p):
 		#print( DirClases[actual['invocadorTipo']]['metodos'] )
 		#print(DirClases['main']['variables'])
 		#print(lineNumber)
-		if(actual['numP'] >= len(DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['params'])):
-			print('Semantic error at line {0}, more parameters given than the {1} specified for function {2} of Class {3}.').format(lineNumber, len(DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['params']), actual['id'], actual['invocadorTipo'])
+		if(actual['numP'] >= len(devuelveParams(actual['invocadorTipo'], actual['id']))):
+			print('Semantic error at line {0}, more parameters given than the {1} specified for function {2} of Class {3}.').format(lineNumber, len(devuelveParams(actual['invocadorTipo'], actual['id'])), actual['id'], actual['invocadorTipo'])
 			exit()
 		else:
-			listaTipos = copy.deepcopy(DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['params'])
+			listaTipos = copy.deepcopy(devuelveParams(actual['invocadorTipo'], actual['id']))
 			#listaTipos.reverse()
 			if(p[1]['tipo'] != listaTipos[actual['numP']]):
 				print(listaTipos)
@@ -808,9 +808,9 @@ def p_exp_ciclo_1(p):
 				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[1]['tipo'], listaTipos[actual['numP']])
 				exit()
 			else:
-				tipo = DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['parametros'][actual['numP']][0]
-				nombreVar = DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['parametros'][actual['numP']][1]
-				Cuad.append(['PARAM', p[1]['id'], '-', DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['vars'][tipo][nombreVar]])
+				tipo = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][0]
+				nombreVar = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][1]
+				Cuad.append(['PARAM', p[1]['id'], '-', devuelveVars(actual['invocadorTipo'], actual['id'])[tipo][nombreVar]])
 	else:
 		print('---')
 		print(actual['numP'])
@@ -853,11 +853,11 @@ def p_exp_ciclo_2(p):
 	global PilaLlamadas
 	actual = PilaLlamadas.top()
 	if(actual.has_key('invocadorTipo')):
-		if(actual['numP'] >= len(DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['params'])):
-			print('Semantic error at line {0}, more parameters given than the {1} specified for function {2} of Class {3}.').format(lineNumber, len(DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['params']), actual['id'], actual['invocadorTipo'])
+		if(actual['numP'] >= len(devuelveParams(actual['invocadorTipo'], actual['id']))):
+			print('Semantic error at line {0}, more parameters given than the {1} specified for function {2} of Class {3}.').format(lineNumber, len(devuelveParams(actual['invocadorTipo'], actual['id'])), actual['id'], actual['invocadorTipo'])
 			exit()
 		else:
-			listaTipos = copy.deepcopy(DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['params'])
+			listaTipos = copy.deepcopy(devuelveParams(actual['invocadorTipo'], actual['id']))
 			#listaTipos.reverse()
 			if(p[3]['tipo'] != listaTipos[actual['numP']]):
 				print(listaTipos)
@@ -866,9 +866,9 @@ def p_exp_ciclo_2(p):
 				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[3]['tipo'], listaTipos[actual['numP']])
 				exit()
 			else:
-				tipo = DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['parametros'][actual['numP']][0]
-				nombreVar = DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['parametros'][actual['numP']][1]
-				Cuad.append(['PARAM', p[3]['id'], '-', DirClases[actual['invocadorTipo']]['metodos'][actual['id']]['vars'][tipo][nombreVar]])
+				tipo = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][0]
+				nombreVar = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][1]
+				Cuad.append(['PARAM', p[3]['id'], '-', devuelveVars(actual['invocadorTipo'], actual['id'])[tipo][nombreVar]])
 	else:
 		if(actual['numP'] >= len(devuelveParams(ClaseActual, actual['id']))):
 			print('Semantic error at line {0}, more parameters given than the {1} specified for function {2} of Class {3}.').format(lineNumber, len(devuelveParams(ClaseActual, actual['id'])), actual['id'], ClaseActual)

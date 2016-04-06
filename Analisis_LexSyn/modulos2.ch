@@ -28,19 +28,19 @@ class Persona {
 class Estudiante under Persona {
     visible numeral materias;
 
-    visible real setMaterias(numeral m) {
+    visible numeral setMaterias(numeral m) {
         m = puchi.id + getEdad(edad, auxEdad(materias, this.edad) * getEdad(puchi.id, 5, auxEdad(1,3) ),3 ) * materias;
     }
 }
 
 class main {
     
-    hidden Persona : yo;
+    hidden Estudiante : yo;
     hidden Persona : pucho;
 
     visible without main () {
         numeral edad;
-        edad = (3 * 4 + yo.getEdad(3, 4, 5)) * pucho.auxEdad(yo.auxEdad(3,4), 5);
+        edad = (3 + 4 / yo.getEdad(3, 4, 5)) * pucho.auxEdad(yo.setMaterias(4), 5);
         output(edad);
     }
 
