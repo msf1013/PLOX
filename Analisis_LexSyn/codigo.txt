@@ -1,5 +1,8 @@
-funcLoca : 0
-fReal : 1
-laFunc : 2
-func : 3
-main : 5
+calcularPotencia : 0
+devuelve : 5
+prueba : 12
+impresionIdentificacion : 14
+impresionFuncionamiento : 20
+imprimir : 44
+imprimirTransportes : 67
+main : 85
