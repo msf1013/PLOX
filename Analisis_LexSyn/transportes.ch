@@ -70,8 +70,12 @@ class VehiculoAereo under Transporte {
 }
 
 class main {
-	
+	visible numeral e, f;
+	hidden string str, str2;
+	hidden numeral g;
 	visible Coche: coche;
+	hidden real q, k;
+	hidden string str3, str4; 
 
 	visible bool imprimirTransportes() {
 		coche.imprimir();
@@ -87,7 +91,7 @@ class main {
 
 		imprimirTransportes();
 
-		s = coche2.devuelve(4, 3.5) - r * 3;
+		s = coche.devuelve(4, 3.5) - r * 3;
 
 	}
 }

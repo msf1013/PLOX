@@ -3,6 +3,6 @@ devuelve : 5
 prueba : 12
 impresionIdentificacion : 14
 impresionFuncionamiento : 20
-imprimir : 44
-imprimirTransportes : 67
-main : 85
+imprimir : 48
+imprimirTransportes : 89
+main : 121

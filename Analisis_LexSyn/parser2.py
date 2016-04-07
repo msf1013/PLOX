@@ -771,6 +771,55 @@ def p_generaGosub(p):
 		Cuad.append(['GOSUB', metodo, dirInicio, '-'])
 	
 	Line = Line + 1
+
+	# go return {start}
+
+	# Pasa clase actual
+	if (invocador == ''):
+		for tipoVariable in TiposVar:
+			print('====')
+			print(claseMet)
+			print(DirClases[claseMet])
+			if (DirClases[claseMet]['tam'][tipoVariable] > 0):
+				total = DirClases[claseMet]['tam'][tipoVariable]
+				dirClase = DirBaseClase[tipoVariable]
+				for i in range(0, total):
+					Cuad.append(['ATTR_RET', dirClase, dirClase, '-'])
+					Line = Line + 1
+					dirClase = dirClase + 1
+	# Pasa la clase del invocador
+	else:
+		# Busca instancia en metodo
+		if ( DirClases[ClaseActual]['metodos'][MetodoActual]['obj'].has_key(invocador) ):
+			for tipoVariable in TiposVar:
+				print('---')
+				print(invocador)
+				print()
+				print(DirClases[ClaseActual]['metodos'][MetodoActual]['obj'])
+				dirInstancia = DirClases[ClaseActual]['metodos'][MetodoActual]['obj'][invocador][tipoVariable]
+				if (dirInicio != -1):
+					total = DirClases[clase]['tam'][tipoVariable]
+					dirClase = DirBaseClase[tipoVariable]
+					for i in range(0, total):
+						Cuad.append(['ATTR_RET', dirClase, dirInstancia, '-'])
+						Line = Line + 1
+						dirInstancia = dirInstancia + 1
+						dirClase = dirClase + 1
+		# Busca instancia en clase
+		else:
+			for tipoVariable in TiposVar:
+				dirInstancia = DirClases[ClaseActual]['obj'][invocador][tipoVariable]
+				if (dirInicio != -1):
+					total = DirClases[clase]['tam'][tipoVariable]
+					dirClase = DirBaseClase[tipoVariable]
+					for i in range(0, total):
+						Cuad.append(['ATTR_RET', dirClase, dirInstancia, '-'])
+						Line = Line + 1
+						dirInstancia = dirInstancia + 1
+						dirClase = dirClase + 1
+
+	# go return {finish}
+
 	
 	if (actual.has_key('invocador')):
 		p[0] = {'tipo' : tipo, 'id' : id, 'invocador' : actual['invocador'] }
