@@ -1,4 +1,5 @@
-auxEdad : 0
-getEdad : 3
-setMaterias : 7
-main : 30
+funcLoca : 0
+fReal : 1
+laFunc : 2
+func : 3
+main : 5

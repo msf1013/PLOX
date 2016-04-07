@@ -271,18 +271,18 @@ def p_ciclo_clase(p):
 	print('ciclo_clase')	
 
 def p_clase(p):
-	'''clase : CLASS ID declararClase herencia LLIZQ ciclo_vars ciclo_func LLDER limpiarMetodoActual
-			 | CLASS ID declararClase herencia LLIZQ ciclo_vars LLDER limpiarMetodoActual
-			 | CLASS ID declararClase herencia LLIZQ ciclo_func LLDER limpiarMetodoActual
-			 | CLASS ID declararClase herencia LLIZQ LLDER limpiarMetodoActual'''
+	'''clase : CLASS ID declararClase herencia LLIZQ ciclo_vars ciclo_func terminarClase LLDER limpiarMetodoActual
+			 | CLASS ID declararClase herencia LLIZQ ciclo_vars terminarClase LLDER limpiarMetodoActual
+			 | CLASS ID declararClase herencia LLIZQ ciclo_func terminarClase LLDER limpiarMetodoActual
+			 | CLASS ID declararClase herencia LLIZQ terminarClase LLDER limpiarMetodoActual'''
 	global ClaseActual
 	DirClases[ClaseActual]['estatus'] = 'completa'
 	print('clase')
 
-#def p_terminarClase(p):
-#	'''terminarClase : '''
-#	global ClaseActual
-#	DirClases[ClaseActual]['tam'] = { 'numeral' : len(DirClases[ClaseActual]['vars']['numeral']), 'real' : len(DirClases[ClaseActual]['vars']['real']), 'string' : len(DirClases[ClaseActual]['vars']['string']), 'char' : len(DirClases[ClaseActual]['vars']['char']), 'bool' : len(DirClases[ClaseActual]['vars']['bool']) }
+def p_terminarClase(p):
+	'''terminarClase : '''
+	global ClaseActual
+	DirClases[ClaseActual]['tam'] = { 'numeral' : len(DirClases[ClaseActual]['vars']['numeral']), 'real' : len(DirClases[ClaseActual]['vars']['real']), 'string' : len(DirClases[ClaseActual]['vars']['string']), 'char' : len(DirClases[ClaseActual]['vars']['char']), 'bool' : len(DirClases[ClaseActual]['vars']['bool']) }
 
 def p_declararClase(p):
 	'''declararClase : '''
@@ -301,7 +301,6 @@ def p_declararClase(p):
 		DirClases[ClaseActual] = {'variables': { 'this' : {'tipo': ClaseActual, 'acceso' : 'hidden'} },
 		 'vars' : { 'numeral' : {}, 'real' : {}, 'string' : {}, 'char' : {}, 'bool' : {} }, 'metodos': {}, 'ancestros': {}, 'estatus' : 'procesando'}
 		DirClases[ClaseActual]['obj'] = {}
-		DirClases[ClaseActual]['tam'] = {'numeral' : 0, 'real' : 0, 'bool' : 0, 'string' : 0, 'char' : 0}
 
 def p_limpiarMetodoActual(p):
 	'''limpiarMetodoActual : '''
@@ -343,7 +342,6 @@ def p_agregaAncestro(p):
 		DirClases[ClaseActual]['ancestros'][ancestro] = DirClases[ancestro]
 		DirClases[ClaseActual]['padre'] = ancestro
 		DirClases[ClaseActual]['obj'] = copy.deepcopy(DirClases[ancestro]['obj'])
-		DirClases[ClaseActual]['tam'] = copy.deepcopy(DirClases[ancestro]['tam'])
 		print('+++')
 		print(ClaseActual)
 		print(DirClases[ClaseActual]['ancestros'])
@@ -441,7 +439,6 @@ def p_declararVariable(p):
 			DirClases[ClaseActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : scanner.ultimoAcceso}
 			if (esTipoBasico(tipo)):
 				DirClases[ClaseActual]['vars'][tipo][var] = DirsClase[tipo]
-				DirClases[ClaseActual]['tam'][tipo] = DirClases[ClaseActual]['tam'][tipo] + 1 
 				DirsClase[tipo] = DirsClase[tipo] + 1
 			else:
 				print('TIPO: ' + tipo)
@@ -455,7 +452,6 @@ def p_declararVariable(p):
 							DirClases[ClaseActual]['obj'][var][tipoVariable] = DirsClase[tipoVariable]
 							esPrimero = False
 						DirsClase[tipoVariable] = DirsClase[tipoVariable] + 1
-						DirClases[ClaseActual]['tam'][tipoVariable] = DirClases[ClaseActual]['tam'][tipoVariable] + 1
 		# Variable de metodo
 		else:
 			DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : 'hidden'}
