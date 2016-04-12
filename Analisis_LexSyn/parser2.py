@@ -183,9 +183,9 @@ AtributoAtom = ''
 AtributoTipo = ''
 MetodoNombre = ''
 MetodoTipo = ''
-Line = 0
+Line = 1
 ResExp = {}
-Cuad = []
+Cuad = [['GOTO', '-', '-', '-']]
 Falsos = []
 Mark = 0
 
@@ -643,8 +643,13 @@ def p_declararMetodo(p):
 		'vars' : { 'numeral' : {}, 'real' : {}, 'string' : {}, 'char' : {}, 'bool' : {} }, 'vars2' : { 'numeral' : {}, 'real' : {}, 'string' : {}, 'char' : {}, 'bool' : {} }, 'retorno': retorno, 'acceso' : scanner.ultimoAcceso, 'obj' : {} }
 
 def p_main(p):
-	'''main 	: acceso WITHOUT MAIN declararMetodo PIZQ PDER cuerpo_func'''
+	'''main 	: acceso WITHOUT MAIN rellenaCuadInicial declararMetodo PIZQ PDER cuerpo_func'''
 	print('main')
+
+def p_rellenaCuadInicial(p):
+    '''rellenaCuadInicial : '''
+    global Line
+    Cuad[0][2] = Line
 
 def p_params(p):
 	'''params 	: PIZQ params_ciclo PDER

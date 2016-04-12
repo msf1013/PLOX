@@ -1,5 +1,5 @@
-copia : 0
-getDim : 8
-getEdades : 12
-getArr : 16
-main : 19
+copia : 1
+getDim : 9
+getEdades : 13
+getArr : 17
+main : 20
