@@ -299,7 +299,8 @@ def p_declararClase(p):
 		CuboSemantico[ClaseActual]['='][ClaseActual] = ClaseActual
 		initDirsClase()
 		DirClases[ClaseActual] = {'variables': { 'this' : {'tipo': ClaseActual, 'acceso' : 'hidden'} },
-		 'vars' : { 'numeral' : {}, 'real' : {}, 'string' : {}, 'char' : {}, 'bool' : {} }, 'metodos': {}, 'ancestros': {}, 'estatus' : 'procesando'}
+		 'vars' : { 'numeral' : {}, 'real' : {}, 'string' : {}, 'char' : {}, 'bool' : {} }, 'metodos': {}, 'ancestros': {}, 'estatus' : 'procesando',
+		 'varsTam' : { 'numeral' : {}, 'real' : {}, 'string' : {}, 'char' : {}, 'bool' : {} }}
 		DirClases[ClaseActual]['obj'] = {}
 		DirClases[ClaseActual]['tam'] = {'numeral' : 0, 'real' : 0, 'bool' : 0, 'string' : 0, 'char' : 0}
 
@@ -338,16 +339,15 @@ def p_agregaAncestro(p):
 	else:
 		for tipo in TiposVar:
 			DirClases[ClaseActual]['vars'][tipo] = copy.deepcopy(DirClases[ancestro]['vars'][tipo])
-			DirsClase[tipo] = DirsClase[tipo] + len(DirClases[ClaseActual]['vars'][tipo])
+			DirClases[ClaseActual]['varsTam'][tipo] = copy.deepcopy(DirClases[ancestro]['varsTam'][tipo])
+			#DirsClase[tipo] = DirsClase[tipo] + len(DirClases[ClaseActual]['vars'][tipo])
 		DirClases[ClaseActual]['ancestros'] = DirClases[ancestro]['ancestros']
 		DirClases[ClaseActual]['ancestros'][ancestro] = DirClases[ancestro]
 		DirClases[ClaseActual]['padre'] = ancestro
 		DirClases[ClaseActual]['obj'] = copy.deepcopy(DirClases[ancestro]['obj'])
 		DirClases[ClaseActual]['tam'] = copy.deepcopy(DirClases[ancestro]['tam'])
-		print('+++')
-		print(ClaseActual)
-		print(DirClases[ClaseActual]['ancestros'])
-		print('+++')
+		for tipo in TiposVar:
+			DirsClase[tipo] = DirsClase[tipo] + DirClases[ClaseActual]['tam'][tipo]
 
 def p_ciclo_vars(p):
 	'''ciclo_vars 	: acceso vars
@@ -392,23 +392,58 @@ def p_revisarExistenciaClase(p):
 
 def p_ciclo_tipo(p):
 	'''ciclo_tipo 	: ID declararVariable
-					| ID declararVariable COIZQ exp CODER
+					| ID COIZQ cte_numeral CODER declararVariableDim
 					| ciclo_tipo COMA ID declararVariable
-					| ciclo_tipo COMA ID declararVariable COIZQ exp CODER
-					| ID declararVariable IGUAL exp
-					| ID declararVariable COIZQ exp CODER IGUAL exp
-					| ciclo_tipo COMA ID declararVariable IGUAL exp
-					| ciclo_tipo COMA ID declararVariable COIZQ exp CODER IGUAL exp'''
+					| ciclo_tipo COMA ID COIZQ cte_numeral CODER declararVariableDim'''
 	print('ciclo_tipo')
 
 def p_ciclo_id(p):
-	'''ciclo_id 	: ID declararVariable 
-					| ID declararVariable COIZQ exp CODER 
-					| ciclo_id COMA ID declararVariable
-					| ciclo_id COMA ID declararVariable COIZQ exp CODER 
-					| ID declararVariable IGUAL atom limpiarInvocador
-					| ciclo_id COMA ID declararVariable IGUAL atom limpiarInvocador'''
+	'''ciclo_id 	: ID declararVariable
+					| ciclo_id COMA ID declararVariable'''
 	print('ciclo_id')
+
+def p_declararVariableDim(p):
+	'''declararVariableDim : '''
+	#'''revisarExistenciaClase : '''
+	global ClaseActual
+	global MetodoActual
+	global DirClases
+
+	global DirsClase 
+	global DirsMetodo
+
+	lineNumber = scanner.lexer.lineno
+	var = scanner.ultimoId
+	tam = int(scanner.ultimoNumeral)
+	if(DirClases.has_key(var)):
+		print('Semantic error at line {0}, variable {1} declared but Class {1} already exists.').format(lineNumber, var)
+		exit()
+	elif( (DirClases[ClaseActual]['variables'].has_key(var) or checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], var, lineNumber)) and MetodoActual == ''):
+		print('Semantic error at line {0}, variable {1} already declared.').format(lineNumber, var)
+		exit()
+	elif(DirClases[ClaseActual]['metodos'].has_key(var) or checarMetodoAncestros(DirClases[ClaseActual]['ancestros'], var, lineNumber)):
+		print('Semantic error at line {0}, variable {1} declared but function {1} already declared.').format(lineNumber, var)
+		exit()
+	elif(MetodoActual != '' and DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(var)):
+		print('Semantic error at line {0}, variable {1} already declared.').format(lineNumber, var)
+		exit()
+	else:
+		tipo = scanner.ultimoTipo
+		# Variable de clase
+		if(MetodoActual == ''):
+			DirClases[ClaseActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : scanner.ultimoAcceso, 'dim' : tam}
+			DirClases[ClaseActual]['vars'][tipo][var] = DirsClase[tipo]
+			DirClases[ClaseActual]['tam'][tipo] = DirClases[ClaseActual]['tam'][tipo] + tam
+			DirsClase[tipo] = DirsClase[tipo] + tam
+			DirClases[ClaseActual]['varsTam'][tipo][var] = tam
+			print('=======================================')
+			print(var)
+		# Variable de metodo
+		else:
+			DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : 'hidden', 'dim' : tam}
+			DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][var] = DirsMetodo[tipo]
+			DirsMetodo[tipo] = DirsMetodo[tipo] + tam
+			#DirClases[ClaseActual]['metodos'][MetodoActual]['varsTam'][tipo][var] = tam
 
 def p_declararVariable(p):
 	'''declararVariable : '''
@@ -454,8 +489,14 @@ def p_declararVariable(p):
 						if (esPrimero):
 							DirClases[ClaseActual]['obj'][var][tipoVariable] = DirsClase[tipoVariable]
 							esPrimero = False
-						DirsClase[tipoVariable] = DirsClase[tipoVariable] + 1
-						DirClases[ClaseActual]['tam'][tipoVariable] = DirClases[ClaseActual]['tam'][tipoVariable] + 1
+
+						if (DirClases[tipo]['varsTam'][tipoVariable].has_key(variable)):
+							DirClases[ClaseActual]['varsTam'][tipoVariable][var + '.' + variable] = DirClases[tipo]['varsTam'][tipoVariable][variable]
+							DirsClase[tipoVariable] = DirsClase[tipoVariable] + DirClases[tipo]['varsTam'][tipoVariable][variable]
+							DirClases[ClaseActual]['tam'][tipoVariable] = DirClases[ClaseActual]['tam'][tipoVariable] + DirClases[tipo]['varsTam'][tipoVariable][variable]
+						else:
+							DirsClase[tipoVariable] = DirsClase[tipoVariable] + 1
+							DirClases[ClaseActual]['tam'][tipoVariable] = DirClases[ClaseActual]['tam'][tipoVariable] + 1
 		# Variable de metodo
 		else:
 			DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][var] = {'tipo': scanner.ultimoTipo, 'acceso' : 'hidden'}
@@ -471,7 +512,10 @@ def p_declararVariable(p):
 						if (esPrimero):
 							DirClases[ClaseActual]['metodos'][MetodoActual]['obj'][var][tipoVariable] = DirsMetodo[tipoVariable]
 							esPrimero = False
-						DirsMetodo[tipoVariable] = DirsMetodo[tipoVariable] + 1
+						if (DirClases[tipo]['varsTam'][tipoVariable].has_key(variable)):
+							DirsMetodo[tipoVariable] = DirsMetodo[tipoVariable] + DirClases[tipo]['varsTam'][tipoVariable][variable]
+						else:
+							DirsMetodo[tipoVariable] = DirsMetodo[tipoVariable] + 1
 
 
 def checarAncestros(ancestros, var, lineNumber, tipo):
@@ -499,6 +543,17 @@ def checarAtributoAncestros(ancestros, var, lineNumber):
 		if (item[1]['variables'].has_key(var)):
 			return True
 	return False
+
+def checarAtributoAncestrosDim(ancestros, var, lineNumber):
+	listaAn = ancestros.items()
+	for item in listaAn:
+		print('---')
+		print(item[1])
+		if (item[1]['variables'].has_key(var)):
+			if (item[1]['variables'][var].has_key('dim')):
+				return True
+			else:
+				return False
 
 def valorAtributoAncestros(ancestros, var, lineNumber):
 	listaAn = ancestros.items()
@@ -575,7 +630,7 @@ def p_declararMetodo(p):
 		exit()
 	else:
 		DirClases[ClaseActual]['metodos'][MetodoActual] = {'variables' : {}, 'parametros' : [], 'params' : [],
-		'vars' : { 'numeral' : {}, 'real' : {}, 'string' : {}, 'char' : {}, 'bool' : {} }, 'retorno': retorno, 'acceso' : scanner.ultimoAcceso, 'obj' : {}}
+		'vars' : { 'numeral' : {}, 'real' : {}, 'string' : {}, 'char' : {}, 'bool' : {} }, 'vars2' : { 'numeral' : {}, 'real' : {}, 'string' : {}, 'char' : {}, 'bool' : {} }, 'retorno': retorno, 'acceso' : scanner.ultimoAcceso, 'obj' : {} }
 
 def p_main(p):
 	'''main 	: acceso WITHOUT MAIN declararMetodo PIZQ PDER cuerpo_func'''
@@ -584,14 +639,42 @@ def p_main(p):
 def p_params(p):
 	'''params 	: PIZQ params_ciclo PDER
 				| PIZQ PDER'''
+	print('				DIRNUMERAL')
+	print(DirsMetodo['numeral'])
 	print('params')
 
 def p_params_ciclo(p):
 	'''params_ciclo 	: tipo ID meterParametros
-						| tipo ID CODER COIZQ meterParametros
+						| tipo ID COIZQ pruebita cte_numeral CODER meterParametrosDim
 						| params_ciclo COMA tipo ID meterParametros
-						| params_ciclo COMA tipo ID CODER COIZQ meterParametros'''
+						| params_ciclo COMA tipo ID COIZQ cte_numeral CODER meterParametrosDim'''
 	print('params_ciclo')
+
+def p_pruebita(p):
+	'''pruebita : '''
+	print('***DIRNUMERAL')
+	print(DirsMetodo['numeral'])
+
+def p_meterParametrosDim(p):
+	'''meterParametrosDim : '''
+	global ClaseActual
+	global MetodoActual
+	global DirClases
+	lineNumber = scanner.lexer.lineno
+	parametro = scanner.ultimoId
+	tipo = scanner.ultimoTipo
+	tam = int(scanner.ultimoNumeral)
+
+	DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][parametro] = {'tipo':tipo, 'acceso':'hidden', 'dim' : tam}
+	DirClases[ClaseActual]['metodos'][MetodoActual]['parametros'].append([tipo, parametro, 1])
+
+	DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][parametro] = DirsMetodo[tipo]
+	DirsMetodo[tipo] = DirsMetodo[tipo] + tam
+
+	DirClases[ClaseActual]['metodos'][MetodoActual]['params'].append([tipo, tam])
+
+	print('+++DIRNUMERAL')
+	print(DirsMetodo['numeral'])
 
 def p_meterParametros(p):
 	'''meterParametros : '''
@@ -607,7 +690,9 @@ def p_meterParametros(p):
 	DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][parametro] = DirsMetodo[tipo]
 	DirsMetodo[tipo] = DirsMetodo[tipo] + 1
 
-	DirClases[ClaseActual]['metodos'][MetodoActual]['params'].append(tipo)
+	DirClases[ClaseActual]['metodos'][MetodoActual]['params'].append([tipo])
+
+
 
 def p_cuerpo_func(p):
 	'''cuerpo_func 	: inicioFunc LLIZQ ciclo_vars_func ciclo_estatuto LLDER
@@ -666,9 +751,7 @@ PilaLlamadas = stack()
 
 def p_llamada_func_invocador(p):
 	'''llamada_func : ID PUNTO definirInvocador ID checarFuncion generaEra PIZQ limpiarInvocador exp_ciclo PDER generarGosub
-					| ID definirInvocador COIZQ exp CODER PUNTO ID checarFuncion generaEra PIZQ limpiarInvocador exp_ciclo PDER generarGosub
-					| ID PUNTO definirInvocador ID checarFuncion generaEra PIZQ limpiarInvocador PDER generarGosub
-					| ID definirInvocador COIZQ exp CODER PUNTO ID checarFuncion generaEra PIZQ limpiarInvocador PDER generarGosub'''
+					| ID PUNTO definirInvocador ID checarFuncion generaEra PIZQ limpiarInvocador PDER generarGosub'''
 	pos = len(p) - 1
 	p[0] = { 'tipo': p[pos]['tipo'], 'id': p[pos]['id'], 'esFuncion' : True }
 	#p[0] = { 'tipo': p[pos]['tipo'], 'id': p[pos]['id'], "invocador": p[pos]['invocador'], 'esFuncion' : True }
@@ -947,17 +1030,33 @@ def p_exp_ciclo_1(p):
 		else:
 			listaTipos = copy.deepcopy(devuelveParams(actual['invocadorTipo'], actual['id']))
 			#listaTipos.reverse()
-			if(p[1]['tipo'] != listaTipos[actual['numP']]):
+			if(p[1]['tipo'] != listaTipos[actual['numP']][0]):
 				print(listaTipos)
 				print(actual['numP'])
 				print(p[1]['tipo'])
-				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[1]['tipo'], listaTipos[actual['numP']])
+				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[1]['tipo'], listaTipos[actual['numP']][0])
 				exit()
-			else:
+			elif (p[1].has_key('dim') and len(listaTipos[actual['numP']]) == 1):
+				print('Semantic error at line {0}, expected array reference but got {1}.').format(lineNumber, listaTipos[actual['numP']][0])
+				exit()
+			elif (not p[1].has_key('dim') and len(listaTipos[actual['numP']]) > 1):
+				print('Semantic error at line {0}, expected {1} but got array reference.').format(lineNumber, p[1]['tipo'])
+				exit()
+			elif (not p[1].has_key('dim') and len(listaTipos[actual['numP']]) == 1):
 				tipo = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][0]
 				nombreVar = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][1]
 				Cuad.append(['PARAM', p[1]['id'], '-', devuelveVars(actual['invocadorTipo'], actual['id'])[tipo][nombreVar]])
 				Line = Line + 1
+			elif ( p[1]['dim'] != listaTipos[actual['numP']][1] ):
+				print('Semantic error at line {0}, array received as parameter differs in length from formal argument.').format(lineNumber)
+				exit()
+			else:
+				tipo = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][0]
+				nombreVar = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][1]
+				base = devuelveVars(actual['invocadorTipo'], actual['id'])[tipo][nombreVar]
+				for x in range(0, p[1]['dim']):	
+					Cuad.append(['PARAM', p[1]['id'] + x, '-', base + x])
+					Line = Line + 1
 	else:
 		print('---')
 		print(actual['numP'])
@@ -975,21 +1074,33 @@ def p_exp_ciclo_1(p):
 			#print(actual['numP'])
 			#print(DirClases[ClaseActual]['metodos'][actual['id']]['params'])
 			#print(listaTipos)
-			if(p[1]['tipo'] != listaTipos[actual['numP']]):
+			if(p[1]['tipo'] != listaTipos[actual['numP']][0]):
 				print(listaTipos)
 				print(actual['numP'])
 				print(p[1]['tipo'])
-				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[1]['tipo'], listaTipos[actual['numP']])
+				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[1]['tipo'], listaTipos[actual['numP']][0])
 				exit()
-			else:
-				print('---')
+			elif (p[1].has_key('dim') and len(listaTipos[actual['numP']]) == 1):
+				print('Semantic error at line {0}, expected array reference but got {1}.').format(lineNumber, listaTipos[actual['numP']][0])
+				exit()
+			elif (not p[1].has_key('dim') and len(listaTipos[actual['numP']]) > 1):
+				print('Semantic error at line {0}, expected {1} but got array reference.').format(lineNumber, p[1]['tipo'])
+				exit()
+			elif (not p[1].has_key('dim') and len(listaTipos[actual['numP']]) == 1):
 				tipo = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][0]
 				nombreVar = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][1]
-				print(tipo)
-				print(nombreVar)
-				print(devuelveVars(ClaseActual, actual['id']))
 				Cuad.append(['PARAM', p[1]['id'], '-', devuelveVars(ClaseActual, actual['id'])[tipo][nombreVar]])
 				Line = Line + 1
+			elif ( p[1]['dim'] != listaTipos[actual['numP']][1] ):
+				print('Semantic error at line {0}, array received as parameter differs in length from formal argument.').format(lineNumber)
+				exit()
+			else:
+				tipo = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][0]
+				nombreVar = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][1]
+				base = devuelveVars(ClaseActual, actual['id'])[tipo][nombreVar]
+				for x in range(0, p[1]['dim']):	
+					Cuad.append(['PARAM', p[1]['id'] + x, '-', base + x])
+					Line = Line + 1
 	actual['numP'] = actual['numP'] + 1
 	PilaLlamadas.pop()
 	PilaLlamadas.push(actual)
@@ -1008,17 +1119,33 @@ def p_exp_ciclo_2(p):
 		else:
 			listaTipos = copy.deepcopy(devuelveParams(actual['invocadorTipo'], actual['id']))
 			#listaTipos.reverse()
-			if(p[3]['tipo'] != listaTipos[actual['numP']]):
+			if(p[3]['tipo'] != listaTipos[actual['numP']][0]):
 				print(listaTipos)
 				print(actual['numP'])
 				print(p[3]['tipo'])
-				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[3]['tipo'], listaTipos[actual['numP']])
+				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[1]['tipo'], listaTipos[actual['numP']][0])
 				exit()
-			else:
+			elif (p[3].has_key('dim') and len(listaTipos[actual['numP']]) == 1):
+				print('Semantic error at line {0}, expected array reference but got {1}.').format(lineNumber, listaTipos[actual['numP']][0])
+				exit()
+			elif (not p[3].has_key('dim') and len(listaTipos[actual['numP']]) > 1):
+				print('Semantic error at line {0}, expected {1} but got array reference.').format(lineNumber, p[3]['tipo'])
+				exit()
+			elif (not p[3].has_key('dim') and len(listaTipos[actual['numP']]) == 1):
 				tipo = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][0]
 				nombreVar = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][1]
 				Cuad.append(['PARAM', p[3]['id'], '-', devuelveVars(actual['invocadorTipo'], actual['id'])[tipo][nombreVar]])
 				Line = Line + 1
+			elif ( p[3]['dim'] != listaTipos[actual['numP']][1] ):
+				print('Semantic error at line {0}, array received as parameter differs in length from formal argument.').format(lineNumber)
+				exit()
+			else:
+				tipo = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][0]
+				nombreVar = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][1]
+				base = devuelveVars(actual['invocadorTipo'], actual['id'])[tipo][nombreVar]
+				for x in range(0, p[3]['dim']):	
+					Cuad.append(['PARAM', p[3]['id'] + x, '-', base + x])
+					Line = Line + 1
 	else:
 		if(actual['numP'] >= len(devuelveParams(ClaseActual, actual['id']))):
 			print('Semantic error at line {0}, more parameters given than the {1} specified for function {2} of Class {3}.').format(lineNumber, len(devuelveParams(ClaseActual, actual['id'])), actual['id'], ClaseActual)
@@ -1026,17 +1153,33 @@ def p_exp_ciclo_2(p):
 		else:
 			listaTipos = copy.deepcopy(devuelveParams(ClaseActual, actual['id']))
 			#listaTipos.reverse()
-			if(p[3]['tipo'] != listaTipos[actual['numP']]):
+			if(p[3]['tipo'] != listaTipos[actual['numP']][0]):
 				print(listaTipos)
 				print(actual['numP'])
 				print(p[3]['tipo'])
-				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[3]['tipo'], listaTipos[actual['numP']])
+				print('Semantic error at line {0}, parameter #{1} of type \'{2}\' given when type \'{3}\' was expected.').format(lineNumber, actual['numP']+1, p[1]['tipo'], listaTipos[actual['numP']][0])
 				exit()
-			else:
+			elif (p[3].has_key('dim') and len(listaTipos[actual['numP']]) == 1):
+				print('Semantic error at line {0}, expected array reference but got {1}.').format(lineNumber, listaTipos[actual['numP']][0])
+				exit()
+			elif (not p[3].has_key('dim') and len(listaTipos[actual['numP']]) > 1):
+				print('Semantic error at line {0}, expected {1} but got array reference.').format(lineNumber, p[3]['tipo'])
+				exit()
+			elif (not p[3].has_key('dim') and len(listaTipos[actual['numP']]) == 1):
 				tipo = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][0]
 				nombreVar = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][1]
 				Cuad.append(['PARAM', p[3]['id'], '-', devuelveVars(ClaseActual, actual['id'])[tipo][nombreVar]])
 				Line = Line + 1
+			elif ( p[3]['dim'] != listaTipos[actual['numP']][1] ):
+				print('Semantic error at line {0}, array received as parameter differs in length from formal argument.').format(lineNumber)
+				exit()
+			else:
+				tipo = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][0]
+				nombreVar = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][1]
+				base = devuelveVars(ClaseActual, actual['id'])[tipo][nombreVar]
+				for x in range(0, p[3]['dim']):	
+					Cuad.append(['PARAM', p[3]['id'] + x, '-', base + x])
+					Line = Line + 1
 	actual['numP'] = actual['numP'] + 1
 	PilaLlamadas.pop()
 	PilaLlamadas.push(actual)
@@ -1073,6 +1216,11 @@ def p_exp_binaria(p):
 	global Line
 	global DirsMetodoTemp
 	lineNumber = scanner.lexer.lineno
+
+	if ( p[1].has_key('dim') or p[3].has_key('dim') ):
+		print('Semantic error at line {0}, can\'t perform operations over array references').format(lineNumber)
+		exit()
+
 	if (p[2] == '+'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('+') and CuboSemantico[ p[1]['tipo'] ]['+'].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ]] }
@@ -1241,6 +1389,11 @@ def p_exp_unaria(p):
 	global cont
 	global Line
 	lineNumber = scanner.lexer.lineno
+
+	if ( p[2].has_key('dim') ):
+		print('Semantic error at line {0}, can\'t perform operations over array references').format(lineNumber)
+		exit()
+
 	if (p[1] == '!'):
 		if (CuboSemantico[ p[2]['tipo'] ].has_key('!')):
 			p[0] = {'tipo': CuboSemantico[ p[2]['tipo'] ]['!'], 'id': DirsMetodoTemp[CuboSemantico[ p[2]['tipo'] ]['!']] }
@@ -1352,6 +1505,11 @@ def p_return_exp(p):
 	global MetodoActual
 	global Line
 	lineNumber = scanner.lexer.lineno
+
+	if ( p[2].has_key('dim') ):
+		print('Semantic error at line {0}, can\'t return array reference').format(lineNumber)
+		exit()
+
 	if (p[2]['tipo'] != DirClases[ClaseActual]['metodos'][MetodoActual]['retorno'] ):
 		print('Semantic error at line {0}, expected "{1}" return, but got "{2}" expression.').format(lineNumber - 1, DirClases[ClaseActual]['metodos'][MetodoActual]['retorno'], p[2]['tipo'])
 		exit()
@@ -1389,6 +1547,9 @@ def p_while_2(p):
 	global Line
 	global ResExp
 	lineNumber = scanner.lexer.lineno
+	if (ResExp.has_key('dim')):
+		print('Semantic error at line {0}, expected "bool" expression, but got array reference.').format(lineNumber - 1)
+		exit()
 	if (ResExp['tipo'] != 'bool'):
 		print('Semantic error at line {0}, expected "bool" expression, but "{1}" expression given in while loop condition.').format(lineNumber - 1, ResExp['tipo'])
 		exit()
@@ -1415,6 +1576,11 @@ def p_asignacion(p):
 	global cont
 	global Line
 	lineNumber = scanner.lexer.lineno
+	
+	if ( p[1].has_key('dim') or p[4].has_key('dim') ):
+		print('Semantic error at line {0}, can\'t perform assignments over array references').format(lineNumber)
+		exit()
+
 	if (CuboSemantico[ p[1]['tipo'] ].has_key('=') and CuboSemantico[ p[1]['tipo'] ]['='].has_key( p[4]['tipo'] )):
 		#p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['='][ p[4]['tipo'] ], 'id': ('t' + str(cont)) }
 		if (p[1].has_key('invocador')):
@@ -1431,15 +1597,75 @@ def p_asignacion(p):
 	#cont = cont + 1
 	print('asignacion')
 
+def p_atom_dim(p):
+	'''atom : ID PUNTO definirInvocador ID checarAtributoDim COIZQ exp CODER
+			| ID checarAtributoDim COIZQ exp CODER
+			| THIS PUNTO definirInvocador ID checarAtributoDim COIZQ exp CODER'''
+	global ClaseActual
+	global MetodoActual
+	global Line
+	dirBase = -1
+	offset = -1
+
+	# Arreglo de THIS 
+	if (p[1] == 'this'):
+
+		if ( p[7].has_key('dim') or p[7]['tipo'] != 'numeral' ):
+			print('Semantic error at line {0}, array index must be a numeral expression').format(lineNumber)
+			exit()
+
+		for tipo in TiposVar:
+			if ( DirClases[ClaseActual]['vars'][tipo].has_key( p[4] ) ):
+				dirBase = DirClases[ClaseActual]['vars'][tipo][ p[4] ]
+		offset = p[7]['id']
+	# Arreglo de instancia
+	elif (p[2] == '.'):
+
+		if ( p[7].has_key('dim') or p[7]['tipo'] != 'numeral' ):
+			print('Semantic error at line {0}, array index must be a numeral expression').format(lineNumber)
+			exit()
+
+		# Checar en metodo
+		if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key( p[1] ) ):
+			for tipo in TiposVar:
+				if ( DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo].has_key( p[1] + '.' + p[4] ) ):
+					dirBase = DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][ p[1] + '.' + p[4] ]
+		# Checar en clase
+		else:
+			for tipo in TiposVar:
+				if ( DirClases[ClaseActual]['vars'][tipo].has_key( p[1] + '.' + p[4] ) ):
+					dirBase = DirClases[ClaseActual]['vars'][tipo][ p[1] + '.' + p[4] ]
+
+
+		offset = p[7]['id']
+	# Arreglo de contexto
+	else:
+
+		if ( p[4].has_key('dim') or p[4]['tipo'] != 'numeral' ):
+			print('Semantic error at line {0}, array index must be a numeral expression').format(lineNumber)
+			exit()
+
+		# Checar en metodo
+		if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key( p[1] ) ):
+			for tipo in TiposVar:
+				if ( DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo].has_key( p[1] ) ):
+					dirBase = DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][ p[1] ]
+		# Checar en clase
+		else:
+			for tipo in TiposVar:
+				if ( DirClases[ClaseActual]['vars'][tipo].has_key( p[1] ) ):
+					dirBase = DirClases[ClaseActual]['vars'][tipo][ p[1] ]
+		offset = p[4]['id']
+
+	Cuad.append(['MAS', ( '|' + str(dirBase) + '|' ), offset, DirsMetodoTemp['numeral'] ])
+	p[0] = {'tipo': 'numeral', 'id': ( '(' + str(DirsMetodoTemp['numeral']) + ')' ) }
+	DirsMetodoTemp['numeral'] = DirsMetodoTemp['numeral'] + 1
+	Line = Line + 1
+
 def p_atom(p):
-	'''atom : ID PUNTO definirInvocador ID checarAtributo COIZQ exp CODER
-			| ID PUNTO definirInvocador ID checarAtributo
-			| ID definirInvocador COIZQ exp CODER PUNTO ID checarAtributo COIZQ exp CODER 
-			| ID definirInvocador COIZQ exp CODER PUNTO ID checarAtributo
+	'''atom : ID PUNTO definirInvocador ID checarAtributo
 			| ID checarAtributo
-			| ID definirInvocador COIZQ exp CODER checarAtributo2
-			| THIS PUNTO definirInvocador ID checarAtributo
-			| THIS PUNTO definirInvocador ID checarAtributo COIZQ exp CODER '''
+			| THIS PUNTO definirInvocador ID checarAtributo'''
 	global ClaseActual
 	global MetodoActual
 	global InvocadorTipo
@@ -1452,29 +1678,42 @@ def p_atom(p):
 		if (Invocador == 'this'):
 			if (esTipoBasico(AtributoTipo)):
 				p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][AtributoAtom] }
+				# Checar si es dimensionada
+				if (DirClases[ClaseActual]['varsTam'][AtributoTipo].has_key(AtributoAtom)):
+					p[0]['dim'] = DirClases[ClaseActual]['varsTam'][AtributoTipo][AtributoAtom]
 			else:
 				print("Semantic error at line {0}, THIS -> X can't refer to instances of Class {1}").format(lineNumber, AtributoTipo)
 				exit()
 		# Buscar en instancia : metodo
 		elif (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(Invocador)):
 			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][AtributoTipo][Invocador + '.' + AtributoAtom] }
+			# Checar si es dimensionada
+			if (DirClases[ DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo'] ]['variables'][AtributoAtom].has_key('dim')):
+				p[0]['dim'] = DirClases[ DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo'] ]['variables'][AtributoAtom]['dim']
 		# Buscar en instancia : clase
 		else:
 			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][Invocador + '.' + AtributoAtom] }
+			# Checar si es dimensionada
+			if (DirClases[ClaseActual]['varsTam'][AtributoTipo].has_key(Invocador + '.' + AtributoAtom)):
+				p[0]['dim'] = DirClases[ClaseActual]['varsTam'][AtributoTipo][Invocador + '.' + AtributoAtom]
 	else:
 		# Buscar en metodo actual
-		print(ClaseActual)
-		print(MetodoActual)
-		print(AtributoAtom)
+		
 		if (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(AtributoAtom)):
 			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][AtributoTipo][AtributoAtom] }
+			# Checar si es dimensionada
+			if (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][AtributoAtom].has_key('dim')):
+				p[0]['dim'] = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][AtributoAtom]['dim']
 		# Buscar en clase actual
 		else:
 			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][AtributoAtom] }
+			# Checar si es dimensionada
+			if (DirClases[ClaseActual]['varsTam'][AtributoTipo].has_key(AtributoAtom)):
+				p[0]['dim'] = DirClases[ClaseActual]['varsTam'][AtributoTipo][AtributoAtom]
 	print('atom')
 
-def p_checarAtributo2(p):
-	'''checarAtributo2 : '''
+def p_checarAtributoDim(p):
+	'''checarAtributoDim : '''
 	global ClaseActual
 	global MetodoActual
 	global DirClases
@@ -1488,27 +1727,55 @@ def p_checarAtributo2(p):
 	if (Invocador == ''):
 		if (MetodoActual == ''):
 			if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
-				AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
+				if ( DirClases[ClaseActual]['variables'][atributo].has_key('dim') ):
+					AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
+				else:
+					print('Semantic error at line {0}, variable {1} is not an array').format(lineNumber, atributo)
+					exit()
 			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
-				AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
+				if ( checarAtributoAncestrosDim(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
+					AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
+				else:
+					print('Semantic error at line {0}, variable {1} is not an array').format(lineNumber, atributo)
+					exit()
 			else:
 				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 111').format(lineNumber, atributo)
 				exit()
 		else:
 			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(atributo) ):
-				AtributoTipo = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][atributo]['tipo']
+				if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][atributo].has_key('dim') ):
+					AtributoTipo = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][atributo]['tipo']
+				else:
+					print('Semantic error at line {0}, variable {1} is not an array').format(lineNumber, atributo)
+					exit()
 			elif ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
-				AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
+				if ( DirClases[ClaseActual]['variables'][atributo].has_key('dim') ):
+					AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
+				else:
+					print('Semantic error at line {0}, variable {1} is not an array').format(lineNumber, atributo)
+					exit()
 			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
-				AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
+				if ( checarAtributoAncestrosDim(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
+					AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
+				else:
+					print('Semantic error at line {0}, variable {1} is not an array').format(lineNumber, atributo)
+					exit()
 			else:
 				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 222').format(lineNumber, atributo)
 				exit()
 	elif (Invocador == 'this'):
 		if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
-			AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
+			if ( DirClases[ClaseActual]['variables'][atributo].has_key('dim') ):
+				AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
+			else:
+				print('Semantic error at line {0}, variable {1} is not an array').format(lineNumber, atributo)
+				exit()
 		elif( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
-			AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
+			if ( checarAtributoAncestrosDim(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
+				AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
+			else:
+				print('Semantic error at line {0}, variable {1} is not an array').format(lineNumber, atributo)
+				exit()
 		else:
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 333').format(lineNumber, atributo)
 			exit()
@@ -1534,15 +1801,21 @@ def p_checarAtributo2(p):
 			if ( not (DirClases[claseAux]['variables'][atributo]['acceso'] == 'visible') ):
 				print('Semantic error at line {0}, variable {1} is hidden').format(lineNumber, atributo)
 				exit()
-			AtributoTipo = DirClases[claseAux]['variables'][atributo]['tipo']
+			if ( DirClases[claseAux]['variables'][atributo].has_key('dim') ):
+				AtributoTipo = DirClases[claseAux]['variables'][atributo]['tipo']
+			else:
+				print('Semantic error at line {0}, variable {1} is not an array').format(lineNumber, atributo)
+				exit()
 		elif ( checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
 			if ( not esVisibleAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
 				print('Semantic error at line {0}, variable {1} is hidden').format(lineNumber, atributo)
 				exit()
-			AtributoTipo = valorAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)
+			if ( checarAtributoAncestrosDim(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
+				AtributoTipo = valorAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)
+			else:
+				print('Semantic error at line {0}, variable {1} is not an array').format(lineNumber, atributo)
+				exit()
 		else:
-			print('---')
-			print(ClaseActual)
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
 			exit()
 		InvocadorTipo = claseAux
@@ -1559,8 +1832,14 @@ def p_checarAtributo(p):
 	global AtributoTipo
 	lineNumber = scanner.lexer.lineno
 	atributo = scanner.ultimoId
+
+	print('----')
+	print(Invocador)
+	print(ClaseActual)
+	print(atributo)
 	
 	if (Invocador == ''):
+		print( DirClases[ClaseActual]['variables'] )
 		if (MetodoActual == ''):
 			if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
 				AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
@@ -1616,12 +1895,6 @@ def p_checarAtributo(p):
 				exit()
 			AtributoTipo = valorAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)
 		else:
-			print('---')
-			print(Invocador)
-			print(DirClases[ClaseActual]['variables'])
-			print(claseAux)
-			print(ClaseActual)
-
 			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
 			exit()
 		InvocadorTipo = claseAux
@@ -1646,6 +1919,9 @@ def p_if_1(p):
 	global Line
 	global ResExp
 	lineNumber = scanner.lexer.lineno
+	if (ResExp.has_key('dim')):
+		print('Semantic error at line {0}, expected "bool" expression, but got array reference.').format(lineNumber - 1)
+		exit()
 	if (ResExp['tipo'] != 'bool'):
 		print('Semantic error at line {0}, expected "bool" expression, but "{1}" expression given in if condition.').format(lineNumber - 1, ResExp['tipo'])
 		exit()
@@ -1702,6 +1978,10 @@ def p_lectura(p):
 def p_escritura(p):
 	'''escritura 	: OUTPUT PIZQ exp PDER PYC'''
 	global Line
+	lineNumber = scanner.lexer.lineno
+	if ( p[3].has_key('dim') ):
+		print('Semantic error at line {0}, can\'t print array references.').format(lineNumber)
+		exit()
 	#arch.write(str(Line) + '\t' + 'OUTPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['id'] + '\n')
 	Cuad.append(['OUTPUT','-', '-', p[3]['id']])
 	Line = Line + 1;
@@ -1740,7 +2020,51 @@ arch2 = open('codigoArr.txt', 'w')
 for i in range(0, len(Cuad)):
 	arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + '\t' + str(Cuad[i][1]) + '\t' + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')
 
-print('Motor')
+print('Fruta')
+print(DirClases['Fruta']['vars'])
+print('')
+print('Sandia')
+print(DirClases['Sandia']['vars'])
+print('')
+print('main')
+print(DirClases['main']['vars'])
+print('')
+print('')
+
+print('Fruta')
+print(DirClases['Fruta']['varsTam'])
+print('')
+print('Sandia')
+print(DirClases['Sandia']['varsTam'])
+print('')
+print('main')
+print(DirClases['main']['varsTam'])
+print('')
+print('')
+
+print('copia')
+print(DirClases['Fruta']['metodos']['copia']['vars'])
+print('')
+print('')
+
+print('getDim')
+print(DirClases['Sandia']['metodos']['getDim']['vars'])
+print('')
+print('getEdades')
+print(DirClases['Sandia']['metodos']['getEdades']['vars'])
+print('')
+print('')
+
+print('getArr')
+print(DirClases['main']['metodos']['getArr']['vars'])
+print('')
+print('main')
+print(DirClases['main']['metodos']['main']['vars'])
+print('')
+print('')
+
+
+'''print('Motor')
 print(DirClases['Motor']['vars'])
 print('')
 print('Transporte')
@@ -1788,7 +2112,7 @@ print('')
 print('main')
 print(DirClases['main']['metodos']['main']['vars'])
 print('')
-print('')
+print('')'''
 
 '''
 print('Animal')
