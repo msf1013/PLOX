@@ -198,12 +198,26 @@ DirsConstMap = {}
 DirsConst = {}
 
 DirBaseClase = {}
+DirBaseMetodo = {}
+DirBaseMetodoTemp = {}
 
 DirBaseClase['numeral'] = 1001
 DirBaseClase['real'] = 4001
 DirBaseClase['string'] = 7001
 DirBaseClase['bool'] = 10001
 DirBaseClase['char'] = 13001
+
+DirBaseMetodo['numeral'] = 16001
+DirBaseMetodo['real'] = 19001
+DirBaseMetodo['string'] = 22001
+DirBaseMetodo['bool'] = 25001
+DirBaseMetodo['char'] = 28001
+
+DirBaseMetodoTemp['numeral'] = 31001
+DirBaseMetodoTemp['real'] = 36001
+DirBaseMetodoTemp['string'] = 41001
+DirBaseMetodoTemp['bool'] = 46001
+DirBaseMetodoTemp['char'] = 51001
 
 def initDirsClase ():
 	global DirsClase
@@ -212,7 +226,6 @@ def initDirsClase ():
 	DirsClase['string'] = 7001
 	DirsClase['bool'] = 10001
 	DirsClase['char'] = 13001
-	DirsClase['obj'] = {}
 
 def initDirsMetodo ():
 	global DirsMetodo
@@ -221,7 +234,6 @@ def initDirsMetodo ():
 	DirsMetodo['string'] = 22001
 	DirsMetodo['bool'] = 25001
 	DirsMetodo['char'] = 28001
-	DirsMetodo['obj'] = {}
 
 def initDirsMetodoTemp ():
 	global DirsMetodoTemp
@@ -230,8 +242,6 @@ def initDirsMetodoTemp ():
 	DirsMetodoTemp['string'] = 41001
 	DirsMetodoTemp['bool'] = 46001
 	DirsMetodoTemp['char'] = 51001
-	DirsMetodoTemp['obj'] = {}
-
 
 DirsConst['numeral'] = 56002
 DirsConst['real'] = 61002
@@ -692,13 +702,32 @@ def p_meterParametros(p):
 
 	DirClases[ClaseActual]['metodos'][MetodoActual]['params'].append([tipo])
 
+def p_tamMetodo(p):
+	'''tamMetodo : '''
+	global ClaseActual
+	global MetodoActual
+	global Line
+	
+	DirClases[ClaseActual]['metodos'][MetodoActual]['tam'] = {}
+	DirClases[ClaseActual]['metodos'][MetodoActual]['tamTemp'] = {}
 
+	DirClases[ClaseActual]['metodos'][MetodoActual]['tam']['numeral']	= DirsMetodo['numeral'] - DirBaseMetodo['numeral']
+	DirClases[ClaseActual]['metodos'][MetodoActual]['tam']['real'] 		= DirsMetodo['real'] - DirBaseMetodo['real']
+	DirClases[ClaseActual]['metodos'][MetodoActual]['tam']['char'] 		= DirsMetodo['char'] - DirBaseMetodo['char']
+	DirClases[ClaseActual]['metodos'][MetodoActual]['tam']['string'] 	= DirsMetodo['string'] - DirBaseMetodo['string']
+	DirClases[ClaseActual]['metodos'][MetodoActual]['tam']['bool'] 		= DirsMetodo['bool'] - DirBaseMetodo['bool']
+
+	DirClases[ClaseActual]['metodos'][MetodoActual]['tamTemp']['numeral'] 	= DirsMetodoTemp['numeral'] - DirBaseMetodoTemp['numeral']
+	DirClases[ClaseActual]['metodos'][MetodoActual]['tamTemp']['real'] 		= DirsMetodoTemp['real'] - DirBaseMetodoTemp['real']
+	DirClases[ClaseActual]['metodos'][MetodoActual]['tamTemp']['char'] 		= DirsMetodoTemp['char'] - DirBaseMetodoTemp['char']
+	DirClases[ClaseActual]['metodos'][MetodoActual]['tamTemp']['string'] 	= DirsMetodoTemp['string'] - DirBaseMetodoTemp['string']
+	DirClases[ClaseActual]['metodos'][MetodoActual]['tamTemp']['bool'] 		= DirsMetodoTemp['bool'] - DirBaseMetodoTemp['bool'] 
 
 def p_cuerpo_func(p):
-	'''cuerpo_func 	: inicioFunc LLIZQ ciclo_vars_func ciclo_estatuto LLDER
-					| inicioFunc LLIZQ ciclo_vars_func LLDER
-					| inicioFunc LLIZQ ciclo_estatuto LLDER
-					| inicioFunc LLIZQ LLDER'''
+	'''cuerpo_func 	: inicioFunc LLIZQ ciclo_vars_func ciclo_estatuto LLDER tamMetodo
+					| inicioFunc LLIZQ ciclo_vars_func LLDER tamMetodo
+					| inicioFunc LLIZQ ciclo_estatuto LLDER tamMetodo
+					| inicioFunc LLIZQ LLDER tamMetodo'''
 	global ClaseActual
 	global MetodoActual
 	global Line
@@ -916,12 +945,22 @@ def p_generaEra(p):
 	'''generaEra : '''
 	global Line
 	global PilaLlamadas
+	global ClaseActual
+	claseAux = ''
 	if (Invocador != ''):
 		PilaLlamadas.push( {'id': MetodoNombre, "invocador": Invocador, "invocadorTipo": InvocadorTipo, 'numP': 0} )
+		claseAux = devuelveClaseMetodo(InvocadorTipo, MetodoNombre)
 	else:
 		PilaLlamadas.push( {'id': MetodoNombre, 'numP': 0} )
-	Cuad.append(['ERA', MetodoNombre, '-', '-'])
-	Line = Line + 1
+		claseAux = devuelveClaseMetodo(ClaseActual, MetodoNombre)
+
+	for tipo in TiposVar:
+		Cuad.append(['ERA', MetodoNombre, tipo, DirClases[claseAux]['metodos'][MetodoNombre]['tam'][tipo] ])
+	
+	for tipo in TiposVar:
+		Cuad.append(['ERA', MetodoNombre, str(tipo)+'-temp', DirClases[claseAux]['metodos'][MetodoNombre]['tamTemp'][tipo] ])
+
+	Line = Line + 10
 	print('generaEra')
 
 def p_checarFuncion(p):
