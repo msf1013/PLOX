@@ -64,7 +64,8 @@ class Estudiante under Persona {
         this.materias = m;
     }
     visible string getMaterias() {
-        string wow = "chefe";
+        string wow ;
+        wow = "chefe";
 
     }
 }
@@ -83,7 +84,7 @@ class main {
         numeral edad;
 
         yo.setEdad(23);
-        edad = yo.getEdad() + 1 * 3 + pucho.edad;
+        edad = yo.getEdad(3, "2", 2) + 1 * 3 + pucho.edad;
         output(edad);
     }
 

@@ -1,8 +1,5 @@
-calcularPotencia : 0
-devuelve : 5
-prueba : 12
-impresionIdentificacion : 14
-impresionFuncionamiento : 20
-imprimir : 48
-imprimirTransportes : 89
-main : 121
+copia : 0
+getDim : 8
+getEdades : 12
+getArr : 16
+main : 19

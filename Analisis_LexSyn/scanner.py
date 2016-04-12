@@ -33,6 +33,7 @@ tokens = ['ID', 'MAS', 'MENOS', 'POR', 'DOSP', 'ENTRE', 'MOD', 'AND', 'OR', 'PYC
 ultimoId = ''
 ultimoAcceso = ''
 ultimoTipo = ''
+ultimoNumeral = -1
 
 # Definicion de tokens a traves de expresiones regulares
 t_MAS           = r'\+'
@@ -78,6 +79,8 @@ def t_CTE_REAL(t):
 
 def t_CTE_NUMERAL(t):
     r'[0-9]+'
+    global ultimoNumeral
+    ultimoNumeral = t.value
     return t
     #return { 'tipo': 'cte_numeral', 'id': t.value }
 
