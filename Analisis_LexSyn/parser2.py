@@ -2291,20 +2291,11 @@ else:
 
 arch2 = open('codigoArr.txt', 'w')
 
+arch2.write(str(len(DirsConstMap['numeral']) + len(DirsConstMap['real']) + len(DirsConstMap['bool']) + len(DirsConstMap['char']) + len(DirsConstMap['string'])) + '\n')
+for tipo in TiposVar:
+	for const in sorted(DirsConstMap[tipo], key = DirsConstMap[tipo].get):
+		arch2.write(const + '\t' + str(DirsConstMap[tipo][const]) + '\n')
+
+arch2.write(str(len(Cuad)) + '\n')
 for i in range(0, len(Cuad)):
-	arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + '\t' + str(Cuad[i][1]) + '\t' + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')
-
-print(DirClases['Persona']['vars'])
-print('')
-
-print(DirClases['Estudiante']['vars'])
-print('')
-
-print(DirClases['Loco']['vars'])
-print('')
-
-print(DirClases['main']['vars'])
-print('')
-
-print(DirClases['Loco']['metodos']['chofo']['vars'])
-print('')
+	arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + str(Cuad[i][1]) + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')

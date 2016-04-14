@@ -1639,6 +1639,7 @@ def p_exp_unaria(p):
 	ResExp = p[0]
 	print('exp_unaria')
 
+# Produccion de expresion a partir de valores dados
 def p_opciones(p):
 	'''exp 	: cte_str
 			| cte_char
@@ -1648,73 +1649,88 @@ def p_opciones(p):
 			| atom limpiarInvocador
 			| llamada_func limpiarInvocador'''
 	global ResExp
-	print('OPCION')
-	print(p[1])
 	p[0] = p[1]
+	# Se salva el valor de la expresion generada para, posiblemente, ser usada en validacion de parametros de llamada a funcion
 	ResExp = p[0]
 	print('opciones')
 
+# Produccion de constante string
 def p_cte_str(p):
 	'''cte_str : CTE_STR'''
 	print('cte_str')
 	global DirsConst
 	global DirsConstMap
+	# Verificar si la constante ya se ha leido
 	if p[1] in DirsConstMap['string']:
 		p[0] = { 'tipo': 'string', 'id': DirsConstMap['string'][ p[1] ] }
 	else:
+		# Dar de alta la constante
 		p[0] = { 'tipo': 'string', 'id': DirsConst['string'] }
 		DirsConstMap['string'][p[1]] = DirsConst['string']
 		DirsConst['string'] = DirsConst['string'] + 1 
 
+# Produccion de constante char
 def p_cte_char(p):
 	'''cte_char : CTE_CHAR'''
 	print('cte_char')
 	global DirsConst
 	global DirsConstMap
+	# Verificar si la constante ya se ha leido
 	if p[1] in DirsConstMap['char']:
 		p[0] = { 'tipo': 'char', 'id': DirsConstMap['char'][ p[1] ] }
 	else:
+		# Dar de alta la constante
 		p[0] = { 'tipo': 'char', 'id': DirsConst['char'] }
 		DirsConstMap['char'][p[1]] = DirsConst['char']
 		DirsConst['char'] = DirsConst['char'] + 1
 
+# Produccion de constante numeral
 def p_cte_numeral(p):
 	'''cte_numeral : CTE_NUMERAL'''
 	print('cte_numeral')
 	global DirsConst
 	global DirsConstMap
+	# Verificar si la constante ya se ha leido
 	if p[1] in DirsConstMap['numeral']:
 		p[0] = { 'tipo': 'numeral', 'id': DirsConstMap['numeral'][ p[1] ] }
 	else:
+		# Dar de alta la constante
 		p[0] = { 'tipo': 'numeral', 'id': DirsConst['numeral'] }
 		DirsConstMap['numeral'][p[1]] = DirsConst['numeral']
 		DirsConst['numeral'] = DirsConst['numeral'] + 1
 
+# Produccion de constante real
 def p_cte_real(p):
 	'''cte_real : CTE_REAL'''
 	print('cte_real')
 	global DirsConst
 	global DirsConstMap
+	# Verificar si la constante ya se ha leido
 	if p[1] in DirsConstMap['real']:
 		p[0] = { 'tipo': 'real', 'id': DirsConstMap['real'][ p[1] ] }
 	else:
+		# Dar de alta la constante
 		p[0] = { 'tipo': 'real', 'id': DirsConst['real'] }
 		DirsConstMap['real'][p[1]] = DirsConst['real']
 		DirsConst['real'] = DirsConst['real'] + 1
 
+# Produccion de constante bool
 def p_cte_bool(p):
 	'''cte_bool 	: TRUE
 					| FALSE'''
 	print('cte_bool')
 	global DirsConst
 	global DirsConstMap
+	# Verificar si la constante ya se ha leido
 	if p[1] in DirsConstMap['bool']:
 		p[0] = { 'tipo': 'bool', 'id': DirsConstMap['bool'][ p[1] ] }
 	else:
+		# Dar de alta la constante
 		p[0] = { 'tipo': 'bool', 'id': DirsConst['bool'] }
 		DirsConstMap['bool'][p[1]] = DirsConst['bool']
 		DirsConst['bool'] = DirsConst['bool'] + 1
 
+# Produccion de return con valor de retorno
 def p_return_exp(p):
 	'''return 	: RETURN exp PYC'''
 	global ClaseActual
@@ -1722,10 +1738,12 @@ def p_return_exp(p):
 	global Line
 	lineNumber = scanner.lexer.lineno
 
+	# Verificar que no se intente regresar una referencia a arreglo
 	if ( p[2].has_key('dim') ):
 		print('Semantic error at line {0}, can\'t return array reference').format(lineNumber)
 		exit()
 
+	# Verificar que el tipo de la expresion coincida con el tipo de retorno del metodo
 	if (p[2]['tipo'] != DirClases[ClaseActual]['metodos'][MetodoActual]['retorno'] ):
 		print('Semantic error at line {0}, expected "{1}" return, but got "{2}" expression.').format(lineNumber - 1, DirClases[ClaseActual]['metodos'][MetodoActual]['retorno'], p[2]['tipo'])
 		exit()
@@ -1733,12 +1751,15 @@ def p_return_exp(p):
 	Line = Line + 1
 	print('return')
 
+# Produccion de return con valor de retorno
 def p_return_null(p):
 	'''return 	: RETURN PYC'''
 	global ClaseActual
 	global MetodoActual
 	global Line
 	lineNumber = scanner.lexer.lineno
+
+	# Verificar que el metodo sea de tipo void/without
 	if (not DirClases[ClaseActual]['metodos'][MetodoActual]['retorno'] == 'without'):
 		print('Semantic error at line {0}, expected "{1}" return expression, but got "without" return.').format(lineNumber - 1, DirClases[ClaseActual]['metodos'][MetodoActual]['retorno'])
 		exit()
@@ -1746,61 +1767,72 @@ def p_return_null(p):
 	Line = Line + 1
 	print('return')
 
+# Produccion de ciclo while
 def p_while(p):
 	'''while 	: WHILE while_1 PIZQ exp PDER while_2 LLIZQ ciclo_estatuto while_3 LLDER
 				| WHILE while_1 PIZQ exp PDER while_2 LLIZQ while_3 LLDER'''
 	print('while')
 
+# Accion semantica de while
 def p_while_1(p):
 	'''while_1 : '''
 	global PSaltos
 	global Line
+	# Se mete a la pila de saltos la posicion de inicio de la expresion de condicion del while
 	PSaltos.push(Line)
 
+# Accion semantica de while
 def p_while_2(p):
 	'''while_2 : '''
 	global PSaltos
 	global Line
 	global ResExp
 	lineNumber = scanner.lexer.lineno
+	# Checar que la expresion devuelta no sea una referencia a arreglo
 	if (ResExp.has_key('dim')):
 		print('Semantic error at line {0}, expected "bool" expression, but got array reference.').format(lineNumber - 1)
 		exit()
+	# Checar que la expresion devuelta sea de tipo bool
 	if (ResExp['tipo'] != 'bool'):
 		print('Semantic error at line {0}, expected "bool" expression, but "{1}" expression given in while loop condition.').format(lineNumber - 1, ResExp['tipo'])
 		exit()
-	#arch.write(str(Line) + '\t' + 'GOTOF' + '\t' + ResExp['id'] + '\t' +  'missing' + '\t' + '-' + '\n')
 	Cuad.append(['GOTOF', ResExp['id'],  'missing', '-'])
 	Line = Line + 1;
+	# Meter a la pila de saltos la posicion pendiente del goto en falso
 	PSaltos.push(Line - 1)
 
+# Accion semantica de while
 def p_while_3(p):
 	'''while_3 : '''
 	global PSaltos
 	global Line
 	falso = PSaltos.pop()
 	retorno = PSaltos.pop()
-	#arch.write(str(Line) + '\t' + 'GOTO' + '\t' + '-' + '\t' +  str(retorno) + '\t' + '-' + '\n')
+	# Se genera salto hacia el inicio del while
 	Cuad.append(['GOTO', '-', retorno, '-'])
 	Line = Line + 1;
+	# Se rellena el cuadruplo pendiente del goto en falso
 	Cuad[falso][2] = Line
-	#arch.write(str(Line) + '\t' + 'RELLENA' + '\t' + str(falso) + '\t' +  str(Line) + '\t' + '-' + '\n')
 
-
+# Produccion de asignacion
 def p_asignacion(p):
 	'''asignacion 	: atom limpiarInvocador IGUAL exp PYC'''
 	global Line
 	lineNumber = scanner.lexer.lineno
 	
+	# Verificar que no se intente hacer una asignacion que involucre referencias a arreglo
 	if ( p[1].has_key('dim') or p[4].has_key('dim') ):
 		print('Semantic error at line {0}, can\'t perform assignments over array references').format(lineNumber)
 		exit()
 
+	# Verificar compatibilidad de tipos en la asignacion
 	if (CuboSemantico[ p[1]['tipo'] ].has_key('=') and CuboSemantico[ p[1]['tipo'] ]['='].has_key( p[4]['tipo'] )):
-		if (p[1].has_key('invocador')):
-			Cuad.append(['IGUAL', p[4]['id'], '-', (p[1]['invocador']+'.'+p[1]['id'])])
-		else:
+		# Asignacion de tipos primitivos
+		if (p[1]['tipo'] in TiposVar): 
 			Cuad.append(['IGUAL', p[4]['id'], '-', p[1]['id']])
+		# Asignacion de objetos
+		else:
+		
 		Line = Line + 1;
 	else:
 		print('Semantic error at line {0}, incompatible type assignation of type {1} into type {2}.').format(lineNumber - 1, p[4]['tipo'], p[1]['tipo'])
