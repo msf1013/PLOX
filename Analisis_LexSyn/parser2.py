@@ -1830,10 +1830,19 @@ def p_asignacion(p):
 		# Asignacion de tipos primitivos
 		if (p[1]['tipo'] in TiposVar): 
 			Cuad.append(['IGUAL', p[4]['id'], '-', p[1]['id']])
-		# Asignacion de tipos primitivos
-		#else:
-
-		Line = Line + 1;
+			Line = Line + 1;
+		# Asignacion de tipos objetos
+		else:
+			claseAux = p[1]['tipo']
+			for tipo in TiposVar:
+				if ( DirClases[claseAux]['tam'][tipo]  > 0):
+					dir1 = p[4]['dirs'][tipo]
+					dir2 = p[1]['dirs'][tipo]
+					for pos in range(0, DirClases[claseAux]['tam'][tipo]):
+						Cuad.append(['IGUAL-OBJ', dir1, '-', dir2])
+						Line = Line + 1;
+						dir1 = dir1 + 1
+						dir2 = dir2 + 1
 	else:
 		print('Semantic error at line {0}, incompatible type assignation of type {1} into type {2}.').format(lineNumber - 1, p[4]['tipo'], p[1]['tipo'])
 		exit()
@@ -1924,34 +1933,57 @@ def p_atom(p):
 				if (DirClases[ClaseActual]['varsTam'][AtributoTipo].has_key(AtributoAtom)):
 					p[0]['dim'] = DirClases[ClaseActual]['varsTam'][AtributoTipo][AtributoAtom]
 			else:
-				print("Semantic error at line {0}, THIS -> X can't refer to instances of Class {1}").format(lineNumber, AtributoTipo)
-				exit()
+				p[0] = { 'tipo': AtributoTipo, 'dirs': DirClases[ClaseActual]['obj'][AtributoAtom] }
 		# Buscar en instancia : metodo
 		elif (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(Invocador)):
-			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][AtributoTipo][Invocador + '.' + AtributoAtom] }
-			# Checar si es dimensionada
-			if (DirClases[ DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo'] ]['variables'][AtributoAtom].has_key('dim')):
-				p[0]['dim'] = DirClases[ DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo'] ]['variables'][AtributoAtom]['dim']
+			if (esTipoBasico(AtributoTipo)):
+				p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][AtributoTipo][Invocador + '.' + AtributoAtom] }
+				# Checar si es dimensionada
+				if (DirClases[ DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo'] ]['variables'][AtributoAtom].has_key('dim')):
+					p[0]['dim'] = DirClases[ DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo'] ]['variables'][AtributoAtom]['dim']
+			else:
+				dirs = { 'numeral' : 9999999, 'real' : 9999999, 'bool' : 9999999, 'string' : 9999999, 'char' : 9999999 }
+				nombre = Invocador + '.' + AtributoAtom
+				for tipo in TiposVar:
+					for key in DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo]:
+						if ( key.startswith(nombre) and DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][key] < dirs[tipo] ):
+							dirs[tipo] = DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][key]
+				p[0] = { 'tipo': AtributoTipo, 'dirs': dirs }
 		# Buscar en instancia : clase
 		else:
-			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][Invocador + '.' + AtributoAtom] }
-			# Checar si es dimensionada
-			if (DirClases[ClaseActual]['varsTam'][AtributoTipo].has_key(Invocador + '.' + AtributoAtom)):
-				p[0]['dim'] = DirClases[ClaseActual]['varsTam'][AtributoTipo][Invocador + '.' + AtributoAtom]
+			if (esTipoBasico(AtributoTipo)):
+				p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][Invocador + '.' + AtributoAtom] }
+				# Checar si es dimensionada
+				if (DirClases[ClaseActual]['varsTam'][AtributoTipo].has_key(Invocador + '.' + AtributoAtom)):
+					p[0]['dim'] = DirClases[ClaseActual]['varsTam'][AtributoTipo][Invocador + '.' + AtributoAtom]
+			else:
+				dirs = { 'numeral' : 9999999, 'real' : 9999999, 'bool' : 9999999, 'string' : 9999999, 'char' : 9999999 }
+				nombre = Invocador + '.' + AtributoAtom
+				for tipo in TiposVar:
+					for key in DirClases[ClaseActual]['vars'][tipo]:
+						if ( key.startswith(nombre) and DirClases[ClaseActual]['vars'][tipo][key] < dirs[tipo] ):
+							dirs[tipo] = DirClases[ClaseActual]['vars'][tipo][key]
+				p[0] = { 'tipo': AtributoTipo, 'dirs': dirs }
 	else:
 		# Buscar en metodo actual
 		
 		if (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(AtributoAtom)):
-			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][AtributoTipo][AtributoAtom] }
-			# Checar si es dimensionada
-			if (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][AtributoAtom].has_key('dim')):
-				p[0]['dim'] = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][AtributoAtom]['dim']
+			if (esTipoBasico(AtributoTipo)):
+				p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][AtributoTipo][AtributoAtom] }
+				# Checar si es dimensionada
+				if (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][AtributoAtom].has_key('dim')):
+					p[0]['dim'] = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][AtributoAtom]['dim']
+			else:
+				p[0] = { 'tipo': AtributoTipo, 'dirs': DirClases[ClaseActual]['metodos'][MetodoActual]['obj'][AtributoAtom] }
 		# Buscar en clase actual
 		else:
-			p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][AtributoAtom] }
-			# Checar si es dimensionada
-			if (DirClases[ClaseActual]['varsTam'][AtributoTipo].has_key(AtributoAtom)):
-				p[0]['dim'] = DirClases[ClaseActual]['varsTam'][AtributoTipo][AtributoAtom]
+			if (esTipoBasico(AtributoTipo)):
+				p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][AtributoAtom] }
+				# Checar si es dimensionada
+				if (DirClases[ClaseActual]['varsTam'][AtributoTipo].has_key(AtributoAtom)):
+					p[0]['dim'] = DirClases[ClaseActual]['varsTam'][AtributoTipo][AtributoAtom]
+			else:
+				p[0] = { 'tipo': AtributoTipo, 'dirs': DirClases[ClaseActual]['obj'][AtributoAtom] }
 	print('atom')
 
 def p_checarAtributoDim(p):
@@ -2261,3 +2293,18 @@ arch2 = open('codigoArr.txt', 'w')
 
 for i in range(0, len(Cuad)):
 	arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + '\t' + str(Cuad[i][1]) + '\t' + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')
+
+print(DirClases['Persona']['vars'])
+print('')
+
+print(DirClases['Estudiante']['vars'])
+print('')
+
+print(DirClases['Loco']['vars'])
+print('')
+
+print(DirClases['main']['vars'])
+print('')
+
+print(DirClases['Loco']['metodos']['chofo']['vars'])
+print('')
