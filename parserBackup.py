@@ -2227,12 +2227,6 @@ else:
 
 arch2 = open('codigoArr.txt', 'w')
 
-arch2.write(str(len(DirsConstMap['numeral']) + len(DirsConstMap['real']) + len(DirsConstMap['bool']) + len(DirsConstMap['char']) + len(DirsConstMap['string'])) + '\n')
-for type in TiposVar:
-    for const in sorted(DirsConstMap[type], key = DirsConstMap[type].get):
-        arch2.write(const + ' ' + str(DirsConstMap[type][const]) + '\n')
-
-arch2.write(str(len(Cuad)) + '\n')
 for i in range(0, len(Cuad)):
 	arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + '\t' + str(Cuad[i][1]) + '\t' + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')
 
