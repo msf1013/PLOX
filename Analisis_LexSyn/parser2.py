@@ -2253,7 +2253,7 @@ for type in TiposVar:
 
 arch2.write(str(len(Cuad)) + '\n')
 for i in range(0, len(Cuad)):
-	arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + '\t' + str(Cuad[i][1]) + '\t' + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')
+	arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + str(Cuad[i][1]) + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')
 
 print(DirClases['Persona']['vars'])
 print('')
