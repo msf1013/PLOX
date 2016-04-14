@@ -9,7 +9,7 @@ if(os.path.isfile(s)):
 		lineArr = f.readlines()
 		numConstantes = int(lineArr[0])
 		for i in range(1, numConstantes):
-			DirConstantes[ lineArr[i][:-1].split(' ')[1] ] = lineArr[i][:-2].split(' ')[0]
+			DirConstantes[ lineArr[i][:-1].split('\t')[1] ] = lineArr[i][:-2].split(' ')[0]
 		numCuadruplos = int(lineArr[numConstantes + 1])
 		for i in range(numConstantes + 2, numConstantes + numCuadruplos + 2):
 			line = lineArr[i][:-1].split('\t')
