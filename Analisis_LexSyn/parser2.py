@@ -306,7 +306,7 @@ DirsConstMap['numeral']['0'] 	= 56001
 DirsConstMap['real']['0'] 		= 61001
 DirsConstMap['string']['""']	= 66001
 DirsConstMap['bool']['false'] 	= 71001
-DirsConstMap['char']['0'] 		= 76001
+DirsConstMap['char']['\'0\''] 	= 76001
 
 # Global que almacena el error de sintaxis
 error = "'Program declaration'"
@@ -1162,6 +1162,9 @@ def p_generaEra(p):
 		PilaLlamadas.push( {'id': MetodoNombre, 'numP': 0} )
 		claseAux = devuelveClaseMetodo(ClaseActual, MetodoNombre)
 
+	# Se genera un cuadruplo para indicar que el contexto de la clase es otro
+	Cuad.append(['CONTEXTO-CLASE', '-', '-', claseAux])
+
 	# Generar cuadruplos ERA para cada tipo de dato primitivo
 	for tipo in TiposVar:
 		Cuad.append(['ERA', MetodoNombre, tipo, DirClases[claseAux]['metodos'][MetodoNombre]['tam'][tipo] ])
@@ -1170,7 +1173,7 @@ def p_generaEra(p):
 	for tipo in TiposVar:
 		Cuad.append(['ERA', MetodoNombre, str(tipo)+'-temp', DirClases[claseAux]['metodos'][MetodoNombre]['tamTemp'][tipo] ])
 
-	Line = Line + 10
+	Line = Line + 11
 	print('generaEra')
 
 # Acciones semanticas para validar una invocacion valida a metodo
@@ -2291,8 +2294,8 @@ else:
 
 arch2 = open('codigoArr.txt', 'w')
 
-arch2.write(str(len(DirsConstMap['numeral']) + len(DirsConstMap['real']) + len(DirsConstMap['bool']) + len(DirsConstMap['char']) + len(DirsConstMap['string'])) + '\n')
 for tipo in TiposVar:
+	arch2.write(str(len(DirsConstMap[tipo])) + '\n')
 	for const in sorted(DirsConstMap[tipo], key = DirsConstMap[tipo].get):
 		arch2.write(const + '\t' + str(DirsConstMap[tipo][const]) + '\n')
 
