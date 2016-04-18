@@ -1055,7 +1055,7 @@ def p_generaGosub(p):
 			for tipoVariable in TiposVar:
 				dirInstancia = DirClases[ClaseActual]['metodos'][MetodoActual]['obj'][invocador][tipoVariable]
 				if (dirInicio != -1):
-					total = DirClases[clase]['tam'][tipoVariable]
+					total = DirClases[claseMet]['tam'][tipoVariable]
 					dirClase = DirBaseClase[tipoVariable]
 					for i in range(0, total):
 						Cuad.append(['ATTR_GO', dirInstancia, dirClase, '-'])
@@ -1069,7 +1069,7 @@ def p_generaGosub(p):
 			for tipoVariable in TiposVar:
 				dirInstancia = DirClases[ClaseActual]['obj'][invocador][tipoVariable]
 				if (dirInicio != -1):
-					total = DirClases[clase]['tam'][tipoVariable]
+					total = DirClases[claseMet]['tam'][tipoVariable]
 					dirClase = DirBaseClase[tipoVariable]
 					for i in range(0, total):
 						Cuad.append(['ATTR_GO', dirInstancia, dirClase, '-'])
@@ -1086,7 +1086,7 @@ def p_generaGosub(p):
 		Cuad.append(['GOSUB', metodo, dirInicio, id])
 	else:
 		Cuad.append(['GOSUB', metodo, dirInicio, '-'])
-	
+
 	Line = Line + 1
 
 	# Proceso inverso de paso de variables, ahora en sentido inverso:
@@ -1117,7 +1117,7 @@ def p_generaGosub(p):
 				print(DirClases[ClaseActual]['metodos'][MetodoActual]['obj'])
 				dirInstancia = DirClases[ClaseActual]['metodos'][MetodoActual]['obj'][invocador][tipoVariable]
 				if (dirInicio != -1):
-					total = DirClases[clase]['tam'][tipoVariable]
+					total = DirClases[claseMet]['tam'][tipoVariable]
 					dirClase = DirBaseClase[tipoVariable]
 					for i in range(0, total):
 						Cuad.append(['ATTR_RET', dirClase, dirInstancia, '-'])
@@ -1129,7 +1129,7 @@ def p_generaGosub(p):
 			for tipoVariable in TiposVar:
 				dirInstancia = DirClases[ClaseActual]['obj'][invocador][tipoVariable]
 				if (dirInicio != -1):
-					total = DirClases[clase]['tam'][tipoVariable]
+					total = DirClases[claseMet]['tam'][tipoVariable]
 					dirClase = DirBaseClase[tipoVariable]
 					for i in range(0, total):
 						Cuad.append(['ATTR_RET', dirClase, dirInstancia, '-'])
@@ -1282,11 +1282,11 @@ def p_exp_ciclo_1(p):
 				exit()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (p[1].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
-				print('Semantic error at line {0}, expected array reference but got {1}.').format(lineNumber, listaTipos[actual['numP']][0])
+				print('Semantic error at line {0}, expected {1} but got array reference.').format(lineNumber, listaTipos[actual['numP']][0])			
 				exit()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (not p[1].has_key('dim') and len(listaTipos[actual['numP']]) > 2):
-				print('Semantic error at line {0}, expected {1} but got array reference.').format(lineNumber, p[1]['tipo'])
+				print('Semantic error at line {0}, expected array reference but got {1}.').format(lineNumber, p[1]['tipo'])
 				exit()
 			# Parametro recibido y el esperado no son dimensionados
 			elif (not p[1].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
@@ -1320,11 +1320,11 @@ def p_exp_ciclo_1(p):
 				exit()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (p[1].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
-				print('Semantic error at line {0}, expected array reference but got {1}.').format(lineNumber, listaTipos[actual['numP']][0])
+				print('Semantic error at line {0}, expected {1} but got array reference.').format(lineNumber, listaTipos[actual['numP']][0])		
 				exit()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (not p[1].has_key('dim') and len(listaTipos[actual['numP']]) > 2):
-				print('Semantic error at line {0}, expected {1} but got array reference.').format(lineNumber, p[1]['tipo'])
+				print('Semantic error at line {0}, expected array reference but got {1}.').format(lineNumber, p[1]['tipo'])
 				exit()
 			# Parametro recibido y el esperado no son dimensionados
 			elif (not p[1].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
@@ -1372,11 +1372,11 @@ def p_exp_ciclo_2(p):
 				exit()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (p[3].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
-				print('Semantic error at line {0}, expected array reference but got {1}.').format(lineNumber, listaTipos[actual['numP']][0])
+				print('Semantic error at line {0}, expected {1} but got array reference.').format(lineNumber, listaTipos[actual['numP']][0])			
 				exit()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (not p[3].has_key('dim') and len(listaTipos[actual['numP']]) > 2):
-				print('Semantic error at line {0}, expected {1} but got array reference.').format(lineNumber, p[3]['tipo'])
+				print('Semantic error at line {0}, expected array reference but got {1}.').format(lineNumber, p[3]['tipo'])
 				exit()
 			# Parametro recibido y el esperado no son dimensionados
 			elif (not p[3].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
@@ -1410,11 +1410,11 @@ def p_exp_ciclo_2(p):
 				exit()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (p[3].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
-				print('Semantic error at line {0}, expected array reference but got {1}.').format(lineNumber, listaTipos[actual['numP']][0])
+				print('Semantic error at line {0}, expected {1} but got array reference.').format(lineNumber, listaTipos[actual['numP']][0])
 				exit()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (not p[3].has_key('dim') and len(listaTipos[actual['numP']]) > 2):
-				print('Semantic error at line {0}, expected {1} but got array reference.').format(lineNumber, p[3]['tipo'])
+				print('Semantic error at line {0}, expected array reference but got {1}.').format(lineNumber, p[3]['tipo'])	
 				exit()
 			# Parametro recibido y el esperado no son dimensionados
 			elif (not p[3].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
@@ -1842,7 +1842,7 @@ def p_asignacion(p):
 					dir1 = p[4]['dirs'][tipo]
 					dir2 = p[1]['dirs'][tipo]
 					for pos in range(0, DirClases[claseAux]['tam'][tipo]):
-						Cuad.append(['IGUAL-OBJ', dir1, '-', dir2])
+						Cuad.append(['IGUAL', dir1, '-', dir2])
 						Line = Line + 1;
 						dir1 = dir1 + 1
 						dir2 = dir2 + 1
@@ -1852,30 +1852,32 @@ def p_asignacion(p):
 	print('asignacion')
 
 def p_atom_dim(p):
-	'''atom : ID PUNTO definirInvocador ID checarAtributoDim COIZQ exp CODER
-			| ID checarAtributoDim COIZQ exp CODER
-			| THIS PUNTO definirInvocador ID checarAtributoDim COIZQ exp CODER'''
+	'''atom : ID PUNTO definirInvocador ID checarAtributoDim COIZQ limpiarInvocador exp CODER
+			| ID checarAtributoDim COIZQ limpiarInvocador exp CODER
+			| THIS PUNTO definirInvocador ID checarAtributoDim COIZQ limpiarInvocador exp CODER'''
 	global ClaseActual
 	global MetodoActual
 	global Line
 	dirBase = -1
 	offset = -1
+	tam = -1
 
 	# Arreglo de THIS 
 	if (p[1] == 'this'):
 
-		if ( p[7].has_key('dim') or p[7]['tipo'] != 'numeral' ):
+		if ( p[8].has_key('dim') or p[8]['tipo'] != 'numeral' ):
 			print('Semantic error at line {0}, array index must be a numeral expression').format(lineNumber)
 			exit()
 
 		for tipo in TiposVar:
 			if ( DirClases[ClaseActual]['vars'][tipo].has_key( p[4] ) ):
 				dirBase = DirClases[ClaseActual]['vars'][tipo][ p[4] ]
-		offset = p[7]['id']
+				tam = DirClases[ClaseActual]['varsTam'][tipo][ p[4] ]
+		offset = p[8]['id']
 	# Arreglo de instancia
 	elif (p[2] == '.'):
 
-		if ( p[7].has_key('dim') or p[7]['tipo'] != 'numeral' ):
+		if ( p[8].has_key('dim') or p[8]['tipo'] != 'numeral' ):
 			print('Semantic error at line {0}, array index must be a numeral expression').format(lineNumber)
 			exit()
 
@@ -1884,18 +1886,24 @@ def p_atom_dim(p):
 			for tipo in TiposVar:
 				if ( DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo].has_key( p[1] + '.' + p[4] ) ):
 					dirBase = DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][ p[1] + '.' + p[4] ]
+
+					claseObj = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][ p[1] ]['tipo']
+
+					for tipoAux in TiposVar:
+						if ( DirClases[claseObj]['vars'][tipoAux].has_key( p[4] ) ):
+							tam =  DirClases[ claseObj ]['varsTam'][ tipoAux ][ p[4] ]
 		# Checar en clase
 		else:
 			for tipo in TiposVar:
 				if ( DirClases[ClaseActual]['vars'][tipo].has_key( p[1] + '.' + p[4] ) ):
 					dirBase = DirClases[ClaseActual]['vars'][tipo][ p[1] + '.' + p[4] ]
+					tam = DirClases[ClaseActual]['varsTam'][tipo][ p[1] + '.' + p[4] ]
 
-
-		offset = p[7]['id']
+		offset = p[8]['id']
 	# Arreglo de contexto
 	else:
 
-		if ( p[4].has_key('dim') or p[4]['tipo'] != 'numeral' ):
+		if ( p[5].has_key('dim') or p[5]['tipo'] != 'numeral' ):
 			print('Semantic error at line {0}, array index must be a numeral expression').format(lineNumber)
 			exit()
 
@@ -1904,13 +1912,20 @@ def p_atom_dim(p):
 			for tipo in TiposVar:
 				if ( DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo].has_key( p[1] ) ):
 					dirBase = DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][ p[1] ]
+					tam = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][ p[1] ]['dim']
 		# Checar en clase
 		else:
 			for tipo in TiposVar:
 				if ( DirClases[ClaseActual]['vars'][tipo].has_key( p[1] ) ):
 					dirBase = DirClases[ClaseActual]['vars'][tipo][ p[1] ]
-		offset = p[4]['id']
+					tam = DirClases[ClaseActual]['varsTam'][tipo][ p[1] ]
+		offset = p[5]['id']
 
+	# Validar que offset sea menor o igual a tamanio de arreglo
+	Cuad.append(['VER', offset, tam, '-'])
+	Line = Line + 1
+	
+	# Obtener direccion real a partir de direccion base y offset
 	Cuad.append(['MAS', ( '|' + str(dirBase) + '|' ), offset, DirsMetodoTemp['numeral'] ])
 	p[0] = {'tipo': 'numeral', 'id': ( '(' + str(DirsMetodoTemp['numeral']) + ')' ) }
 	DirsMetodoTemp['numeral'] = DirsMetodoTemp['numeral'] + 1
@@ -2302,3 +2317,37 @@ for tipo in TiposVar:
 arch2.write(str(len(Cuad)) + '\n')
 for i in range(0, len(Cuad)):
 	arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + str(Cuad[i][1]) + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')
+
+print('Persona')
+print(DirClases['Persona']['vars'])
+print('')
+
+print('Estudiante')
+print(DirClases['Estudiante']['vars'])
+print('')
+
+print('main')
+print(DirClases['main']['vars'])
+print('')
+
+print('')
+
+print('sumaArr')
+print(DirClases['Persona']['metodos']['sumaArr']['vars'])
+print('')
+
+print('suma1')
+print(DirClases['main']['metodos']['suma1']['vars'])
+print('')
+
+print('suma2')
+print(DirClases['main']['metodos']['suma2']['vars'])
+print('')
+
+print('suma')
+print(DirClases['main']['metodos']['suma2']['vars'])
+print('')
+
+print('main')
+print(DirClases['main']['metodos']['main']['vars'])
+print('')
