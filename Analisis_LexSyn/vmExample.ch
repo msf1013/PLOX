@@ -37,23 +37,56 @@ class main {
 	hidden Fruta: fruta;
 
 	visible without main() {
-		numeral a, b, c;
+		numeral a, b, c, x, y;
 		real d, e, f;
 		bool g, h, i;
 		char j, k, l;
 		string m, n, o;
 		a = 3;
+		x = 1;
 		b = a % 2;
 		input(c);
 		e = 3.5 + c;
 		fruta.id = fruta.id + a * b;
 		f = (b * 5 - 3 / 1.2) * 5;
 		g = (3 > a) || (4.5 < e) && !(3 == 3);
-		output("Hola");
+		if(g) {
+			output("Verdadero\n");
+		}
+		else {
+			output("Falso\n");
+		}
+		if(20 >= 19) {
+			output("Verdadero 2\n");
+		}
+		else {
+			output("Falso 2\n");
+		}
+		while(x <= 10) {
+			output(x);
+			output(' ');
+			x = x + 1;
+		}
+		output('\n');
+		x = 1;
+		y = 1;
+		while(x <= 100) {
+			output(y);
+			output(' ');
+			y = x + y;
+			x = y - x;
+		}
+		output('\n');
+		output("Hola\n");
 		output('c');
+		output('\n');
 		output(a);
+		output('\n');
 		output(b);
+		output('\n');
 		output(fruta.id);
+		output('\n');
 		output(g);
+		output('\n');
 	}
 }

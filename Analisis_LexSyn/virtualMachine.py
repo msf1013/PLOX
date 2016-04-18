@@ -1,3 +1,4 @@
+from __future__ import print_function
 import os.path
 
 # Implementacion de pila, basada en lista nativa de Python
@@ -25,37 +26,39 @@ class stack:
 
 
 
-MapaMemoria = { 'main': { 'main' : {} } }
+MapaMemoria = { 'main': {} }
 DirConstantes = {}
 Cuadruplos = []
 
 PContexto = stack()
 PMemoria = stack()
 PContexto.push(0)
-PMemoria.push(['main', 'main'])
+PMemoria.push('main')
+
+cuadruploActual = 0
 
 def suma(Operador1, Operador2, Resultado):
 	global PMemoria
 	global PContexto
 	global MapaMemoria
-	global DirConstantes
+	global DirConstantes	
 	contextoActual = PMemoria.at(PContexto.top())
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
 	if(DirConstantes.has_key(Operador2)):
 		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador2]
+	elif(MapaMemoria[contextoActual].has_key(Operador2)):
+		Operador2 = MapaMemoria[contextoActual][Operador2]
 	else:
 		Operador2 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1 + Operador2
+	MapaMemoria[contextoActual][Resultado] = Operador1 + Operador2
 	return 'suma'
 
 def resta(Operador1, Operador2, Resultado):
@@ -67,19 +70,19 @@ def resta(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
 	if(DirConstantes.has_key(Operador2)):
 		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador2]
+	elif(MapaMemoria[contextoActual].has_key(Operador2)):
+		Operador2 = MapaMemoria[contextoActual][Operador2]
 	else:
 		Operador2 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1 - Operador2
+	MapaMemoria[contextoActual][Resultado] = Operador1 - Operador2
 	return 'resta'
 
 def multiplicacion(Operador1, Operador2, Resultado):
@@ -91,19 +94,19 @@ def multiplicacion(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
 	if(DirConstantes.has_key(Operador2)):
 		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador2]
+	elif(MapaMemoria[contextoActual].has_key(Operador2)):
+		Operador2 = MapaMemoria[contextoActual][Operador2]
 	else:
 		Operador2 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1 * Operador2
+	MapaMemoria[contextoActual][Resultado] = Operador1 * Operador2
 	return 'multiplicacion'
 
 def division(Operador1, Operador2, Resultado):
@@ -115,19 +118,19 @@ def division(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
 	if(DirConstantes.has_key(Operador2)):
 		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador2]
+	elif(MapaMemoria[contextoActual].has_key(Operador2)):
+		Operador2 = MapaMemoria[contextoActual][Operador2]
 	else:
 		Operador2 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1 / Operador2
+	MapaMemoria[contextoActual][Resultado] = Operador1 / Operador2
 	return 'division'
 
 def asignacion(Operador1, Operador2, Resultado):
@@ -139,12 +142,12 @@ def asignacion(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1
+	MapaMemoria[contextoActual][Resultado] = Operador1
 	return 'asignacion'
 
 def condicionOr(Operador1, Operador2, Resultado):
@@ -156,19 +159,19 @@ def condicionOr(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
 	if(DirConstantes.has_key(Operador2)):
 		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador2]
+	elif(MapaMemoria[contextoActual].has_key(Operador2)):
+		Operador2 = MapaMemoria[contextoActual][Operador2]
 	else:
 		Operador2 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1 or Operador2
+	MapaMemoria[contextoActual][Resultado] = Operador1 or Operador2
 	return 'condicionOr'
 
 def condicionAnd(Operador1, Operador2, Resultado):
@@ -180,19 +183,19 @@ def condicionAnd(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
 	if(DirConstantes.has_key(Operador2)):
 		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador2]
+	elif(MapaMemoria[contextoActual].has_key(Operador2)):
+		Operador2 = MapaMemoria[contextoActual][Operador2]
 	else:
 		Operador2 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1 and Operador2
+	MapaMemoria[contextoActual][Resultado] = Operador1 and Operador2
 	return 'condicionAnd'
 
 def condicionNot(Operador1, Operador2, Resultado):
@@ -204,12 +207,12 @@ def condicionNot(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = not(Operador1)
+	MapaMemoria[contextoActual][Resultado] = not(Operador1)
 	return 'condicionNot'
 
 def mayorQue(Operador1, Operador2, Resultado):
@@ -221,19 +224,19 @@ def mayorQue(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
 	if(DirConstantes.has_key(Operador2)):
 		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador2]
+	elif(MapaMemoria[contextoActual].has_key(Operador2)):
+		Operador2 = MapaMemoria[contextoActual][Operador2]
 	else:
 		Operador2 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1 > Operador2
+	MapaMemoria[contextoActual][Resultado] = Operador1 > Operador2
 	return 'mayorQue'
 
 def menorQue(Operador1, Operador2, Resultado):
@@ -245,19 +248,19 @@ def menorQue(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
 	if(DirConstantes.has_key(Operador2)):
 		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador2]
+	elif(MapaMemoria[contextoActual].has_key(Operador2)):
+		Operador2 = MapaMemoria[contextoActual][Operador2]
 	else:
 		Operador2 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1 < Operador2
+	MapaMemoria[contextoActual][Resultado] = Operador1 < Operador2
 	return 'menorQue'
 
 def menorIgualQue(Operador1, Operador2, Resultado):
@@ -269,19 +272,19 @@ def menorIgualQue(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
 	if(DirConstantes.has_key(Operador2)):
 		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador2]
+	elif(MapaMemoria[contextoActual].has_key(Operador2)):
+		Operador2 = MapaMemoria[contextoActual][Operador2]
 	else:
 		Operador2 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1 <= Operador2
+	MapaMemoria[contextoActual][Resultado] = Operador1 <= Operador2
 	return 'menorIgualQue'
 
 def mayorIgualQue(Operador1, Operador2, Resultado):
@@ -293,19 +296,19 @@ def mayorIgualQue(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
 	if(DirConstantes.has_key(Operador2)):
 		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador2]
+	elif(MapaMemoria[contextoActual].has_key(Operador2)):
+		Operador2 = MapaMemoria[contextoActual][Operador2]
 	else:
 		Operador2 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1 >= Operador2
+	MapaMemoria[contextoActual][Resultado] = Operador1 >= Operador2
 	return 'mayorIgualQue'
 
 def igualQue(Operador1, Operador2, Resultado):
@@ -317,19 +320,19 @@ def igualQue(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
 	if(DirConstantes.has_key(Operador2)):
 		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador2]
+	elif(MapaMemoria[contextoActual].has_key(Operador2)):
+		Operador2 = MapaMemoria[contextoActual][Operador2]
 	else:
 		Operador2 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1 == Operador2
+	MapaMemoria[contextoActual][Resultado] = Operador1 == Operador2
 	return 'igualQue'
 
 def noIgualQue(Operador1, Operador2, Resultado):
@@ -341,19 +344,19 @@ def noIgualQue(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
 	if(DirConstantes.has_key(Operador2)):
 		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador2]
+	elif(MapaMemoria[contextoActual].has_key(Operador2)):
+		Operador2 = MapaMemoria[contextoActual][Operador2]
 	else:
 		Operador2 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1 != Operador2
+	MapaMemoria[contextoActual][Resultado] = Operador1 != Operador2
 	return 'noIgualQue'
 
 def modulo(Operador1, Operador2, Resultado):
@@ -365,19 +368,19 @@ def modulo(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
 	if(DirConstantes.has_key(Operador2)):
 		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador2]
+	elif(MapaMemoria[contextoActual].has_key(Operador2)):
+		Operador2 = MapaMemoria[contextoActual][Operador2]
 	else:
 		Operador2 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = Operador1 % Operador2
+	MapaMemoria[contextoActual][Resultado] = Operador1 % Operador2
 	return 'modulo'
 
 def negacion(Operador1, Operador2, Resultado):
@@ -389,12 +392,12 @@ def negacion(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Operador1)):
 		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual[0]][contextoActual[1]][Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Operador1 = MapaMemoria[contextoActual][Operador1]
 	else:
 		Operador1 = 0
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = -1 * Operador1
+	MapaMemoria[contextoActual][Resultado] = -1 * Operador1
 	return 'negacion'
 
 def stdIn(Operador1, Operador2, Resultado):
@@ -419,7 +422,7 @@ def stdIn(Operador1, Operador2, Resultado):
 	else:
 		valor = raw_input()
 
-	MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado] = valor
+	MapaMemoria[contextoActual][Resultado] = valor
 	return 'stdIn'
 
 def stdOut(Operador1, Operador2, Resultado):
@@ -433,21 +436,58 @@ def stdOut(Operador1, Operador2, Resultado):
 	
 	if(DirConstantes.has_key(Resultado)):
 		Resultado = DirConstantes[Resultado]
-	elif(MapaMemoria[contextoActual[0]][contextoActual[1]].has_key(Resultado)):
-		Resultado = MapaMemoria[contextoActual[0]][contextoActual[1]][Resultado]
+	elif(MapaMemoria[contextoActual].has_key(Resultado)):
+		Resultado = MapaMemoria[contextoActual][Resultado]
 	else:
 		Resultado = 0
 
-	print(str(Resultado))
+	print(str(Resultado).replace('\\n', '\n'), end='')
+
 	return 'stdOut'
 
 def retorno(Operador1, Operador2, Resultado):
 	return 'retorno'
 
 def gotoF(Operador1, Operador2, Resultado):
+	global cuadruploActual
+	global PMemoria
+	global PContexto
+	global MapaMemoria
+	global DirConstantes
+	contextoActual = PMemoria.at(PContexto.top())
+
+	if(DirConstantes.has_key(Operador1)):
+		Condicion = DirConstantes[Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		Condicion = MapaMemoria[contextoActual][Operador1]
+	else:
+		Condicion = False
+
+	if(not(Condicion)):
+		cuadruploActual = int(Operador2)
+		Operacion = Cuadruplos[cuadruploActual][0]
+		Operador1 = Cuadruplos[cuadruploActual][1]
+		Operador2 = Cuadruplos[cuadruploActual][2]
+		Resultado = Cuadruplos[cuadruploActual][3]
+		Operaciones[Operacion](Operador1, Operador2, Resultado)
+
 	return 'gotoF'
 
 def goto(Operador1, Operador2, Resultado):
+	global cuadruploActual
+	global PMemoria
+	global PContexto
+	global MapaMemoria
+	global DirConstantes
+
+	cuadruploActual = int(Operador2)
+
+	Operacion = Cuadruplos[cuadruploActual][0]
+	Operador1 = Cuadruplos[cuadruploActual][1]
+	Operador2 = Cuadruplos[cuadruploActual][2]
+	Resultado = Cuadruplos[cuadruploActual][3]
+	Operaciones[Operacion](Operador1, Operador2, Resultado)
+
 	return 'goto'
 
 def igualacionObjetos(Operador1, Operador2, Resultado):
@@ -533,6 +573,7 @@ if(os.path.isfile(s)):
 		for i in range(actual + 1, actual + numCuadruplos + 1):
 			line = lineArr[i][:-1].split('\t')
 			Cuadruplos.append([line[1], line[2], line[3], line[4]])
+	
 	cuadruploActual = 0
 	#print(DirConstantes)
 	while(cuadruploActual != numCuadruplos):
@@ -543,6 +584,7 @@ if(os.path.isfile(s)):
 		Operador2 = Cuadruplos[cuadruploActual][2]
 		Resultado = Cuadruplos[cuadruploActual][3]
 		Operaciones[Operacion](Operador1, Operador2, Resultado)
+		#print(cuadruploActual)
 		cuadruploActual = cuadruploActual + 1
 	print
 	print(MapaMemoria)
