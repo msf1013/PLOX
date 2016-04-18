@@ -1,4 +1,4 @@
-Created by PLY version 3.8 (http://www.dabeaz.com/ply)
+Created by PLY version 3.6 (http://www.dabeaz.com/ply)
 
 Grammar
 
@@ -680,9 +680,9 @@ state 32
 
     (15) ciclo_vars -> acceso vars .
 
+    LLDER           reduce using rule 15 (ciclo_vars -> acceso vars .)
     HIDDEN          reduce using rule 15 (ciclo_vars -> acceso vars .)
     VISIBLE         reduce using rule 15 (ciclo_vars -> acceso vars .)
-    LLDER           reduce using rule 15 (ciclo_vars -> acceso vars .)
 
 
 state 33
@@ -855,9 +855,9 @@ state 47
 
     (16) ciclo_vars -> ciclo_vars acceso vars .
 
+    LLDER           reduce using rule 16 (ciclo_vars -> ciclo_vars acceso vars .)
     HIDDEN          reduce using rule 16 (ciclo_vars -> ciclo_vars acceso vars .)
     VISIBLE         reduce using rule 16 (ciclo_vars -> ciclo_vars acceso vars .)
-    LLDER           reduce using rule 16 (ciclo_vars -> ciclo_vars acceso vars .)
 
 
 state 48

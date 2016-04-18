@@ -17,7 +17,7 @@ class Sandia under Fruta {
 	hidden numeral tam;
 	visible Fruta : FrutaAmiga;
 	visible numeral edades[4];
-	hidden numeral k;
+	visible numeral k;
 	visible numeral arri[5];
 
 	visible numeral getDim(numeral i) {
@@ -31,10 +31,15 @@ class Sandia under Fruta {
 		aux = edades[i];
 		return aux;
 	}
+	visible numeral suma(numeral x) {
+		tam = 1;
+		this.id = tam + k + x;
+		return id;
+	}
 }
 
 class main {
-	hidden Fruta: fruta;
+	hidden Sandia: fruta;
 
 	visible without main() {
 		numeral a, b, c, x, y;
@@ -47,6 +52,7 @@ class main {
 		b = a % 2;
 		input(c);
 		e = 3.5 + c;
+		fruta.k = 2;
 		fruta.id = fruta.id + a * b;
 		f = (b * 5 - 3 / 1.2) * 5;
 		g = (3 > a) || (4.5 < e) && !(3 == 3);
@@ -76,6 +82,9 @@ class main {
 			y = x + y;
 			x = y - x;
 		}
+		output('\n');
+		output("Suma: ");
+		output(fruta.suma(3));
 		output('\n');
 		output("Hola\n");
 		output('c');

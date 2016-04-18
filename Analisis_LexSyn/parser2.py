@@ -1162,9 +1162,6 @@ def p_generaEra(p):
 		PilaLlamadas.push( {'id': MetodoNombre, 'numP': 0} )
 		claseAux = devuelveClaseMetodo(ClaseActual, MetodoNombre)
 
-	# Se genera un cuadruplo para indicar que el contexto de la clase es otro
-	Cuad.append(['CONTEXTO-CLASE', '-', '-', claseAux])
-
 	# Generar cuadruplos ERA para cada tipo de dato primitivo
 	for tipo in TiposVar:
 		Cuad.append(['ERA', MetodoNombre, tipo, DirClases[claseAux]['metodos'][MetodoNombre]['tam'][tipo] ])
