@@ -1861,6 +1861,7 @@ def p_atom_dim(p):
 	dirBase = -1
 	offset = -1
 	tam = -1
+	lineNumber = scanner.lexer.lineno
 
 	# Arreglo de THIS 
 	if (p[1] == 'this'):
