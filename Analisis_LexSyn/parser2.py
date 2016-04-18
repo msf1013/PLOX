@@ -1842,7 +1842,7 @@ def p_asignacion(p):
 					dir1 = p[4]['dirs'][tipo]
 					dir2 = p[1]['dirs'][tipo]
 					for pos in range(0, DirClases[claseAux]['tam'][tipo]):
-						Cuad.append(['IGUAL-OBJ', dir1, '-', dir2])
+						Cuad.append(['IGUAL', dir1, '-', dir2])
 						Line = Line + 1;
 						dir1 = dir1 + 1
 						dir2 = dir2 + 1
