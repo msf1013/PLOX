@@ -548,6 +548,10 @@ def retorno(Operador1, Operador2, Resultado):
 
 		PRetornos.pop()
 
+		if(Cuadruplos[cuadruploActual + 1][0] != "ATTR_RET"):
+			PContexto.pop()
+			PMemoria.pop()
+
 	return 'retorno'
 
 def gotoF(Operador1, Operador2, Resultado):
