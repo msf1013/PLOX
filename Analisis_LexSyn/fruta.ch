@@ -8,6 +8,7 @@ class Fruta {
 		i = 0;
 		while (i < 4) {
 			dim[i] = arr[i];
+			i = i + 1;
 		}
 	}
 
@@ -47,10 +48,14 @@ class main {
 		numeral a, b;
 		Fruta : f;
 		Sandia : s, s2;
+		s.edades[3] = 2;
 		lol = 34 * s.edades[3];
 		s2.copia("g", 5, 6, s.edades);
 		a = 5 + 2 *6;
 		b = a;
 		output( s2.getEdades(a) + s2.getDim(b) );
+		output('\n');
+		output(lol);
+		output('\n');
 	}
 }

@@ -1164,7 +1164,7 @@ def p_generaEra(p):
 		claseAux = devuelveClaseMetodo(ClaseActual, MetodoNombre)
 
 	# Generar cuadruplo ERA para metodo
-		Cuad.append(['ERA', MetodoNombre, '-', '-'])
+	Cuad.append(['ERA', MetodoNombre, '-', '-'])
 
 	Line = Line + 1
 	print('generaEra')

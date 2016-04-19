@@ -58,6 +58,14 @@ PMemoria.push('main')
 
 cuadruploActual = 0
 
+def revisarDireccion(Direccion):
+	if(str(Direccion)[0] == '|'):
+		return 'Base'
+	elif(str(Direccion)[0] == '('):
+		return 'Indirecto'
+	else:
+		return 'Directo'
+
 def suma(Operador1, Operador2, Resultado):
 	global PMemoria
 	global PContexto
@@ -65,24 +73,65 @@ def suma(Operador1, Operador2, Resultado):
 	global DirConstantes	
 	contextoActual = PMemoria.at(PContexto.top())
 
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
-	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	Resultado = int(Resultado)
 
-	if(DirConstantes.has_key(Operador2)):
-		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual][Operador2]
-	else:
-		Operador2 = 0
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1 + Operador2
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
+
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = 0
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = 0
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = Operador1 + Operador2
 	return 'suma'
 
 def resta(Operador1, Operador2, Resultado):
@@ -92,24 +141,65 @@ def resta(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 	
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
+	Resultado = int(Resultado)
 
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
 
-	if(DirConstantes.has_key(Operador2)):
-		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual][Operador2]
-	else:
-		Operador2 = 0
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1 - Operador2
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = 0
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = 0
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = Operador1 - Operador2
 	return 'resta'
 
 def multiplicacion(Operador1, Operador2, Resultado):
@@ -119,24 +209,65 @@ def multiplicacion(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 	
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
+	Resultado = int(Resultado)
 
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
 
-	if(DirConstantes.has_key(Operador2)):
-		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual][Operador2]
-	else:
-		Operador2 = 0
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1 * Operador2
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = 0
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = 0
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = Operador1 * Operador2
 	return 'multiplicacion'
 
 def division(Operador1, Operador2, Resultado):
@@ -146,24 +277,65 @@ def division(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
-	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	Resultado = int(Resultado)
 
-	if(DirConstantes.has_key(Operador2)):
-		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual][Operador2]
-	else:
-		Operador2 = 0
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1 / Operador2
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
+
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = 0
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = 0
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = Operador1 / Operador2
 	return 'division'
 
 def asignacion(Operador1, Operador2, Resultado):
@@ -173,16 +345,44 @@ def asignacion(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 
-	Operador1 = int(Operador1)
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccionR = revisarDireccion(Resultado)
 	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
+	Operador1 = int(Operador1)
+	Resultado = int(Resultado)
+
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
+
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = Operador1
 	return 'asignacion'
 
 def condicionOr(Operador1, Operador2, Resultado):
@@ -192,24 +392,66 @@ def condicionOr(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
-	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	Resultado = int(Resultado)
 
-	if(DirConstantes.has_key(Operador2)):
-		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual][Operador2]
-	else:
-		Operador2 = 0
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = False
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1 or Operador2
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = False
+
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = False
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = False
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = False
+
+
+	MapaMemoria[contextoActual][Resultado] = Operador1 or Operador2
 	return 'condicionOr'
 
 def condicionAnd(Operador1, Operador2, Resultado):
@@ -219,24 +461,65 @@ def condicionAnd(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
-	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	Resultado = int(Resultado)
 
-	if(DirConstantes.has_key(Operador2)):
-		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual][Operador2]
-	else:
-		Operador2 = 0
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = False
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1 and Operador2
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = False
+
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = False
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = False
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = False
+
+	MapaMemoria[contextoActual][Resultado] = Operador1 and Operador2
 	return 'condicionAnd'
 
 def condicionNot(Operador1, Operador2, Resultado):
@@ -246,16 +529,44 @@ def condicionNot(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 
-	Operador1 = int(Operador1)
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccionR = revisarDireccion(Resultado)
 	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
 
-	MapaMemoria[contextoActual][int(Resultado)] = not(Operador1)
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
+	Operador1 = int(Operador1)
+	Resultado = int(Resultado)
+
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = False
+
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = False
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = False
+
+	MapaMemoria[contextoActual][Resultado] = not(Operador1)
 	return 'condicionNot'
 
 def mayorQue(Operador1, Operador2, Resultado):
@@ -264,25 +575,66 @@ def mayorQue(Operador1, Operador2, Resultado):
 	global MapaMemoria
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
+	
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
 
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
-	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	Resultado = int(Resultado)
 
-	if(DirConstantes.has_key(Operador2)):
-		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual][Operador2]
-	else:
-		Operador2 = 0
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1 > Operador2
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
+
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = 0
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = 0
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = Operador1 > Operador2
 	return 'mayorQue'
 
 def menorQue(Operador1, Operador2, Resultado):
@@ -292,24 +644,65 @@ def menorQue(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
-	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	Resultado = int(Resultado)
 
-	if(DirConstantes.has_key(Operador2)):
-		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual][Operador2]
-	else:
-		Operador2 = 0
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1 < Operador2
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
+
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = 0
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = 0
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = Operador1 < Operador2
 	return 'menorQue'
 
 def menorIgualQue(Operador1, Operador2, Resultado):
@@ -319,24 +712,65 @@ def menorIgualQue(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
-	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	Resultado = int(Resultado)
 
-	if(DirConstantes.has_key(Operador2)):
-		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual][Operador2]
-	else:
-		Operador2 = 0
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1 <= Operador2
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
+
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = 0
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = 0
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = Operador1 <= Operador2
 	return 'menorIgualQue'
 
 def mayorIgualQue(Operador1, Operador2, Resultado):
@@ -346,24 +780,65 @@ def mayorIgualQue(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
-	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	Resultado = int(Resultado)
 
-	if(DirConstantes.has_key(Operador2)):
-		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual][Operador2]
-	else:
-		Operador2 = 0
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1 >= Operador2
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
+
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = 0
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = 0
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = Operador1 >= Operador2
 	return 'mayorIgualQue'
 
 def igualQue(Operador1, Operador2, Resultado):
@@ -373,24 +848,65 @@ def igualQue(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
-	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	Resultado = int(Resultado)
 
-	if(DirConstantes.has_key(Operador2)):
-		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual][Operador2]
-	else:
-		Operador2 = 0
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1 == Operador2
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
+
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = 0
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = 0
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = Operador1 == Operador2
 	return 'igualQue'
 
 def noIgualQue(Operador1, Operador2, Resultado):
@@ -400,24 +916,65 @@ def noIgualQue(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
-	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	Resultado = int(Resultado)
 
-	if(DirConstantes.has_key(Operador2)):
-		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual][Operador2]
-	else:
-		Operador2 = 0
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1 != Operador2
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
+
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = 0
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = 0
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = Operador1 != Operador2
 	return 'noIgualQue'
 
 def modulo(Operador1, Operador2, Resultado):
@@ -427,24 +984,65 @@ def modulo(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
-	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	Resultado = int(Resultado)
 
-	if(DirConstantes.has_key(Operador2)):
-		Operador2 = DirConstantes[Operador2]
-	elif(MapaMemoria[contextoActual].has_key(Operador2)):
-		Operador2 = MapaMemoria[contextoActual][Operador2]
-	else:
-		Operador2 = 0
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
 
-	MapaMemoria[contextoActual][int(Resultado)] = Operador1 % Operador2
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
+
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = 0
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = 0
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = Operador1 % Operador2
 	return 'modulo'
 
 def negacion(Operador1, Operador2, Resultado):
@@ -454,16 +1052,44 @@ def negacion(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 
-	Operador1 = int(Operador1)
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccionR = revisarDireccion(Resultado)
 	
-	if(DirConstantes.has_key(Operador1)):
-		Operador1 = DirConstantes[Operador1]
-	elif(MapaMemoria[contextoActual].has_key(Operador1)):
-		Operador1 = MapaMemoria[contextoActual][Operador1]
-	else:
-		Operador1 = 0
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
 
-	MapaMemoria[contextoActual][int(Resultado)] = -1 * Operador1
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
+	Operador1 = int(Operador1)
+	Resultado = int(Resultado)
+
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
+
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = -1 * Operador1
 	return 'negacion'
 
 def stdIn(Operador1, Operador2, Resultado):
@@ -476,7 +1102,21 @@ def stdIn(Operador1, Operador2, Resultado):
 	global DirBaseMetodoTemp
 	contextoActual = PMemoria.at(PContexto.top())
 
+	TipoDireccion = revisarDireccion(Resultado)
+	
+	if(TipoDireccion != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
 	Resultado = int(Resultado)
+
+	if(TipoDireccion != 'Base'):
+		if(TipoDireccion == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
 
 	if((Resultado >= DirBaseClase['numeral'] and Resultado < DirBaseClase['real']) or (Resultado >= DirBaseMetodo['numeral'] and Resultado < DirBaseMetodo['real']) or (Resultado >= DirBaseMetodoTemp['numeral'] and Resultado < DirBaseMetodoTemp['real'])):
 		valor = int(raw_input())
@@ -491,7 +1131,7 @@ def stdIn(Operador1, Operador2, Resultado):
 	else:
 		valor = raw_input()
 
-	MapaMemoria[contextoActual][int(Resultado)] = valor
+	MapaMemoria[contextoActual][Resultado] = valor
 	return 'stdIn'
 
 def stdOut(Operador1, Operador2, Resultado):
@@ -501,14 +1141,28 @@ def stdOut(Operador1, Operador2, Resultado):
 	global DirConstantes
 	contextoActual = PMemoria.at(PContexto.top())
 
-	Resultado = int(Resultado)
+	TipoDireccion = revisarDireccion(Resultado)
 	
-	if(DirConstantes.has_key(Resultado)):
-		Resultado = DirConstantes[Resultado]
-	elif(MapaMemoria[contextoActual].has_key(Resultado)):
-		Resultado = MapaMemoria[contextoActual][Resultado]
-	else:
-		Resultado = 0
+	if(TipoDireccion != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
+	Resultado = int(Resultado)
+
+	if(TipoDireccion != 'Base'):
+		if(TipoDireccion == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = ''
+	
+		if(DirConstantes.has_key(Resultado)):
+			Resultado = DirConstantes[Resultado]
+		elif(MapaMemoria[contextoActual].has_key(Resultado)):
+			Resultado = MapaMemoria[contextoActual][Resultado]
+		else:
+			Resultado = ''
 
 	print(str(Resultado).replace('\\n', '\n'), end='')
 
@@ -542,7 +1196,8 @@ def retorno(Operador1, Operador2, Resultado):
 			ValorRetorno = 0
 
 		DireccionRetorno = PRetornos.top()[0]
-		MapaMemoria[contextoNuevo][DireccionRetorno] = ValorRetorno
+		if(DireccionRetorno != '-'):
+			MapaMemoria[contextoNuevo][DireccionRetorno] = ValorRetorno
 
 		cuadruploActual = PRetornos.top()[1]
 
@@ -625,7 +1280,10 @@ def cambiarContexto(Operador1, Operador2, Resultado):
 	global cuadruploActual
 
 	PContexto.push(PMemoria.size() - 1)
-	PRetornos.push([int(Resultado), cuadruploActual])
+	if(Resultado != '-'):
+		PRetornos.push([int(Resultado), cuadruploActual])
+	else:
+		PRetornos.push(['-', cuadruploActual])
 
 	cuadruploActual = int(Operador2)
 
@@ -700,7 +1358,7 @@ def generarContextoMetodo(Operador1, Operador2, Resultado):
 	MapaMemoria[Operador1] = {}
 
 	PMemoria.push(Operador1)
-	
+
 	return 'generarContextoMetodo'
 
 def enviarParametro(Operador1, Operador2, Resultado):
@@ -722,6 +1380,44 @@ def enviarParametro(Operador1, Operador2, Resultado):
 
 	MapaMemoria[contextoNuevo][int(Resultado)] = ValorOriginal
 	return 'enviarParametro'
+
+def verificaArreglo(Operador1, Operador2, Resultado):
+	global PMemoria
+	global PContexto
+	global MapaMemoria
+	global DirConstantes
+	global numCuadruplos
+	contextoActual = PMemoria.at(PContexto.top())
+
+	TipoDireccion1 = revisarDireccion(Operador1)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	Operador1 = int(Operador1)
+
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = 0
+
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = 0
+
+	Operador2 = int(Operador2)
+
+	if(Operador1 < 0 or Operador1 >= Operador2):
+		cuadruploActual = numCuadruplos - 2
+
+	return 'verificaArreglo'
 
 Operaciones = {
 	'MAS': suma,
@@ -749,7 +1445,8 @@ Operaciones = {
 	'GOSUB': cambiarContexto,
 	'ATTR_RET': regresarAtributo,
 	'ERA': generarContextoMetodo,
-	'PARAM': enviarParametro
+	'PARAM': enviarParametro,
+	'VER': verificaArreglo
 }
 
 # A file is asked from the user for the vm to execute
