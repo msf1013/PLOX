@@ -683,14 +683,24 @@ def generarContextoMetodo(Operador1, Operador2, Resultado):
 	Operador1 = Operador1 + str(diferenciadorMetodos)
 
 	while(MapaMemoria.has_key(Operador1)):
-		Operador1 = Operador1[:-1] + str(diferenciadorMetodos)
+		n = diferenciadorMetodos - 1
+		if(n <= 0):
+			x = 1
+		else:
+			x = 0
+		while(n > 0):
+			n = n // 10
+			x = x + 1
+		while(x > 0):
+			Operador1 = str(Operador1)[:-1]
+			x = x - 1
+		Operador1 = Operador1 + str(diferenciadorMetodos)
 		diferenciadorMetodos = diferenciadorMetodos + 1
 
 	MapaMemoria[Operador1] = {}
 
 	PMemoria.push(Operador1)
-
-	cuadruploActual = cuadruploActual + 9
+	
 	return 'generarContextoMetodo'
 
 def enviarParametro(Operador1, Operador2, Resultado):

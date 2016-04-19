@@ -846,6 +846,7 @@ def p_main(p):
 def p_rellenaCuadInicial(p):
     '''rellenaCuadInicial : '''
     global Line
+    print ('Line: ' + str(Line))
     Cuad[0][2] = Line
 
 # Produccion de declaracion de parametros
@@ -1162,15 +1163,10 @@ def p_generaEra(p):
 		PilaLlamadas.push( {'id': MetodoNombre, 'numP': 0} )
 		claseAux = devuelveClaseMetodo(ClaseActual, MetodoNombre)
 
-	# Generar cuadruplos ERA para cada tipo de dato primitivo
-	for tipo in TiposVar:
-		Cuad.append(['ERA', MetodoNombre, tipo, DirClases[claseAux]['metodos'][MetodoNombre]['tam'][tipo] ])
-	
-	# Generar cuadruplos ERA para cada tipo de dato temporal primitivo
-	for tipo in TiposVar:
-		Cuad.append(['ERA', MetodoNombre, str(tipo)+'-temp', DirClases[claseAux]['metodos'][MetodoNombre]['tamTemp'][tipo] ])
+	# Generar cuadruplo ERA para metodo
+		Cuad.append(['ERA', MetodoNombre, '-', '-'])
 
-	Line = Line + 11
+	Line = Line + 1
 	print('generaEra')
 
 # Acciones semanticas para validar una invocacion valida a metodo
