@@ -65,12 +65,12 @@ t_PUNTO			= r'\.'
 t_DOSP     = r'\:'
 
 def t_CTE_STR(t):
-    r'\"(\\.|[^"])*\"'
+    r'\"(\\.|[^"])*\"|\"\"'
     return t
     #return { 'tipo': 'cte_string', 'id': t.value }
 
 def t_CTE_CHAR(t):
-    r"\'(\\.|[^'])\'"
+    r"\'(\\.|[^'])\'|\'\'"
     return t
     #return { 'tipo': 'cte_char', 'id': t.value }
 
