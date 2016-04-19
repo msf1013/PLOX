@@ -950,7 +950,7 @@ def p_cuerpo_func(p):
 	elif (refTipo == 'bool'):
 		Cuad.append(['RETURN', DirsConstMap['bool']['false'], '-', '-'])
 	elif (refTipo == 'char'):
-		Cuad.append(['RETURN', DirsConstMap['char']['0'], '-', '-'])
+		Cuad.append(['RETURN', DirsConstMap['char']['\'0\''], '-', '-'])
 	elif (refTipo == 'string'):
 		Cuad.append(['RETURN', DirsConstMap['string']['""'], '-', '-'])
 	else:
@@ -1432,6 +1432,62 @@ def p_exp_ciclo_2(p):
 	PilaLlamadas.push(actual)
 	print('exp_ciclo')
 
+# Producciones de metodo length para strings
+def p_exp_string_length(p):
+	'''exp 	: LEN PIZQ atom PDER'''
+	global Line
+	global DirsMetodoTemp
+
+	if ( p[3]['tipo'] != 'string' ):
+		print('Semantic error at line {0}, "length" can only be applied to strings, not variables of type {1}.').format(lineNumber, p[3]['tipo'])
+		exit()
+
+	if ( p[3].has_key('dim') ):
+		print('Semantic error at line {0}, "length" can only be applied to strings, not arrays of strings.').format(lineNumber)
+		exit()
+
+	# Se crea cuadruplo de longitud de string
+	Cuad.append(['LEN', p[3]['id'], '-', DirsMetodoTemp['numeral'] ])
+
+	# Se pasa valor de length a expresion
+	p[0] = {'tipo': 'numeral', 'id': DirsMetodoTemp['numeral'] }
+
+	# Se actualiza siguiente direccion de numerales temporales disponibles, y se aumenta el numero de cuadruplo
+	DirsMetodoTemp['numeral'] = DirsMetodoTemp['numeral'] + 1
+	Line = Line + 1
+
+	print('string_length')
+
+# Producciones de metodo charAt para strings
+def p_exp_string_at(p):
+	'''exp 	: CHARAT PIZQ atom COMA exp PDER'''
+	global Line
+	global DirsMetodoTemp
+
+	if ( p[3]['tipo'] != 'string' ):
+		print('Semantic error at line {0}, "charAt" can only be applied to strings, not variables of type {1}.').format(lineNumber, p[3]['tipo'])
+		exit()
+
+	if ( p[3].has_key('dim') ):
+		print('Semantic error at line {0}, "length" can only be applied to strings, not arrays of strings.').format(lineNumber)
+		exit()
+
+	if ( p[5]['tipo'] != 'numeral' ):
+		print('Semantic error at line {0}, "charAt" can only be used with numeral indexes, not variables of type {1}.').format(lineNumber, p[5]['tipo'])
+		exit()
+
+	# Se crea cuadruplo de charAt de string
+	Cuad.append(['CHARAT', p[3]['id'], p[5]['id'], DirsMetodoTemp['char'] ])
+
+	# Se pasa valor de length a expresion
+	p[0] = {'tipo': 'char', 'id': DirsMetodoTemp['char'] }
+
+	# Se actualiza siguiente direccion de chars temporales disponibles, y se aumenta el numero de cuadruplo
+	DirsMetodoTemp['char'] = DirsMetodoTemp['char'] + 1
+	Line = Line + 1
+
+	print('string_at')
+
 # Producciones de expresiones binarias
 def p_exp_binaria(p):	
 	'''exp 	: exp MAS exp
@@ -1851,6 +1907,7 @@ def p_atom_dim(p):
 	global ClaseActual
 	global MetodoActual
 	global Line
+	tipoArr = ''
 	dirBase = -1
 	offset = -1
 	tam = -1
@@ -1867,6 +1924,7 @@ def p_atom_dim(p):
 			if ( DirClases[ClaseActual]['vars'][tipo].has_key( p[4] ) ):
 				dirBase = DirClases[ClaseActual]['vars'][tipo][ p[4] ]
 				tam = DirClases[ClaseActual]['varsTam'][tipo][ p[4] ]
+				tipoArr = tipo
 		offset = p[8]['id']
 	# Arreglo de instancia
 	elif (p[2] == '.'):
@@ -1883,15 +1941,20 @@ def p_atom_dim(p):
 
 					claseObj = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][ p[1] ]['tipo']
 
-					for tipoAux in TiposVar:
-						if ( DirClases[claseObj]['vars'][tipoAux].has_key( p[4] ) ):
-							tam =  DirClases[ claseObj ]['varsTam'][ tipoAux ][ p[4] ]
+					tipoArr = tipo
+
+					tam = DirClases[ claseObj ]['varsTam'][ tipo ][ p[4] ]
+
+					#for tipoAux in TiposVar:
+					#	if ( DirClases[claseObj]['vars'][tipoAux].has_key( p[4] ) ):
+					#		tam =  DirClases[ claseObj ]['varsTam'][ tipoAux ][ p[4] ]
 		# Checar en clase
 		else:
 			for tipo in TiposVar:
 				if ( DirClases[ClaseActual]['vars'][tipo].has_key( p[1] + '.' + p[4] ) ):
 					dirBase = DirClases[ClaseActual]['vars'][tipo][ p[1] + '.' + p[4] ]
 					tam = DirClases[ClaseActual]['varsTam'][tipo][ p[1] + '.' + p[4] ]
+					tipoArr = tipo
 
 		offset = p[8]['id']
 	# Arreglo de contexto
@@ -1907,12 +1970,14 @@ def p_atom_dim(p):
 				if ( DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo].has_key( p[1] ) ):
 					dirBase = DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][ p[1] ]
 					tam = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][ p[1] ]['dim']
+					tipoArr = tipo
 		# Checar en clase
 		else:
 			for tipo in TiposVar:
 				if ( DirClases[ClaseActual]['vars'][tipo].has_key( p[1] ) ):
 					dirBase = DirClases[ClaseActual]['vars'][tipo][ p[1] ]
 					tam = DirClases[ClaseActual]['varsTam'][tipo][ p[1] ]
+					tipoArr = tipo
 		offset = p[5]['id']
 
 	# Validar que offset sea menor o igual a tamanio de arreglo
@@ -1921,7 +1986,7 @@ def p_atom_dim(p):
 	
 	# Obtener direccion real a partir de direccion base y offset
 	Cuad.append(['MAS', ( '|' + str(dirBase) + '|' ), offset, DirsMetodoTemp['numeral'] ])
-	p[0] = {'tipo': 'numeral', 'id': ( '(' + str(DirsMetodoTemp['numeral']) + ')' ) }
+	p[0] = {'tipo': tipoArr, 'id': ( '(' + str(DirsMetodoTemp['numeral']) + ')' ) }
 	DirsMetodoTemp['numeral'] = DirsMetodoTemp['numeral'] + 1
 	Line = Line + 1
 
@@ -2326,20 +2391,16 @@ print('')
 
 print('')
 
-print('sumaArr')
-print(DirClases['Persona']['metodos']['sumaArr']['vars'])
+print('primerLetraApellido')
+print(DirClases['Persona']['metodos']['primerLetraApellido']['vars'])
 print('')
 
-print('suma1')
-print(DirClases['main']['metodos']['suma1']['vars'])
+print('imprime')
+print(DirClases['Persona']['metodos']['imprime']['vars'])
 print('')
 
-print('suma2')
-print(DirClases['main']['metodos']['suma2']['vars'])
-print('')
-
-print('suma')
-print(DirClases['main']['metodos']['suma2']['vars'])
+print('getSalonCompania')
+print(DirClases['Estudiante']['metodos']['getSalonCompania']['vars'])
 print('')
 
 print('main')

@@ -22,7 +22,9 @@ reserved = {
    'output'     : 'OUTPUT',
    '=='         : 'IGUALC',
    '>='         : 'MAYORIGUAL',
-   '<='         : 'MENORIGUAL'
+   '<='         : 'MENORIGUAL',
+   'len'        : 'LEN',
+   'charAt'     : 'CHARAT'
 }
 
 
