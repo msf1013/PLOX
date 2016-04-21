@@ -1416,6 +1416,7 @@ def verificaArreglo(Operador1, Operador2, Resultado):
 
 	if(Operador1 < 0 or Operador1 >= Operador2):
 		cuadruploActual = numCuadruplos - 2
+		print('\nExecution Error: Index out of bounds')
 
 	return 'verificaArreglo'
 
