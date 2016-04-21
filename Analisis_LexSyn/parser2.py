@@ -167,6 +167,10 @@ CuboSemantico['char']['!=']['char'] = 'bool'
 CuboSemantico['char']['='] = {}
 CuboSemantico['char']['=']['char'] = 'char'
 
+CuboSemantico['char']['+'] = {}
+CuboSemantico['char']['+']['char'] = 'string'
+CuboSemantico['char']['+']['string'] = 'string'
+
 # Reglas semanticas para operaciones entre tipos string
 CuboSemantico['string'] = {}
 
@@ -178,6 +182,10 @@ CuboSemantico['string']['!=']['string'] = 'bool'
 
 CuboSemantico['string']['='] = {}
 CuboSemantico['string']['=']['string'] = 'string'
+
+CuboSemantico['string']['+'] = {}
+CuboSemantico['string']['+']['char'] = 'string'
+CuboSemantico['string']['+']['string'] = 'string'
 
 CuboSemantico['without'] = {}
 
@@ -1519,7 +1527,10 @@ def p_exp_binaria(p):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('+') and CuboSemantico[ p[1]['tipo'] ]['+'].has_key( p[3]['tipo'] )):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ]] }
 			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ]] + 1
-			Cuad.append(['MAS', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
+			if ( CuboSemantico[ p[1]['tipo'] ]['+'][ p[3]['tipo'] ] != 'string' ):
+				Cuad.append(['MAS', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
+			else:
+				Cuad.append(['CONCAT', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			Line = Line + 1;
 		else:
 			print('Semantic error at line {0}, incompatible types {1} and {2} with operator \'+\'.').format(lineNumber, p[1]['tipo'], p[3]['tipo'])

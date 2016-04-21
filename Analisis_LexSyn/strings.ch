@@ -59,6 +59,9 @@ class main{
 
 		str2 = f.getSalonCompania();
 
+		output('');
+		output("");
+
 	}
 
 }
