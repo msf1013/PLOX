@@ -35,7 +35,7 @@ class Estudiante under Persona {
 			output(charAt(compania, pos));
 			pos = pos + 1;
 		}
-		return salon;
+		return salon + '*' + "chefe";
 	}
 
 }
@@ -55,7 +55,7 @@ class main{
 		k = this.e;
 		ch2 = k.primerLetraApellido();
 
-		p.imprime(str3);
+		p.imprime('a' + str2);
 
 		str2 = f.getSalonCompania();
 

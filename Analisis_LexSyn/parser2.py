@@ -198,6 +198,9 @@ PSaltos = stack()
 # Pila de llamadas a metodo
 PilaLlamadas = stack()
 
+# Pila de paso de REFERENCIAS
+PilaRef = stack()
+
 # Global que almacena nombre de Clase que actualmente se esta parseando
 ClaseActual = ''
 
@@ -519,6 +522,16 @@ def p_limpiarInvocador(p):
 	global InvocadorTipo
 	Invocador = ''
 	InvocadorTipo = ''
+
+# Accion semantica de sanitizacion
+def p_limpiarInvocadorFunc(p):
+	'''limpiarInvocadorFunc : '''
+	global Invocador
+	global InvocadorTipo
+	global PilaRef
+	Invocador = ''
+	InvocadorTipo = ''
+	PilaRef.pop()
 
 # Produccion para verificar herencia
 def p_herencia(p):
@@ -845,6 +858,7 @@ def p_declararMetodo(p):
 		# la direccion de su primer variable/atributo para cada tipo de dato atomico
 		DirClases[ClaseActual]['metodos'][MetodoActual]['obj'] = {}
 
+
 # Produccion de declaracion de metodo main
 def p_main(p):
 	'''main 	: acceso WITHOUT MAIN rellenaCuadInicial declararMetodo PIZQ PDER cuerpo_func'''
@@ -992,7 +1006,7 @@ def p_estatuto(p):
 					| condicion
 					| escritura
 					| lectura
-					| llamada_func limpiarInvocador PYC
+					| llamada_func limpiarInvocadorFunc PYC
 					| return'''
 	print('estatuto')
 
@@ -1017,6 +1031,7 @@ def p_generaGosub(p):
 	'''generarGosub : '''
 	lineNumber = scanner.lexer.lineno
 	global PilaLlamadas
+	global PilaRef
 	global Line
 	actual = PilaLlamadas.top() # Referencia a metodo que ha sido invocado 
 	clase = ''	# Clase a la cual pertenece el metodo
@@ -1042,6 +1057,16 @@ def p_generaGosub(p):
 	tipo = devuelveMetodo(clase, metodo)['retorno']
 	# Obtener clase a la cual pertenece el metodo
 	claseMet = devuelveClaseMetodo(clase,metodo)
+
+	# Meter referencias de llamadas
+	PilaRefAux = stack()
+
+	while ( not PilaRef.top() == -1):
+		ref = PilaRef.top()
+		Cuad.append(['REF_GO', ref[0], '-', ref[1]])
+		Line = Line + 1
+		PilaRefAux.push([ ref[0], ref[1] ])
+		PilaRef.pop()
 
 	# Si no hay invocador, se pasa la clase actual
 	if (invocador == ''):
@@ -1102,6 +1127,13 @@ def p_generaGosub(p):
 	# ahora es el contexto del metodo quien devuelve los valores (posiblemente alterados)
 	# a la clase actual, o al invocador del metodo
 
+	# Meter referencias de llamadas
+	while ( not PilaRefAux.isEmpty() ):
+		ref = PilaRefAux.top()
+		Cuad.append(['REF_RET', ref[1], '-', ref[0]])
+		Line = Line + 1
+		PilaRefAux.pop()
+
 	# Pasa clase actual
 	if (invocador == ''):
 		for tipoVariable in TiposVar:
@@ -1160,6 +1192,7 @@ def p_generaEra(p):
 	'''generaEra : '''
 	global Line
 	global PilaLlamadas
+	global PilaRef
 	global ClaseActual
 	claseAux = ''
 	# Meter a pila de llamadas, junto con invocador
@@ -1175,6 +1208,10 @@ def p_generaEra(p):
 	Cuad.append(['ERA', MetodoNombre, '-', '-'])
 
 	Line = Line + 1
+
+	# Se agrega fondo falso a Pila de referencias
+	PilaRef.push(-1)
+
 	print('generaEra')
 
 # Acciones semanticas para validar una invocacion valida a metodo
@@ -1265,6 +1302,7 @@ def p_exp_ciclo_1(p):
 	'''exp_ciclo 	: exp'''
 	global PilaLlamadas
 	global Line
+	global PilaRef
 	actual = PilaLlamadas.top()
 	lineNumber = scanner.lexer.lineno
 
@@ -1305,8 +1343,9 @@ def p_exp_ciclo_1(p):
 				nombreVar = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][1]
 				base = devuelveVars(actual['invocadorTipo'], actual['id'])[tipo][nombreVar]
 				for x in range(0, p[1]['dim']):	
-					Cuad.append(['PARAM', p[1]['id'] + x, '-', base + x])
-					Line = Line + 1
+					#Cuad.append(['PARAM', p[1]['id'] + x, '-', base + x])
+					#Line = Line + 1
+					PilaRef.push([p[1]['id'] + x, base + x])
 	else:
 		# Se verifica que el numero de parametros leidos no sea mayor al numero de parametros esperados
 		if(actual['numP'] >= len( devuelveParametros(ClaseActual, actual['id']) )):
@@ -1343,8 +1382,9 @@ def p_exp_ciclo_1(p):
 				nombreVar = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][1]
 				base = devuelveVars(ClaseActual, actual['id'])[tipo][nombreVar]
 				for x in range(0, p[1]['dim']):	
-					Cuad.append(['PARAM', p[1]['id'] + x, '-', base + x])
-					Line = Line + 1
+					#Cuad.append(['PARAM', p[1]['id'] + x, '-', base + x])
+					#Line = Line + 1
+					PilaRef.push([p[1]['id'] + x, base + x])
 	actual['numP'] = actual['numP'] + 1
 	PilaLlamadas.pop()
 	PilaLlamadas.push(actual)
@@ -1355,6 +1395,7 @@ def p_exp_ciclo_2(p):
 	'''exp_ciclo 	: exp_ciclo COMA exp'''
 	lineNumber = scanner.lexer.lineno
 	global PilaLlamadas
+	global PilaRef
 	global Line
 	actual = PilaLlamadas.top()
 
@@ -1395,8 +1436,9 @@ def p_exp_ciclo_2(p):
 				nombreVar = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][1]
 				base = devuelveVars(actual['invocadorTipo'], actual['id'])[tipo][nombreVar]
 				for x in range(0, p[3]['dim']):	
-					Cuad.append(['PARAM', p[3]['id'] + x, '-', base + x])
-					Line = Line + 1
+					#Cuad.append(['PARAM', p[3]['id'] + x, '-', base + x])
+					#Line = Line + 1
+					PilaRef.push([p[3]['id'] + x, base + x])
 	else:
 		# Se verifica que el numero de parametros leidos no sea mayor al numero de parametros esperados
 		if(actual['numP'] >= len(devuelveParametros(ClaseActual, actual['id']))):
@@ -1433,8 +1475,9 @@ def p_exp_ciclo_2(p):
 				nombreVar = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][1]
 				base = devuelveVars(ClaseActual, actual['id'])[tipo][nombreVar]
 				for x in range(0, p[3]['dim']):	
-					Cuad.append(['PARAM', p[3]['id'] + x, '-', base + x])
-					Line = Line + 1
+					#Cuad.append(['PARAM', p[3]['id'] + x, '-', base + x])
+					#Line = Line + 1
+					PilaRef.push([p[3]['id'] + x, base + x])
 	actual['numP'] = actual['numP'] + 1
 	PilaLlamadas.pop()
 	PilaLlamadas.push(actual)
@@ -1710,7 +1753,7 @@ def p_opciones(p):
 			| cte_real
 			| cte_bool
 			| atom limpiarInvocador
-			| llamada_func limpiarInvocador'''
+			| llamada_func limpiarInvocadorFunc'''
 	global ResExp
 	p[0] = p[1]
 	# Se salva el valor de la expresion generada para, posiblemente, ser usada en validacion de parametros de llamada a funcion
