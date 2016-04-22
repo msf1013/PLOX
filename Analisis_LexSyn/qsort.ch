@@ -51,7 +51,7 @@ class main{
 
 		while (i < n) {
 			output("Elemento #"); output(i); output(":\n");
-			input(arr[i]);
+			input(arreglo[i]);
 			i = i + 1; 
 		}
 
@@ -61,7 +61,7 @@ class main{
 
 		i = 0;
 		while (i < n) {
-			output(arr[i]); output("\n");
+			output(arreglo[i]); output("\n");
 			i = i + 1; 
 		}
 

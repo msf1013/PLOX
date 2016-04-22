@@ -343,6 +343,7 @@ def asignacion(Operador1, Operador2, Resultado):
 	global PContexto
 	global MapaMemoria
 	global DirConstantes
+
 	contextoActual = PMemoria.at(PContexto.top())
 
 	TipoDireccion1 = revisarDireccion(Operador1)
@@ -1203,7 +1204,7 @@ def retorno(Operador1, Operador2, Resultado):
 
 		PRetornos.pop()
 
-		if(Cuadruplos[cuadruploActual + 1][0] != "ATTR_RET"):
+		if(Cuadruplos[cuadruploActual + 1][0] != "ATTR_RET" and Cuadruplos[cuadruploActual + 1][0] != "REF_RET"):
 			PContexto.pop()
 			PMemoria.pop()
 
@@ -1273,6 +1274,26 @@ def mandarAtributo(Operador1, Operador2, Resultado):
 	MapaMemoria[contextoNuevo][int(Operador2)] = ValorOriginal
 	return 'mandarAtributo'
 
+def mandarReferencia(Operador1, Operador2, Resultado):
+	global PMemoria
+	global PContexto
+	global MapaMemoria
+	global DirConstantes
+	contextoActual = PMemoria.at(PContexto.top())
+	contextoNuevo = PMemoria.top()
+
+	Operador1 = int(Operador1)
+	
+	if(DirConstantes.has_key(Operador1)):
+		ValorOriginal = DirConstantes[Operador1]
+	elif(MapaMemoria[contextoActual].has_key(Operador1)):
+		ValorOriginal = MapaMemoria[contextoActual][Operador1]
+	else:
+		ValorOriginal = 0
+
+	MapaMemoria[contextoNuevo][int(Resultado)] = ValorOriginal
+	return 'mandarReferencia'
+
 def cambiarContexto(Operador1, Operador2, Resultado):
 	global PMemoria
 	global PContexto
@@ -1294,6 +1315,47 @@ def cambiarContexto(Operador1, Operador2, Resultado):
 	Operaciones[Operacion](Operador1, Operador2, Resultado)
 
 	return 'cambiarContexto'
+
+def regresarReferencia(Operador1, Operador2, Resultado):
+	global PMemoria
+	global PContexto
+	global MapaMemoria
+	global DirConstantes
+	global cuadruploActual
+	contextoActual = PMemoria.top()
+	PContexto.pop()
+	contextoNuevo = PMemoria.at(PContexto.top())
+	PContexto.push(PMemoria.size() - 1)
+	
+	Operacion = Cuadruplos[cuadruploActual][0]
+	Operador1 = Cuadruplos[cuadruploActual][1]
+	Operador2 = Cuadruplos[cuadruploActual][2]
+	Resultado = Cuadruplos[cuadruploActual][3]
+	
+	while(Operacion == 'REF_RET'):
+		Operador1 = int(Operador1)
+
+		if(DirConstantes.has_key(Operador1)):
+			ValorOriginal = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			ValorOriginal = MapaMemoria[contextoActual][Operador1]
+		else:
+			ValorOriginal = 0
+
+		MapaMemoria[contextoNuevo][int(Resultado)] = ValorOriginal
+
+		cuadruploActual = cuadruploActual + 1
+		Operacion = Cuadruplos[cuadruploActual][0]
+		Operador1 = Cuadruplos[cuadruploActual][1]
+		Resultado = Cuadruplos[cuadruploActual][3]
+
+	if(Operacion != 'ATTR_RET'):
+		PContexto.pop()
+		PMemoria.pop()
+
+	cuadruploActual = cuadruploActual - 1
+
+	return 'regresarAtributo'
 
 def regresarAtributo(Operador1, Operador2, Resultado):
 	global PMemoria
@@ -1337,6 +1399,10 @@ def generarContextoMetodo(Operador1, Operador2, Resultado):
 	global PMemoria
 	global cuadruploActual
 	diferenciadorMetodos = 0
+
+	print(MapaMemoria)
+	print(Operador1)
+	print('')
 
 	Operador1 = Operador1 + str(diferenciadorMetodos)
 
@@ -1447,7 +1513,9 @@ Operaciones = {
 	'ATTR_RET': regresarAtributo,
 	'ERA': generarContextoMetodo,
 	'PARAM': enviarParametro,
-	'VER': verificaArreglo
+	'VER': verificaArreglo,
+	'REF_GO': mandarReferencia,
+	'REF_RET': regresarReferencia
 }
 
 # A file is asked from the user for the vm to execute
