@@ -51,16 +51,21 @@ class main{
 		string str1, str2, str3;
 		char ch1, ch2, ch3;
 
-		ch1 = o.primerLetraApellido();
-		k = this.e;
-		ch2 = k.primerLetraApellido();
-
-		p.imprime('a' + str2);
-
-		str2 = f.getSalonCompania();
-
-		output('1' + " hola " + "gg " + '\n');
-		output('1' + " hola " + "gg " + '\n');
+		output('1' + " hola " + '\n' + "gg " + '\n');
+		output('1' + " hola " + '\n' + "gg " + '\n');
+		output(charAt("hola", 0));
+		output('\n');
+		output(charAt("hola", 1));
+		output('\n');
+		output(charAt("hola", 2));
+		output('\n');
+		output(charAt("hola", 3));
+		output('\n');
+		output(charAt("adios", 0));
+		output('\n');
+		output(charAt("adios", 2));
+		output('\n');
+		output(charAt("adios", 4));
 		output('');
 		output("");
 

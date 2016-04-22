@@ -1511,7 +1511,8 @@ def p_exp_string_length(p):
 
 # Producciones de metodo charAt para strings
 def p_exp_string_at(p):
-	'''exp 	: CHARAT PIZQ atom COMA exp PDER'''
+	'''exp 	: CHARAT PIZQ atom COMA exp PDER
+			| CHARAT PIZQ cte_str COMA exp PDER'''
 	global Line
 	global DirsMetodoTemp
 
