@@ -1400,10 +1400,6 @@ def generarContextoMetodo(Operador1, Operador2, Resultado):
 	global cuadruploActual
 	diferenciadorMetodos = 0
 
-	print(MapaMemoria)
-	print(Operador1)
-	print('')
-
 	Operador1 = Operador1 + str(diferenciadorMetodos)
 
 	while(MapaMemoria.has_key(Operador1)):
@@ -1486,6 +1482,80 @@ def verificaArreglo(Operador1, Operador2, Resultado):
 
 	return 'verificaArreglo'
 
+def concatenarStrings(Operador1, Operador2, Resultado):
+	global PMemoria
+	global PContexto
+	global MapaMemoria
+	global DirConstantes
+	contextoActual = PMemoria.at(PContexto.top())
+
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccion2 = revisarDireccion(Operador2)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccion2 != 'Directo'):
+		Operador2 = str(Operador2)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
+	Operador1 = int(Operador1)
+	Operador2 = int(Operador2)
+	Resultado = int(Resultado)
+
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = ''
+
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = ''
+
+	if(TipoDireccion2 != 'Base'):
+		if(TipoDireccion2 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador2)):
+				Operador2 = DirConstantes[Operador2]
+			elif(MapaMemoria[contextoActual].has_key(Operador2)):
+				Operador2 = MapaMemoria[contextoActual][Operador2]
+			else:
+				Operador2 = ''
+
+		if(DirConstantes.has_key(Operador2)):
+			Operador2 = DirConstantes[Operador2]
+		elif(MapaMemoria[contextoActual].has_key(Operador2)):
+			Operador2 = MapaMemoria[contextoActual][Operador2]
+		else:
+			Operador2 = ''
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = ''
+
+	MapaMemoria[contextoActual][Resultado] = str(Operador1) + str(Operador2)
+	return 'concatenarStrings'
+
+def caracterEnPosicion(Operador1, Operador2, Resultado):
+	return 'caracterEnPosicion'
+
+def longitudString(Operador1, Operador2, Resultado):
+	return 'longitudString'
+
 Operaciones = {
 	'MAS': suma,
 	'MENOS': resta,
@@ -1515,7 +1585,10 @@ Operaciones = {
 	'PARAM': enviarParametro,
 	'VER': verificaArreglo,
 	'REF_GO': mandarReferencia,
-	'REF_RET': regresarReferencia
+	'REF_RET': regresarReferencia,
+	'CONCAT': concatenarStrings,
+	'CHARAT': caracterEnPosicion,
+	'LEN': longitudString
 }
 
 # A file is asked from the user for the vm to execute

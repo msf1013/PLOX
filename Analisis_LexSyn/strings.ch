@@ -12,7 +12,7 @@ class Persona {
 
 		while ( i < len(aux) ) {
 			output(charAt(compania, i));
-			output("\n");
+			output("hola" + "\n");
 			output(charAt(aux, i));
 			output("\n");
 			i = i + 1;
@@ -59,6 +59,8 @@ class main{
 
 		str2 = f.getSalonCompania();
 
+		output('1' + " hola " + "gg " + '\n');
+		output('1' + " hola " + "gg " + '\n');
 		output('');
 		output("");
 
