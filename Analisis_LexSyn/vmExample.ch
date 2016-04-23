@@ -56,6 +56,7 @@ class main {
 		fruta.id = fruta.id + a * b;
 		f = (b * 5 - 3 / 1.2) * 5;
 		g = (3 > a) || (4.5 < e) && !(3 == 3);
+		a = 10 % 1;
 		if(g) {
 			output("Verdadero\n");
 		}

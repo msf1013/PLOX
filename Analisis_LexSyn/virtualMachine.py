@@ -335,6 +335,10 @@ def division(Operador1, Operador2, Resultado):
 			else:
 				Resultado = 0
 
+	if(Operador2 == 0):
+		print("\nExecution Error: Division by 0")
+		exit()
+
 	MapaMemoria[contextoActual][Resultado] = Operador1 / Operador2
 	return 'division'
 
@@ -1043,6 +1047,10 @@ def modulo(Operador1, Operador2, Resultado):
 			else:
 				Resultado = 0
 
+	if(Operador2 == 0):
+		print("\nExecution Error: Division by 0")
+		exit()
+
 	MapaMemoria[contextoActual][Resultado] = Operador1 % Operador2
 	return 'modulo'
 
@@ -1747,6 +1755,7 @@ if(os.path.isfile(s)):
 		Resultado = Cuadruplos[cuadruploActual][3]
 		Operaciones[Operacion](Operador1, Operador2, Resultado)
 		cuadruploActual = cuadruploActual + 1
+	print('\nExecution finished')
 	print('')
 	print(MapaMemoria)
 	print('')
