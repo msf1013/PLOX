@@ -428,6 +428,13 @@ def devuelveVars(clase, metodo):
 	else:
 		return devuelveVars(DirClases[clase]['padre'],metodo)
 
+# Metodo que devuelve un booleano indicando si la direccion provista es una direccion de clase
+def esDirClase(dir):
+	if ( DirBaseClase['numeral'] <= dir and dir <= (DirBaseClase['char'] + 2999) ):
+		return True
+	else:
+		return False
+
 #############################################################################
 #							REGLAS DE PRODUCCION							#
 #############################################################################
@@ -1376,6 +1383,10 @@ def p_exp_ciclo_1(p):
 			elif ( p[1]['dim'] != listaTipos[actual['numP']][2] ):
 				print('Semantic error at line {0}, array received as parameter differs in length from formal argument.').format(lineNumber)
 				exit()
+			# Checar que el arreglo no sea atributo de clase
+			elif ( esDirClase( p[1]['id'] ) ):
+				print('Semantic error at line {0}, can\'t receive as parameter an array that is class attribute or belongs to class attribute.').format(lineNumber)
+				exit()
 			# Parametro recibido y el esperado son dimensionados
 			else:
 				tipo = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][0]
@@ -1468,6 +1479,10 @@ def p_exp_ciclo_2(p):
 			# Checar que el parametro recibido y el esperado sean dimensionados y tengan igual tamanio
 			elif ( p[3]['dim'] != listaTipos[actual['numP']][2] ):
 				print('Semantic error at line {0}, array received as parameter differs in length from formal argument.').format(lineNumber)
+				exit()
+			# Checar que el arreglo no sea atributo de clase
+			elif ( esDirClase( p[3]['id'] ) ):
+				print('Semantic error at line {0}, can\'t receive as parameter an array that is class attribute or belongs to class attribute.').format(lineNumber)
 				exit()
 			# Parametro recibido y el esperado son dimensionados
 			else:
