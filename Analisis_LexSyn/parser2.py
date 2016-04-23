@@ -2407,7 +2407,7 @@ def p_error(p):
 	if(p is None):
 		print("Syntax error at line {0} in {1}").format(lineNumber, error)
 	else:
-		print("Syntax error, unexpected '{0}' at line {1} in {2}").format(p.value, lineNumber, error)
+		print("Syntax error, unexpected '{0}' at line {1}").format(p.value, lineNumber)
 	exit()
 
 # The parser is built

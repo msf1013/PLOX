@@ -1205,6 +1205,7 @@ def retorno(Operador1, Operador2, Resultado):
 		PRetornos.pop()
 
 		if(Cuadruplos[cuadruploActual + 1][0] != "ATTR_RET" and Cuadruplos[cuadruploActual + 1][0] != "REF_RET"):
+			del MapaMemoria[contextoActual]
 			PContexto.pop()
 			PMemoria.pop()
 
@@ -1350,6 +1351,7 @@ def regresarReferencia(Operador1, Operador2, Resultado):
 		Resultado = Cuadruplos[cuadruploActual][3]
 
 	if(Operacion != 'ATTR_RET'):
+		del MapaMemoria[contextoActual]
 		PContexto.pop()
 		PMemoria.pop()
 
@@ -1391,6 +1393,8 @@ def regresarAtributo(Operador1, Operador2, Resultado):
 		Operador2 = Cuadruplos[cuadruploActual][2]
 
 	cuadruploActual = cuadruploActual - 1
+
+	del MapaMemoria[contextoActual]
 
 	return 'regresarAtributo'
 
