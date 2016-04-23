@@ -27,7 +27,7 @@ class Estudiante under Persona {
 
 	visible string getSalonCompania() {
 		numeral pos;
-		pos = len(nombres[56 * len(salon)]);
+		pos = len(nombres[len(salon)]);
 
 		while ( pos < len(compania) ) {
 			output(charAt(salon, pos));
@@ -51,6 +51,17 @@ class main{
 		string str1, str2, str3;
 		char ch1, ch2, ch3;
 
+		ch1 = o.primerLetraApellido();
+		k = this.e;
+		ch2 = k.primerLetraApellido();
+
+		p.imprime('a' + str2);
+
+		str2 = f.getSalonCompania();
+
+		str1 = "hola";
+		str2 = "ggggg";
+
 		output('1' + " hola " + '\n' + "gg " + '\n');
 		output('1' + " hola " + '\n' + "gg " + '\n');
 		output(charAt("hola", 0));
@@ -59,13 +70,22 @@ class main{
 		output('\n');
 		output(charAt("hola", 2));
 		output('\n');
-		output(charAt("hola", 3));
+		output(charAt(str1, 3));
 		output('\n');
 		output(charAt("adios", 0));
 		output('\n');
 		output(charAt("adios", 2));
 		output('\n');
 		output(charAt("adios", 4));
+		output('\n');
+		output(len("a"));
+		output('\n');
+		output(len("ab"));
+		output('\n');
+		output(len("abcdefghij"));
+		output('\n');
+		output(len(str2));
+		output('\n');
 		output('');
 		output("");
 

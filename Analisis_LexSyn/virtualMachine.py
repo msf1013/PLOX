@@ -1477,8 +1477,8 @@ def verificaArreglo(Operador1, Operador2, Resultado):
 	Operador2 = int(Operador2)
 
 	if(Operador1 < 0 or Operador1 >= Operador2):
-		cuadruploActual = numCuadruplos - 2
 		print('\nExecution Error: Index out of bounds')
+		exit()
 
 	return 'verificaArreglo'
 
@@ -1545,7 +1545,7 @@ def concatenarStrings(Operador1, Operador2, Resultado):
 			elif(MapaMemoria[contextoActual].has_key(Resultado)):
 				Resultado = MapaMemoria[contextoActual][Resultado]
 			else:
-				Resultado = ''
+				Resultado = 0
 
 	MapaMemoria[contextoActual][Resultado] = str(Operador1) + str(Operador2)
 	return 'concatenarStrings'
@@ -1613,12 +1613,56 @@ def caracterEnPosicion(Operador1, Operador2, Resultado):
 			elif(MapaMemoria[contextoActual].has_key(Resultado)):
 				Resultado = MapaMemoria[contextoActual][Resultado]
 			else:
-				Resultado = ''
+				Resultado = 0
 
-	MapaMemoria[contextoActual][Resultado] = Operador1[Operador2]
+	MapaMemoria[contextoActual][Resultado] = str(Operador1)[Operador2]
 	return 'caracterEnPosicion'
 
 def longitudString(Operador1, Operador2, Resultado):
+	global PMemoria
+	global PContexto
+	global MapaMemoria
+	global DirConstantes
+	contextoActual = PMemoria.at(PContexto.top())
+
+	TipoDireccion1 = revisarDireccion(Operador1)
+	TipoDireccionR = revisarDireccion(Resultado)
+	
+	if(TipoDireccion1 != 'Directo'):
+		Operador1 = str(Operador1)[1:-1]
+
+	if(TipoDireccionR != 'Directo'):
+		Resultado = str(Resultado)[1:-1]
+
+	Operador1 = int(Operador1)
+	Resultado = int(Resultado)
+
+	if(TipoDireccion1 != 'Base'):
+		if(TipoDireccion1 == 'Indirecto'):
+			if(DirConstantes.has_key(Operador1)):
+				Operador1 = DirConstantes[Operador1]
+			elif(MapaMemoria[contextoActual].has_key(Operador1)):
+				Operador1 = MapaMemoria[contextoActual][Operador1]
+			else:
+				Operador1 = ''
+
+		if(DirConstantes.has_key(Operador1)):
+			Operador1 = DirConstantes[Operador1]
+		elif(MapaMemoria[contextoActual].has_key(Operador1)):
+			Operador1 = MapaMemoria[contextoActual][Operador1]
+		else:
+			Operador1 = ''
+
+	if(TipoDireccionR != 'Base'):
+		if(TipoDireccionR == 'Indirecto'):
+			if(DirConstantes.has_key(Resultado)):
+				Resultado = DirConstantes[Resultado]
+			elif(MapaMemoria[contextoActual].has_key(Resultado)):
+				Resultado = MapaMemoria[contextoActual][Resultado]
+			else:
+				Resultado = 0
+
+	MapaMemoria[contextoActual][Resultado] = len(str(Operador1))
 	return 'longitudString'
 
 Operaciones = {

@@ -1485,7 +1485,8 @@ def p_exp_ciclo_2(p):
 
 # Producciones de metodo length para strings
 def p_exp_string_length(p):
-	'''exp 	: LEN PIZQ atom PDER'''
+	'''exp 	: LEN PIZQ atom PDER
+			| LEN PIZQ cte_str PDER'''
 	global Line
 	global DirsMetodoTemp
 
