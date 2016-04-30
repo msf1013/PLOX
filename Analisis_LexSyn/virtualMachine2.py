@@ -1714,7 +1714,7 @@ Operaciones = {
 }
 
 # A file is asked from the user for the vm to execute
-s = raw_input('file: ')
+s = 'codigoArr.txt'
 if(os.path.isfile(s)):
 	with open(s, 'r') as f:
 		lineArr = f.readlines()
