@@ -1385,7 +1385,7 @@ def p_exp_ciclo_1(p):
 				exit()
 			# Checar que el arreglo no sea atributo de clase
 			elif ( esDirClase( p[1]['id'] ) ):
-				print('Semantic error at line {0}, can\'t receive as parameter an array that is class attribute or belongs to class attribute.').format(lineNumber)
+				print('Semantic error at line {0}, can\'t receive as parameter an array that is Class attribute or belongs to Class attribute.').format(lineNumber)
 				exit()
 			# Parametro recibido y el esperado son dimensionados
 			else:
@@ -1482,7 +1482,7 @@ def p_exp_ciclo_2(p):
 				exit()
 			# Checar que el arreglo no sea atributo de clase
 			elif ( esDirClase( p[3]['id'] ) ):
-				print('Semantic error at line {0}, can\'t receive as parameter an array that is class attribute or belongs to class attribute.').format(lineNumber)
+				print('Semantic error at line {0}, can\'t receive as parameter an array that is Class attribute or belongs to Class attribute.').format(lineNumber)
 				exit()
 			# Parametro recibido y el esperado son dimensionados
 			else:
@@ -1537,7 +1537,7 @@ def p_exp_string_at(p):
 		exit()
 
 	if ( p[3].has_key('dim') ):
-		print('Semantic error at line {0}, "length" can only be applied to strings, not arrays of strings.').format(lineNumber)
+		print('Semantic error at line {0}, "charAt" can only be applied to strings, not arrays of strings.').format(lineNumber)
 		exit()
 
 	if ( p[5]['tipo'] != 'numeral' ):
@@ -1913,7 +1913,7 @@ def p_while_2(p):
 	lineNumber = scanner.lexer.lineno
 	# Checar que la expresion devuelta no sea una referencia a arreglo
 	if (ResExp.has_key('dim')):
-		print('Semantic error at line {0}, expected "bool" expression, but got array reference.').format(lineNumber - 1)
+		print('Semantic error at line {0}, expected "bool" expression, but got array reference in while loop condition.').format(lineNumber - 1)
 		exit()
 	# Checar que la expresion devuelta sea de tipo bool
 	if (ResExp['tipo'] != 'bool'):
@@ -1967,7 +1967,7 @@ def p_asignacion(p):
 						dir1 = dir1 + 1
 						dir2 = dir2 + 1
 	else:
-		print('Semantic error at line {0}, incompatible type assignation of type {1} into type {2}.').format(lineNumber - 1, p[4]['tipo'], p[1]['tipo'])
+		print('Semantic error at line {0}, incompatible type assignment of type {1} into type {2}.').format(lineNumber - 1, p[4]['tipo'], p[1]['tipo'])
 		exit()
 	print('asignacion')
 
@@ -2161,7 +2161,7 @@ def p_checarAtributoDim(p):
 					print('Semantic error at line {0}, variable {1} is not an array').format(lineNumber, atributo)
 					exit()
 			else:
-				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 111').format(lineNumber, atributo)
+				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy.').format(lineNumber, atributo)
 				exit()
 		else:
 			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(atributo) ):
@@ -2183,7 +2183,7 @@ def p_checarAtributoDim(p):
 					print('Semantic error at line {0}, variable {1} is not an array').format(lineNumber, atributo)
 					exit()
 			else:
-				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 222').format(lineNumber, atributo)
+				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy.').format(lineNumber, atributo)
 				exit()
 	elif (Invocador == 'this'):
 		if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
@@ -2199,7 +2199,7 @@ def p_checarAtributoDim(p):
 				print('Semantic error at line {0}, variable {1} is not an array').format(lineNumber, atributo)
 				exit()
 		else:
-			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 333').format(lineNumber, atributo)
+			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy.').format(lineNumber, atributo)
 			exit()
 	else:
 
@@ -2238,7 +2238,7 @@ def p_checarAtributoDim(p):
 				print('Semantic error at line {0}, variable {1} is not an array').format(lineNumber, atributo)
 				exit()
 		else:
-			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
+			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy.').format(lineNumber, atributo)
 			exit()
 		InvocadorTipo = claseAux
 	AtributoAtom = atributo
@@ -2268,7 +2268,7 @@ def p_checarAtributo(p):
 			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 				AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
 			else:
-				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 111').format(lineNumber, atributo)
+				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy.').format(lineNumber, atributo)
 				exit()
 		else:
 			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(atributo) ):
@@ -2278,7 +2278,7 @@ def p_checarAtributo(p):
 			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
 				AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
 			else:
-				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 222').format(lineNumber, atributo)
+				print('Semantic error at line {0}, variable {1} not found in Class Hierarchy.').format(lineNumber, atributo)
 				exit()
 	elif (Invocador == 'this'):
 		if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
@@ -2286,7 +2286,7 @@ def p_checarAtributo(p):
 		elif( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 			AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
 		else:
-			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 333').format(lineNumber, atributo)
+			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy.').format(lineNumber, atributo)
 			exit()
 	else:
 
@@ -2317,7 +2317,7 @@ def p_checarAtributo(p):
 				exit()
 			AtributoTipo = valorAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)
 		else:
-			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy. 444').format(lineNumber, atributo)
+			print('Semantic error at line {0}, variable {1} not found in Class Hierarchy.').format(lineNumber, atributo)
 			exit()
 		InvocadorTipo = claseAux
 	AtributoAtom = atributo
@@ -2342,12 +2342,11 @@ def p_if_1(p):
 	global ResExp
 	lineNumber = scanner.lexer.lineno
 	if (ResExp.has_key('dim')):
-		print('Semantic error at line {0}, expected "bool" expression, but got array reference.').format(lineNumber - 1)
+		print('Semantic error at line {0}, expected "bool" expression in if condition, but got array reference.').format(lineNumber - 1)
 		exit()
 	if (ResExp['tipo'] != 'bool'):
 		print('Semantic error at line {0}, expected "bool" expression, but "{1}" expression given in if condition.').format(lineNumber - 1, ResExp['tipo'])
 		exit()
-	#arch.write(str(Line) + '\t' + 'GOTOF' + '\t' + ResExp['id'] + '\t' +  'missing' + '\t' + '-' + '\n')
 	Cuad.append(['GOTOF', ResExp['id'],  'missing', '-'])
 	Line = Line + 1;
 	PSaltos.push(Line - 1)
