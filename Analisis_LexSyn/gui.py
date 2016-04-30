@@ -59,7 +59,7 @@ class PloxStudio(Tkinter.Tk):
      # Accion para abrir un archivo de un directorio
      def browseFileFromDirectory(self):
           # Se obtiene el nombre del archivo
-          self.browsePathText.set(tkFileDialog.askopenfilename())
+          self.browsePathText.set(tkFileDialog.askopenfilename(defaultextension='.ch', filetypes=[('Plox source file','*.ch'), ('All files','*.*')]))
 
           # Se lee el archivo especificado
           fileName = self.browsePathText.get()
@@ -72,7 +72,7 @@ class PloxStudio(Tkinter.Tk):
      # Accion para abrir un archivo de un directorio
      def saveFileIntoDirectory(self):
           # Se obtiene el path del archivo
-          File = tkFileDialog.asksaveasfile(defaultextension = ".ch")
+          File = tkFileDialog.asksaveasfile(defaultextension='.ch', filetypes=[('Plox source file','*.ch'), ('All files','*.*')])
 
           # Se graba en el archivo especificado
           if(File is None):
