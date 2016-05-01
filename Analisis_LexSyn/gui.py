@@ -89,7 +89,10 @@ class PloxStudio(Tkinter.Tk):
           # Se compila archivo
           parser3.parseFile(self.fileName)
 
-          tkMessageBox.showinfo("Compilation messages", "Compilation successful!!")
+          if(parser3.correcto):
+               tkMessageBox.showinfo("Compilation messages", "Compilation successful!!")
+          else:
+               tkMessageBox.showerror("Compilation errors", parser3.error)
 
           print('\n\n\n\n')
 
