@@ -481,7 +481,8 @@ def p_declararClase(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', multiple declaration of Class ' + str(ClaseActual) + '.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	else:
 		# Dar de alta operacion de asignacion para instancias de la nueva Clase
 		CuboSemantico[ClaseActual] = {}
@@ -570,19 +571,22 @@ def p_agregaAncestro(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', Class ' + str(ancestro) + ' not declared and used in inheritance.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	# Validar que el nombre de la nueva Clase no sea atributo de ancestros
 	elif ( checarAtributoAncestros(DirClases[ancestro]['ancestros'], ClaseActual, lineNumber) or DirClases[ancestro]['variables'].has_key(ClaseActual) ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', attribute ' + str(ClaseActual) + ' already declared in Class Hierarchy.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	# Validar que el nombre de la nueva Clase no sea metodo de ancestros
 	elif ( checarMetodoAncestros(DirClases[ancestro]['ancestros'], ClaseActual, lineNumber) or DirClases[ancestro]['metodos'].has_key(ClaseActual) ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', method ' + str(ClaseActual) + ' already declared in Class Hierarchy.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	else:
 		# Copiar informacion de variables de jerarquia de clases
 		for tipo in TiposVar:
@@ -653,13 +657,15 @@ def p_revisarExistenciaClase(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', Class ' + str(tipo) + ' not declared but being instanced.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	# Validar que la clase haya terminado de ser procesada
 	elif (DirClases[tipo]['estatus'] == 'procesando'):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', trying to instantiate Class ' + str(tipo) + ' but its Class definition is incomplete.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	else:
 		# Guardar Clase
 		scanner.ultimoTipo = tipo
@@ -699,25 +705,29 @@ def p_declararVariableDim(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(var) + ' declared but Class ' + var + ' already exists.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	# Validar que la variable no haya sido declarada previamente como atributo en la jerarquia de clases
 	elif( (DirClases[ClaseActual]['variables'].has_key(var) or checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], var, lineNumber)) and MetodoActual == ''):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(var) + ' already declared.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	# Validar que la variable no haya sido declarada previamente como metodo en la jerarquia de clases
 	elif(DirClases[ClaseActual]['metodos'].has_key(var) or checarMetodoAncestros(DirClases[ClaseActual]['ancestros'], var, lineNumber)):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(var) +  ' declared but function ' + str(var) + ' already declared.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	# Validar que la variable no haya sido declarada previamente como variable en el metodo actual
 	elif(MetodoActual != '' and DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(var)):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(var) + 'already declared.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	else:
 		tipo = scanner.ultimoTipo
 
@@ -754,25 +764,29 @@ def p_declararVariable(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(var) +  ' declared but Class ' + str(var) + ' already exists.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	# Validar que la variable no haya sido declarada previamente como atributo en la jerarquia de clases
 	elif( (DirClases[ClaseActual]['variables'].has_key(var) or checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], var, lineNumber)) and MetodoActual == ''):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(var) + ' already declared.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	# Validar que la variable no haya sido declarada previamente como metodo en la jerarquia de clases
 	elif(DirClases[ClaseActual]['metodos'].has_key(var) or checarMetodoAncestros(DirClases[ClaseActual]['ancestros'], var, lineNumber)):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(var) + ' declared but function ' + str(var) + ' already declared.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	# Validar que la variable no haya sido declarada previamente como variable en el metodo actual
 	elif(MetodoActual != '' and DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(var)):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(var) + ' already declared.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	else:
 		tipo = scanner.ultimoTipo
 		# Dar de alta variable de Clase
@@ -880,19 +894,22 @@ def p_declararMetodo(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', method ' + str(MetodoActual) + ' declared but Class ' + str(MetodoActual) + ' already exists.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	# Verificar que metodo no se llame como algun atributo declarado en la jerarquia de clases
 	elif( DirClases[ClaseActual]['variables'].has_key(MetodoActual) or checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], MetodoActual, lineNumber) ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', method ' + str(MetodoActual) + ' declared but variable ' + str(MetodoActual) + ' already declared.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	# Verificar que metodo no se llame como algun metodo declarado en la jerarquia de clases
 	elif(DirClases[ClaseActual]['metodos'].has_key(MetodoActual) or checarMetodoAncestros(DirClases[ClaseActual]['ancestros'], MetodoActual, lineNumber) ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', method ' + str(MetodoActual) + ' already declared.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	else:
 		# Dar de alta metodo en Clase actual
 		DirClases[ClaseActual]['metodos'][MetodoActual] = {}
@@ -1118,7 +1135,8 @@ def p_generaGosub(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', less parameters than expected passed to \'' + str(metodo) + '\' method of Class \'' + str(clase) + '\'.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	
 	# Obtener tipo de retorno de metodo
 	tipo = devuelveMetodo(clase, metodo)['retorno']
@@ -1309,7 +1327,8 @@ def p_checarFuncion(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', method ' + str(func) + ' not found in Class Hierarchy.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Metodo con invocador
 	else:
 		claseAux = ''
@@ -1339,20 +1358,23 @@ def p_checarFuncion(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', method ' + str(func) + ' is hidden'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			MetodoTipo = DirClases[claseAux]['metodos'][func]['retorno']
 		elif ( checarMetodoAncestros(DirClases[claseAux]['ancestros'], func, lineNumber) ):
 			if ( not esVisibleMetodoAncestros(DirClases[claseAux]['ancestros'], func, lineNumber) ):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', method ' + str(func) + ' is hidden'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			MetodoTipo = valorMetodoAncestros(DirClases[claseAux]['ancestros'], func, lineNumber)
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', method ' + str(func) + ' not associated with Object ' + str(Invocador) + '.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 		InvocadorTipo = claseAux
 	MetodoNombre = func			
 
@@ -1378,7 +1400,8 @@ def p_definirInvocador(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', Class instance ' + str(Invocador) + ' not found.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 
 # Produccion de expresiones en parametros de llamada a funcion
 def p_exp_ciclo_1(p):
@@ -1399,7 +1422,8 @@ def p_exp_ciclo_1(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', more parameters given than the ' + str(len(devuelveParametros(actual['invocadorTipo'], actual['id']))) + ' specified for function ' + str(actual['id']) + ' of Class ' + str(actual['invocadorTipo']) + '.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 		else:
 			# Obtener la lista de tipos de los parametros de la funcion
 			listaTipos = copy.deepcopy(devuelveParametros(actual['invocadorTipo'], actual['id']))
@@ -1408,19 +1432,22 @@ def p_exp_ciclo_1(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', parameter #' + str(actual['numP']+1) + ' of type \'' + str(p[1]['tipo']) + '\' given when type \'' + str(listaTipos[actual['numP']][0]) + '\' was expected.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (p[1].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', expected ' + str(listaTipos[actual['numP']][0]) + ' but got array reference.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (not p[1].has_key('dim') and len(listaTipos[actual['numP']]) > 2):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', expected array reference but got ' + str(p[1]['tipo']) + '.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Parametro recibido y el esperado no son dimensionados
 			elif (not p[1].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
 				tipo = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][0]
@@ -1432,7 +1459,8 @@ def p_exp_ciclo_1(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', array received as parameter differs in length from formal argument.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Parametro recibido y el esperado son dimensionados
 			else:
 				tipo = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][0]
@@ -1448,7 +1476,8 @@ def p_exp_ciclo_1(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', more parameters given than the ' + str(len(devuelveParametros(ClaseActual, actual['id']))) + ' specified for function ' + str(actual['id']) + ' of Class ' + str(ClaseActual) + '.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 		else:
 			# Obtener la lista de tipos de los parametros de la funcion
 			listaTipos = copy.deepcopy(devuelveParametros(ClaseActual, actual['id']))
@@ -1457,19 +1486,22 @@ def p_exp_ciclo_1(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', parameter #' + str(actual['numP']+1) + ' of type \'' + str(p[1]['tipo']) + '\' given when type \'' + listaTipos[actual['numP']][0] + '\' was expected.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (p[1].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', expected ' + str(listaTipos[actual['numP']][0]) + ' but got array reference.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (not p[1].has_key('dim') and len(listaTipos[actual['numP']]) > 2):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', expected array reference but got ' + str(p[1]['tipo']) + '.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Parametro recibido y el esperado no son dimensionados
 			elif (not p[1].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
 				tipo = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][0]
@@ -1481,13 +1513,15 @@ def p_exp_ciclo_1(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', array received as parameter differs in length from formal argument.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Checar que el arreglo no sea atributo de clase
 			elif ( esDirClase( p[1]['id'] ) ):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', can\'t receive as parameter an array that is class attribute or belongs to class attribute.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Parametro recibido y el esperado son dimensionados
 			else:
 				tipo = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][0]
@@ -1521,7 +1555,8 @@ def p_exp_ciclo_2(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', more parameters given than the ' + str(len(devuelveParametros(actual['invocadorTipo'], actual['id']))) + ' specified for function ' + actual['id'] + ' of Class ' + actual['invocadorTipo'] + '.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 		else:
 			# Obtener la lista de tipos de los parametros de la funcion
 			listaTipos = copy.deepcopy(devuelveParametros(actual['invocadorTipo'], actual['id']))
@@ -1530,19 +1565,22 @@ def p_exp_ciclo_2(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', parameter #' + str(actual['numP']+1) + ' of type \'' + str(p[1]['tipo']) + '\' given when type \'' + str(listaTipos[actual['numP']][0]) + '\' was expected.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (p[3].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', expected ' + str(listaTipos[actual['numP']][0]) + ' but got array reference.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (not p[3].has_key('dim') and len(listaTipos[actual['numP']]) > 2):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', expected array reference but got ' + p[3]['tipo'] + '.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Parametro recibido y el esperado no son dimensionados
 			elif (not p[3].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
 				tipo = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][0]
@@ -1554,7 +1592,8 @@ def p_exp_ciclo_2(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', array received as parameter differs in length from formal argument.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Parametro recibido y el esperado son dimensionados
 			else:
 				tipo = devuelveParametros(actual['invocadorTipo'], actual['id'])[actual['numP']][0]
@@ -1570,7 +1609,8 @@ def p_exp_ciclo_2(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', more parameters given than the ' + str(len(devuelveParametros(ClaseActual, actual['id']))) + ' specified for function ' + str(actual['id']) + ' of Class ' + str(ClaseActual) + '.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 		else:
 			# Obtener la lista de tipos de los parametros de la funcion
 			listaTipos = copy.deepcopy(devuelveParametros(ClaseActual, actual['id']))
@@ -1579,19 +1619,22 @@ def p_exp_ciclo_2(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', parameter #' + str(actual['numP']+1) + ' of type \'' + str(p[1]['tipo']) + '\' given when type \'' + str(listaTipos[actual['numP']][0]) + '\' was expected.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (p[3].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', expected ' + listaTipos[actual['numP']][0] + ' but got array reference.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Checar que el parametro recibido y el esperado coincidan en dimension
 			elif (not p[3].has_key('dim') and len(listaTipos[actual['numP']]) > 2):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', expected array reference but got ' + str(p[3]['tipo']) + '.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Parametro recibido y el esperado no son dimensionados
 			elif (not p[3].has_key('dim') and len(listaTipos[actual['numP']]) == 2):
 				tipo = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][0]
@@ -1603,13 +1646,15 @@ def p_exp_ciclo_2(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', array received as parameter differs in length from formal argument.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Checar que el arreglo no sea atributo de clase
 			elif ( esDirClase( p[3]['id'] ) ):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', can\'t receive as parameter an array that is class attribute or belongs to class attribute.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			# Parametro recibido y el esperado son dimensionados
 			else:
 				tipo = devuelveParametros(ClaseActual, actual['id'])[actual['numP']][0]
@@ -1638,13 +1683,15 @@ def p_exp_string_length(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', "length" can only be applied to strings, not variables of type ' +  str(p[3]['tipo']) + '.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 
 	if ( p[3].has_key('dim') ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', "length" can only be applied to strings, not arrays of strings.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 
 	# Se crea cuadruplo de longitud de string
 	Cuad.append(['LEN', p[3]['id'], '-', DirsMetodoTemp['numeral'] ])
@@ -1672,19 +1719,22 @@ def p_exp_string_at(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', "charAt" can only be applied to strings, not variables of type ' + str(p[3]['tipo']) + '.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 
 	if ( p[3].has_key('dim') ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', "charAt" can only be applied to strings, not arrays of strings.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 
 	if ( p[5]['tipo'] != 'numeral' ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', "charAt" can only be used with numeral indexes, not variables of type ' + str(p[5]['tipo']) + '.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 
 	# Se crea cuadruplo de charAt de string
 	Cuad.append(['CHARAT', p[3]['id'], p[5]['id'], DirsMetodoTemp['char'] ])
@@ -1726,7 +1776,8 @@ def p_exp_binaria(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', can\'t perform operations over array references'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 
 	# Generacion de suma
 	if (p[2] == '+'):
@@ -1743,7 +1794,8 @@ def p_exp_binaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'+\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Generacion de resta
 	elif (p[2] == '-'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('-') and CuboSemantico[ p[1]['tipo'] ]['-'].has_key( p[3]['tipo'] )):
@@ -1755,7 +1807,8 @@ def p_exp_binaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'-\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Generacion de multiplicacion
 	elif (p[2] == '*'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('*') and CuboSemantico[ p[1]['tipo'] ]['*'].has_key( p[3]['tipo'] )):
@@ -1767,7 +1820,8 @@ def p_exp_binaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'*\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Generacion de division
 	elif (p[2] == '/'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('/') and CuboSemantico[ p[1]['tipo'] ]['/'].has_key( p[3]['tipo'] )):
@@ -1779,7 +1833,8 @@ def p_exp_binaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'/\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Generacion de modulo
 	elif (p[2] == '%'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('%') and CuboSemantico[ p[1]['tipo'] ]['%'].has_key( p[3]['tipo'] )):
@@ -1791,7 +1846,8 @@ def p_exp_binaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'%\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Generacion de comparacion de igualdad
 	elif (p[2] == '=='):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('==') and CuboSemantico[ p[1]['tipo'] ]['=='].has_key( p[3]['tipo'] )):
@@ -1803,7 +1859,8 @@ def p_exp_binaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'==\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Generacion de comparacion de diferencia
 	elif (p[2] == '!='):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('!=') and CuboSemantico[ p[1]['tipo'] ]['!='].has_key( p[3]['tipo'] )):
@@ -1815,7 +1872,8 @@ def p_exp_binaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'!=\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Generacion de mayor que
 	elif (p[2] == '>'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('>') and CuboSemantico[ p[1]['tipo'] ]['>'].has_key( p[3]['tipo'] )):
@@ -1827,7 +1885,8 @@ def p_exp_binaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'>\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Generacion de mayor o igual que
 	elif (p[2] == '>='):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('>=') and CuboSemantico[ p[1]['tipo'] ]['>='].has_key( p[3]['tipo'] )):
@@ -1839,7 +1898,8 @@ def p_exp_binaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'>=\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Generacion de menor que
 	elif (p[2] == '<'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('<') and CuboSemantico[ p[1]['tipo'] ]['<'].has_key( p[3]['tipo'] )):
@@ -1851,7 +1911,8 @@ def p_exp_binaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'<\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Generacion de menor o igual que
 	elif (p[2] == '<='):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('<=') and CuboSemantico[ p[1]['tipo'] ]['<='].has_key( p[3]['tipo'] )):
@@ -1863,7 +1924,8 @@ def p_exp_binaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'<=\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Generacion de OR
 	elif (p[2] == '||'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('||') and CuboSemantico[ p[1]['tipo'] ]['||'].has_key( p[3]['tipo'] )):
@@ -1875,7 +1937,8 @@ def p_exp_binaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'||\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Generacion de AND
 	elif (p[2] == '&&'):
 		if (CuboSemantico[ p[1]['tipo'] ].has_key('&&') and CuboSemantico[ p[1]['tipo'] ]['&&'].has_key( p[3]['tipo'] )):
@@ -1887,7 +1950,8 @@ def p_exp_binaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'&&\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Se salva el valor de la expresion generada para, posiblemente, ser usada en validacion de parametros de llamada a funcion
 	ResExp = p[0]
 	print('exp_binaria')
@@ -1909,7 +1973,8 @@ def p_exp_unaria(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', can\'t perform operations over array references'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 
 	# Genercion de NOT
 	if (p[1] == '!'):
@@ -1923,7 +1988,8 @@ def p_exp_unaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible type ' + str(p[2]['tipo']) + ' with preceding operator \'!\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Genercion de negacion aritmetica
 	elif (p[1] == '-'):
 		if (CuboSemantico[ p[2]['tipo'] ].has_key('-') and CuboSemantico[ p[2]['tipo'] ]['-'].has_key('-')):
@@ -1935,7 +2001,8 @@ def p_exp_unaria(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible type ' + str(p[2]['tipo']) + ' with preceding operator \'-\'.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	# Genercion de parentesis alrededor de expresion
 	elif (p[1] == '('):
 		p[0] = p[2]
@@ -2051,14 +2118,16 @@ def p_return_exp(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', can\'t return array reference'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 
 	# Verificar que el tipo de la expresion coincida con el tipo de retorno del metodo
 	if (p[2]['tipo'] != DirClases[ClaseActual]['metodos'][MetodoActual]['retorno'] ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber - 1) + ', expected "' + str(DirClases[ClaseActual]['metodos'][MetodoActual]['retorno']) + '" return, but got "' + str(p[2]['tipo']) + '" expression.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	Cuad.append(['RETURN', p[2]['id'],  '-', '-'])
 	Line = Line + 1
 	print('return')
@@ -2079,7 +2148,8 @@ def p_return_null(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber - 1) + ', expected "' + str(DirClases[ClaseActual]['metodos'][MetodoActual]['retorno']) + '" return expression, but got "without" return.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	Cuad.append(['RETURN', '-',  '-', '-'])
 	Line = Line + 1
 	print('return')
@@ -2113,13 +2183,15 @@ def p_while_2(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber - 1) + ', expected "bool" expression, but got array reference.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	# Checar que la expresion devuelta sea de tipo bool
 	if (ResExp['tipo'] != 'bool'):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber - 1) + ', expected "bool" expression, but "' + str(ResExp['tipo']) + '" expression given in while loop condition.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	Cuad.append(['GOTOF', ResExp['id'],  'missing', '-'])
 	Line = Line + 1;
 	# Meter a la pila de saltos la posicion pendiente del goto en falso
@@ -2152,7 +2224,8 @@ def p_asignacion(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', can\'t perform assignments over array references'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 
 	# Verificar compatibilidad de tipos en la asignacion
 	if (CuboSemantico[ p[1]['tipo'] ].has_key('=') and CuboSemantico[ p[1]['tipo'] ]['='].has_key( p[4]['tipo'] )):
@@ -2176,7 +2249,8 @@ def p_asignacion(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber - 1) + ', incompatible type assignation of type ' + str(p[4]['tipo']) + ' into type ' + str(p[1]['tipo']) + '.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	print('asignacion')
 
 def p_atom_dim(p):
@@ -2202,7 +2276,8 @@ def p_atom_dim(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', array index must be a numeral expression.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 
 		for tipo in TiposVar:
 			if ( DirClases[ClaseActual]['vars'][tipo].has_key( p[4] ) ):
@@ -2217,7 +2292,8 @@ def p_atom_dim(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', array index must be a numeral expression.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 
 		# Checar en metodo
 		if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key( p[1] ) ):
@@ -2250,7 +2326,8 @@ def p_atom_dim(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', array index must be a numeral expression.'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 
 		# Checar en metodo
 		if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key( p[1] ) ):
@@ -2375,7 +2452,8 @@ def p_checarAtributoDim(p):
 					if(correcto):
 						error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 						correcto = False
-					#parser.restart()
+					raise SyntaxError
+					parser.restart()
 			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 				if ( checarAtributoAncestrosDim(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 					AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
@@ -2383,12 +2461,14 @@ def p_checarAtributoDim(p):
 					if(correcto):
 						error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 						correcto = False
-					#parser.restart()
+					raise SyntaxError
+					parser.restart()
 			else:
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy. 111'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 		else:
 			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(atributo) ):
 				if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][atributo].has_key('dim') ):
@@ -2397,7 +2477,8 @@ def p_checarAtributoDim(p):
 					if(correcto):
 						error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 						correcto = False
-					#parser.restart()
+					raise SyntaxError
+					parser.restart()
 			elif ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
 				if ( DirClases[ClaseActual]['variables'][atributo].has_key('dim') ):
 					AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
@@ -2405,7 +2486,8 @@ def p_checarAtributoDim(p):
 					if(correcto):
 						error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 						correcto = False
-					#parser.restart()
+					raise SyntaxError
+					parser.restart()
 			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
 				if ( checarAtributoAncestrosDim(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 					AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
@@ -2413,12 +2495,14 @@ def p_checarAtributoDim(p):
 					if(correcto):
 						error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 						correcto = False
-					#parser.restart()
+					raise SyntaxError
+					parser.restart()
 			else:
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy. 222'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 	elif (Invocador == 'this'):
 		if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
 			if ( DirClases[ClaseActual]['variables'][atributo].has_key('dim') ):
@@ -2427,7 +2511,8 @@ def p_checarAtributoDim(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 		elif( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 			if ( checarAtributoAncestrosDim(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 				AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
@@ -2435,12 +2520,14 @@ def p_checarAtributoDim(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy. 333'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	else:
 
 		claseAux = ''
@@ -2464,32 +2551,37 @@ def p_checarAtributoDim(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is hidden.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			if ( DirClases[claseAux]['variables'][atributo].has_key('dim') ):
 				AtributoTipo = DirClases[claseAux]['variables'][atributo]['tipo']
 			else:
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 		elif ( checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
 			if ( not esVisibleAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is hidden.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			if ( checarAtributoAncestrosDim(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
 				AtributoTipo = valorAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)
 			else:
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy. 444'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 		InvocadorTipo = claseAux
 	AtributoAtom = atributo
 
@@ -2524,7 +2616,8 @@ def p_checarAtributo(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy. 111'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 		else:
 			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(atributo) ):
 				AtributoTipo = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][atributo]['tipo']
@@ -2536,7 +2629,8 @@ def p_checarAtributo(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy. 222'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 	elif (Invocador == 'this'):
 		if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
 			AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
@@ -2546,7 +2640,8 @@ def p_checarAtributo(p):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy. 333'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 	else:
 
 		claseAux = ''
@@ -2570,20 +2665,23 @@ def p_checarAtributo(p):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is hidden.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			AtributoTipo = DirClases[claseAux]['variables'][atributo]['tipo']
 		elif ( checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
 			if ( not esVisibleAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is hidden.'
 					correcto = False
-				#parser.restart()
+				raise SyntaxError
+				parser.restart()
 			AtributoTipo = valorAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy. 444'
 				correcto = False
-			#parser.restart()
+			raise SyntaxError
+			parser.restart()
 		InvocadorTipo = claseAux
 	AtributoAtom = atributo
 
@@ -2613,12 +2711,14 @@ def p_if_1(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber - 1) + ', expected "bool" expression, but got array reference.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	if (ResExp['tipo'] != 'bool'):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber - 1) + ', expected "bool" expression, but "' + str(ResExp['tipo']) + '" expression given in if condition.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	#arch.write(str(Line) + '\t' + 'GOTOF' + '\t' + ResExp['id'] + '\t' +  'missing' + '\t' + '-' + '\n')
 	Cuad.append(['GOTOF', ResExp['id'],  'missing', '-'])
 	Line = Line + 1;
@@ -2680,7 +2780,8 @@ def p_escritura(p):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', can\'t print array references.'
 			correcto = False
-		#parser.restart()
+		raise SyntaxError
+		parser.restart()
 	#arch.write(str(Line) + '\t' + 'OUTPUT' + '\t' + '-' + '\t' +  '-' + '\t' + p[3]['id'] + '\n')
 	Cuad.append(['OUTPUT','-', '-', p[3]['id']])
 	Line = Line + 1;
@@ -2716,9 +2817,8 @@ parser = yacc.yacc()
 # A file is asked from the user from input to parse
 def parseFile(fileName):
 	global parser
-	global correcto
-
-	correcto = True
+	
+	initialize()
 
 	# The parser is built
 	s = fileName
@@ -2740,7 +2840,6 @@ def parseFile(fileName):
 	arch2.write(str(len(Cuad)) + '\n')
 	for i in range(0, len(Cuad)):
 		arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + str(Cuad[i][1]) + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')
-	initialize()
 
 # Metodo para inicializar atributos
 def initialize():
@@ -2771,9 +2870,11 @@ def initialize():
      global DirsConst
      global DirsConstMap
      global parser
+     global correcto
 
      parser = yacc.yacc()
      scanner.lexer.lineno = 1
+     correcto = True
      
      # Tabla semantica de clases a utilizar
      DirClases = {}
