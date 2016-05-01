@@ -58,6 +58,7 @@ PContexto.push(0)
 PMemoria.push('main')
 
 cuadruploActual = 0
+numCuadruplos = 0
 
 def revisarDireccion(Direccion):
 	if(str(Direccion)[0] == '|'):
@@ -1713,54 +1714,76 @@ Operaciones = {
 	'LEN': longitudString
 }
 
-# A file is asked from the user for the vm to execute
-s = 'codigoArr.txt'
-if(os.path.isfile(s)):
-	with open(s, 'r') as f:
-		lineArr = f.readlines()
-		numConstantesEnteras = int(lineArr[0])
-		for i in range(1, numConstantesEnteras + 1):
-			DirConstantes[ int(lineArr[i][:-1].split('\t')[1]) ] = int(lineArr[i][:-1].split('\t')[0])
-		numConstantesReales = int(lineArr[numConstantesEnteras + 1])
-		for i in range(numConstantesEnteras + 2, numConstantesEnteras + numConstantesReales + 2):
-			DirConstantes[ int(lineArr[i][:-1].split('\t')[1]) ] = float(lineArr[i][:-1].split('\t')[0])
-		actual = numConstantesEnteras + numConstantesReales + 2
-		numConstantesString = int(lineArr[actual])
-		for i in range(actual + 1, actual + numConstantesString + 1):
-			DirConstantes[ int(lineArr[i][:-1].split('\t')[1]) ] = lineArr[i][:-1].split('\t')[0][1:-1]
-		actual = actual + numConstantesString + 1
-		numConstantesBool = int(lineArr[actual])
-		for i in range(actual + 1, actual + numConstantesBool + 1):
-			if(lineArr[i][:-1].split('\t')[0] == 'true'):
-				DirConstantes[ int(lineArr[i][:-1].split('\t')[1]) ] = True
-			else:
-				DirConstantes[ int(lineArr[i][:-1].split('\t')[1]) ] = False
-		actual = actual + numConstantesBool + 1
-		numConstantesChar = int(lineArr[actual])
-		for i in range(actual + 1, actual + numConstantesChar + 1):
-			DirConstantes[ int(lineArr[i][:-1].split('\t')[1]) ] = lineArr[i][:-1].split('\t')[0][1:-1]
-		actual = actual + numConstantesChar + 1
-		numCuadruplos = int(lineArr[actual])
-		for i in range(actual + 1, actual + numCuadruplos + 1):
-			line = lineArr[i][:-1].split('\t')
-			Cuadruplos.append([line[1], line[2], line[3], line[4]])
-	
+def execute():
+	global DirConstantes
+	global numCuadruplos
+	global cuadruploActual
+	global Cuadruplos
+	global MapaMemoria
+
+	MapaMemoria = { 'main': {} }
+	DirConstantes = {}
+	Cuadruplos = []
+
+	PContexto = stack()
+	PMemoria = stack()
+	PRetornos = stack()
+	PContexto.push(0)
+	PMemoria.push('main')
+
 	cuadruploActual = 0
-	#print(DirConstantes)
-	while(cuadruploActual != numCuadruplos):
-		#print(cuadruploActual)
-		#print(MapaMemoria)
-		Operacion = Cuadruplos[cuadruploActual][0]
-		Operador1 = Cuadruplos[cuadruploActual][1]
-		Operador2 = Cuadruplos[cuadruploActual][2]
-		Resultado = Cuadruplos[cuadruploActual][3]
-		Operaciones[Operacion](Operador1, Operador2, Resultado)
-		cuadruploActual = cuadruploActual + 1
-	print('\nExecution finished')
-	print('')
-	print(MapaMemoria)
-	print('')
-	print(DirConstantes)
-else:
-	print("Couldn't open file specified")
+	numCuadruplos = 0
+
+	# A file is asked from the user for the vm to execute
+	s = 'codigoArr.txt'
+	if(os.path.isfile(s)):
+		with open(s, 'r') as f:
+			lineArr = f.readlines()
+			print(Cuadruplos)
+			numConstantesEnteras = int(lineArr[0])
+			for i in range(1, numConstantesEnteras + 1):
+				DirConstantes[ int(lineArr[i][:-1].split('\t')[1]) ] = int(lineArr[i][:-1].split('\t')[0])
+			numConstantesReales = int(lineArr[numConstantesEnteras + 1])
+			for i in range(numConstantesEnteras + 2, numConstantesEnteras + numConstantesReales + 2):
+				DirConstantes[ int(lineArr[i][:-1].split('\t')[1]) ] = float(lineArr[i][:-1].split('\t')[0])
+			actual = numConstantesEnteras + numConstantesReales + 2
+			numConstantesString = int(lineArr[actual])
+			for i in range(actual + 1, actual + numConstantesString + 1):
+				DirConstantes[ int(lineArr[i][:-1].split('\t')[1]) ] = lineArr[i][:-1].split('\t')[0][1:-1]
+			actual = actual + numConstantesString + 1
+			numConstantesBool = int(lineArr[actual])
+			for i in range(actual + 1, actual + numConstantesBool + 1):
+				if(lineArr[i][:-1].split('\t')[0] == 'true'):
+					DirConstantes[ int(lineArr[i][:-1].split('\t')[1]) ] = True
+				else:
+					DirConstantes[ int(lineArr[i][:-1].split('\t')[1]) ] = False
+			actual = actual + numConstantesBool + 1
+			numConstantesChar = int(lineArr[actual])
+			for i in range(actual + 1, actual + numConstantesChar + 1):
+				DirConstantes[ int(lineArr[i][:-1].split('\t')[1]) ] = lineArr[i][:-1].split('\t')[0][1:-1]
+			actual = actual + numConstantesChar + 1
+			numCuadruplos = int(lineArr[actual])
+			for i in range(actual + 1, actual + numCuadruplos + 1):
+				line = lineArr[i][:-1].split('\t')
+				Cuadruplos.append([line[1], line[2], line[3], line[4]])
+		
+		cuadruploActual = 0
+		#print(DirConstantes)
+		while(cuadruploActual != numCuadruplos):
+			#print(cuadruploActual)
+			#print(MapaMemoria)
+			Operacion = Cuadruplos[cuadruploActual][0]
+			Operador1 = Cuadruplos[cuadruploActual][1]
+			Operador2 = Cuadruplos[cuadruploActual][2]
+			Resultado = Cuadruplos[cuadruploActual][3]
+			Operaciones[Operacion](Operador1, Operador2, Resultado)
+			cuadruploActual = cuadruploActual + 1
+		print('\nExecution finished')
+		print('')
+		print(MapaMemoria)
+		print('')
+		print(DirConstantes)
+		f.close()
+	else:
+		print("Couldn't open file specified")
 
