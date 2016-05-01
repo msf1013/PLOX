@@ -86,12 +86,15 @@ class PloxStudio(Tkinter.Tk):
 
      # Accion para compilar un archivo de un directorio
      def compileFile(self):
-          # Se compila archivo
-          parser3.parseFile(self.fileName)
+          try:
+               # Se compila archivo
+               parser3.parseFile(self.fileName)
 
-          if(parser3.correcto):
-               tkMessageBox.showinfo("Compilation messages", "Compilation successful!!")
-          else:
+               if(parser3.correcto):
+                    tkMessageBox.showinfo("Compilation messages", "Compilation successful!!")
+               else:
+                    tkMessageBox.showerror("Compilation errors", parser3.error)
+          except:
                tkMessageBox.showerror("Compilation errors", parser3.error)
 
           print('\n\n\n\n')
