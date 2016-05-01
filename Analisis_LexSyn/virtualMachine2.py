@@ -60,6 +60,9 @@ PMemoria.push('main')
 cuadruploActual = 0
 numCuadruplos = 0
 
+# Global que almacena el error de ejecucion correspondiente
+error = ''
+
 def revisarDireccion(Direccion):
 	if(str(Direccion)[0] == '|'):
 		return 'Base'
@@ -277,6 +280,7 @@ def division(Operador1, Operador2, Resultado):
 	global PContexto
 	global MapaMemoria
 	global DirConstantes
+	global error
 	contextoActual = PMemoria.at(PContexto.top())
 
 	TipoDireccion1 = revisarDireccion(Operador1)
@@ -338,8 +342,8 @@ def division(Operador1, Operador2, Resultado):
 				Resultado = 0
 
 	if(Operador2 == 0):
-		print("\nExecution Error: Division by 0")
-		exit()
+		error = "Execution Error: Division by 0"
+		raise KeyboardInterrupt
 
 	MapaMemoria[contextoActual][Resultado] = Operador1 / Operador2
 	return 'division'
@@ -989,6 +993,7 @@ def modulo(Operador1, Operador2, Resultado):
 	global PContexto
 	global MapaMemoria
 	global DirConstantes
+	global error
 	contextoActual = PMemoria.at(PContexto.top())
 
 	TipoDireccion1 = revisarDireccion(Operador1)
@@ -1050,8 +1055,8 @@ def modulo(Operador1, Operador2, Resultado):
 				Resultado = 0
 
 	if(Operador2 == 0):
-		print("\nExecution Error: Division by 0")
-		exit()
+		error = "Execution Error: Division by 0"
+		raise KeyboardInterrupt
 
 	MapaMemoria[contextoActual][Resultado] = Operador1 % Operador2
 	return 'modulo'
@@ -1274,7 +1279,7 @@ def mandarAtributo(Operador1, Operador2, Resultado):
 	contextoNuevo = PMemoria.top()
 
 	Operador1 = int(Operador1)
-	
+
 	if(DirConstantes.has_key(Operador1)):
 		ValorOriginal = DirConstantes[Operador1]
 	elif(MapaMemoria[contextoActual].has_key(Operador1)):
@@ -1463,6 +1468,7 @@ def verificaArreglo(Operador1, Operador2, Resultado):
 	global MapaMemoria
 	global DirConstantes
 	global numCuadruplos
+	global error
 	contextoActual = PMemoria.at(PContexto.top())
 
 	TipoDireccion1 = revisarDireccion(Operador1)
@@ -1491,8 +1497,9 @@ def verificaArreglo(Operador1, Operador2, Resultado):
 	Operador2 = int(Operador2)
 
 	if(Operador1 < 0 or Operador1 >= Operador2):
-		print('\nExecution Error: Index out of bounds')
-		exit()
+		print(str(Operador1) + ' ' + str(Operador2))
+		error = 'Execution Error: Index out of bounds'
+		raise KeyboardInterrupt
 
 	return 'verificaArreglo'
 
@@ -1720,6 +1727,10 @@ def execute():
 	global cuadruploActual
 	global Cuadruplos
 	global MapaMemoria
+	global error
+	global PContexto
+	global PMemoria
+	global PRetornos
 
 	MapaMemoria = { 'main': {} }
 	DirConstantes = {}
@@ -1731,6 +1742,8 @@ def execute():
 	PContexto.push(0)
 	PMemoria.push('main')
 
+	error = ''
+
 	cuadruploActual = 0
 	numCuadruplos = 0
 
@@ -1740,6 +1753,7 @@ def execute():
 		with open(s, 'r') as f:
 			lineArr = f.readlines()
 			print(Cuadruplos)
+			print(MapaMemoria)
 			numConstantesEnteras = int(lineArr[0])
 			for i in range(1, numConstantesEnteras + 1):
 				DirConstantes[ int(lineArr[i][:-1].split('\t')[1]) ] = int(lineArr[i][:-1].split('\t')[0])

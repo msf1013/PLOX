@@ -102,9 +102,12 @@ class PloxStudio(Tkinter.Tk):
      # Accion para ejecutar un archivo de un directorio
      def executeFile(self):
           tkMessageBox.showinfo("Execution messages", "Executing in console.")
-          
-          # Se ejecuta archivo
-          virtualMachine2.execute()
+
+          try:
+               # Se ejecuta archivo
+               virtualMachine2.execute()
+          except:
+               tkMessageBox.showerror("Execution errors", virtualMachine2.error)
 
           print('\n\n\n\n')
 

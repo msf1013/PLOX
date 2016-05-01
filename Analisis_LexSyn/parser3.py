@@ -132,7 +132,7 @@ CuboSemantico['real']['>=']['numeral'] = 'bool'
 CuboSemantico['real']['>=']['real'] = 'bool'
 
 CuboSemantico['real']['='] = {}
-CuboSemantico['real']['=']['numeral'] = 'numeral'
+CuboSemantico['real']['=']['numeral'] = 'real'
 CuboSemantico['real']['=']['real'] = 'real'
 
 # Reglas semanticas para operaciones entre tipos bool
