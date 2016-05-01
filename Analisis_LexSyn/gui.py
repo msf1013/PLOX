@@ -4,6 +4,7 @@ import tkFont
 import os.path
 import copy
 import parser3
+import tkMessageBox
 
 class PloxStudio(Tkinter.Tk):
      # Constructor que mantiene un tracking del contenedor padre
@@ -62,9 +63,9 @@ class PloxStudio(Tkinter.Tk):
           self.browsePathText.set(tkFileDialog.askopenfilename(defaultextension='.ch', filetypes=[('Plox source file','*.ch'), ('All files','*.*')]))
 
           # Se lee el archivo especificado
-          fileName = self.browsePathText.get()
-          if(os.path.isfile(fileName)):
-                  f = open(fileName, 'r')
+          self.fileName = self.browsePathText.get()
+          if(os.path.isfile(self.fileName)):
+                  f = open(self.fileName, 'r')
                   fileText = f.read()
                   self.input.delete(1.0, 'end')
                   self.input.insert('end', fileText)
@@ -87,10 +88,18 @@ class PloxStudio(Tkinter.Tk):
           # Se compila archivo
           parser3.parseFile(self.fileName)
 
+          tkMessageBox.showinfo("Compilation messages", "Compilation successful!!")
+
+          print('\n\n\n\n')
+
      # Accion para ejecutar un archivo de un directorio
      def executeFile(self):
+          tkMessageBox.showinfo("Execution messages", "Executing in console.")
+          
           # Se ejecuta archivo
           import virtualMachine2
+
+          print('\n\n\n\n')
 
 # Main que se ejecuta cuando se corre el programa
 if __name__ == "__main__":

@@ -2447,3 +2447,139 @@ def parseFile(fileName):
 	arch2.write(str(len(Cuad)) + '\n')
 	for i in range(0, len(Cuad)):
 		arch2.write(str(i) + '\t' + str(Cuad[i][0]) + '\t' + str(Cuad[i][1]) + '\t' + str(Cuad[i][2]) + '\t' + str(Cuad[i][3]) + '\n')
+	del parser
+	initialize()
+
+# Metodo para inicializar atributos
+def initialize():
+     global DirClases
+     global PSaltos
+     global PilaLlamadas
+     global PilaRef
+     global ClaseActual
+     global MetodoActual
+     global Invocador
+     global InvocadorTipo
+     global AtributoAtom
+     global AtributoTipo
+     global MetodoNombre
+     global MetodoTipo
+     global Cuad
+     global Line
+     global ResExp
+     global Falsos
+     global Mark
+     global TiposVar
+     global DirBaseClase
+     global DirBaseMetodo
+     global DirBaseMetodoTemp
+     global DirsClase
+     global DirsMetodo
+     global DirsMetodoTemp
+     global DirsConst
+     global DirsConstMap
+     
+     # Tabla semantica de clases a utilizar
+     DirClases = {}
+
+     # Pila de saltos
+     PSaltos = stack()
+
+     # Pila de llamadas a metodo
+     PilaLlamadas = stack()
+
+     # Pila de paso de REFERENCIAS
+     PilaRef = stack()
+
+     # Global que almacena nombre de Clase que actualmente se esta parseando
+     ClaseActual = ''
+
+     # Global que almacena nombre de Metodo que actualmente se esta parseando
+     MetodoActual = ''
+
+     # Global que almacena nombre de Invocador de atributo o metodo
+     Invocador = ''
+
+     # Global que almacena Clase de Invocador de atributo o metodo
+     InvocadorTipo = ''
+
+     # Global que almacena nombre de atributo invocado
+     AtributoAtom = ''
+
+     # Global que almacena Clase/tipo de atributo invocado
+     AtributoTipo = ''
+
+     # Global que almacena nombre de Metodo invocado
+     MetodoNombre = ''
+
+     # Global que almacena tipo de retorno de Metodo invocado
+     MetodoTipo = ''
+
+     # Arreglo de cuadruplos
+     Cuad = [['GOTO', '-', '-', '-']]
+     Line = 1 # Linea del siguiente cuadruplo, inicia en 1 porque el cuadruplo 0 es GOTO main
+
+     # Dictionario global usado para capturar la ultima expresion evaluada,
+     # para poder realizar validaciones de tipo en IFs y WHILEs
+     ResExp = {}
+
+     # Arreglo para almacenar posiciones del codigo intermedio pendientes de rellenar,
+     # para implementacion de IFs
+     Falsos = []
+
+     # Numero de cuadruplo final de un bloque de IF
+     Mark = 0
+
+     # Arreglo que almacena tipos de dato primitivos
+     TiposVar = ['numeral', 'real', 'string', 'bool', 'char']
+
+     # Diccionarios que almacenan las direcciones base para cada tipo en:
+     DirBaseClase = {}		# Clase
+     DirBaseMetodo = {}		# Metodo
+     DirBaseMetodoTemp = {}	# Temporales de metodo
+
+     DirBaseClase['numeral'] = 1001
+     DirBaseClase['real'] = 4001
+     DirBaseClase['string'] = 7001
+     DirBaseClase['bool'] = 10001
+     DirBaseClase['char'] = 13001
+
+     DirBaseMetodo['numeral'] = 16001
+     DirBaseMetodo['real'] = 19001
+     DirBaseMetodo['string'] = 22001
+     DirBaseMetodo['bool'] = 25001
+     DirBaseMetodo['char'] = 28001
+
+     DirBaseMetodoTemp['numeral'] = 31001
+     DirBaseMetodoTemp['real'] = 36001
+     DirBaseMetodoTemp['string'] = 41001
+     DirBaseMetodoTemp['bool'] = 46001
+     DirBaseMetodoTemp['char'] = 51001
+
+     # Diccionarios que almacenan la siguiente direccion disponible para:
+     DirsClase = {}			# Clase
+     DirsMetodo = {}			# Metodo
+     DirsMetodoTemp = {}		# Temporales de metodo
+     DirsConst = {}			# Constantes
+
+     DirsConst['numeral'] 	= 56002
+     DirsConst['real'] 		= 61002
+     DirsConst['string'] 	= 66002
+     DirsConst['bool'] 		= 71002
+     DirsConst['char'] 		= 76002
+
+     # Diccionario a manera de mapa para identificar a las constantes encontradas
+     DirsConstMap = {}
+
+     DirsConstMap['numeral'] = {}
+     DirsConstMap['real'] = {}
+     DirsConstMap['string'] = {}
+     DirsConstMap['bool'] = {}
+     DirsConstMap['char'] = {}
+
+     # Inicializacion de constantes basicas
+     DirsConstMap['numeral']['0'] 	= 56001
+     DirsConstMap['real']['0'] 		= 61001
+     DirsConstMap['string']['""']	= 66001
+     DirsConstMap['bool']['false'] 	= 71001
+     DirsConstMap['char']['\'0\''] 	= 76001
