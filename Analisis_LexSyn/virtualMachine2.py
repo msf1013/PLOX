@@ -950,10 +950,14 @@ def mayorQue(Operador1, Operador2, Resultado):
 	# Se obtiene el contexto actual
 	contextoActual = PMemoria.at(PContexto.top())
 	
+	# Se revisa que tipo de direcciones representan las direcciones de los
+	# operadores y la direccion del resultado
 	TipoDireccion1 = revisarDireccion(Operador1)
 	TipoDireccion2 = revisarDireccion(Operador2)
 	TipoDireccionR = revisarDireccion(Resultado)
 	
+	# Se obtiene el valor numerico de las direcciones (eliminando '||' y '()'
+	# al principio y al final de la direccion)
 	if(TipoDireccion1 != 'Directo'):
 		Operador1 = str(Operador1)[1:-1]
 
@@ -963,16 +967,25 @@ def mayorQue(Operador1, Operador2, Resultado):
 	if(TipoDireccionR != 'Directo'):
 		Resultado = str(Resultado)[1:-1]
 
+	# Se parsea el valor de las direcciones a valores enteros
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
 	Resultado = int(Resultado)
 
+	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion1 != 'Base'):
+		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion1 == 'Indirecto'):
+			# Se revisa en el directorio de constantes si ahi se encuentra la
+			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador1)):
 				Operador1 = DirConstantes[Operador1]
+			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
+			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador1)):
 				Operador1 = MapaMemoria[contextoActual][Operador1]
+			# Si no se encontro el valor de la nueva direccion, se obtiene
+			# entonces el valor default que es 0
 			else:
 				Operador1 = 0
 
