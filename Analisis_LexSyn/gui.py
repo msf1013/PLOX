@@ -44,7 +44,7 @@ class PloxStudio(Tkinter.Tk):
           self.browseFile.grid(row = 0, column = 2, sticky = 'W')
 
           # Se crea un textfield para input
-          self.input = Tkinter.Text(self, width = 130, height = 20, highlightbackground = '#F6F6F6', highlightthickness = 2, bg = '#1E1E1E', fg = '#F6F6F6')
+          self.input = Tkinter.Text(self, width = 130, height = 28, highlightbackground = '#F6F6F6', highlightthickness = 2, bg = '#1E1E1E', fg = '#F6F6F6', insertbackground = '#F6F6F6')
           self.input.grid(row = 1, column = 0, padx = 25, pady = (10,10), columnspan = 3)
 
           # Se crea browser para guardar archivo
@@ -97,7 +97,7 @@ class PloxStudio(Tkinter.Tk):
           except:
                tkMessageBox.showerror("Compilation errors", parser3.error)
 
-          print('\n\n\n\n')
+          print('\n\n')
 
      # Accion para ejecutar un archivo de un directorio
      def executeFile(self):

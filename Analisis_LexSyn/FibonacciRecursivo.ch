@@ -13,7 +13,7 @@ class main {
 		output("Introduce indice hasta el cual se calculara fibonacci -> ");
 		input(n);
 
-		n = fibo(fibo(n));
+		n = fibo(n);
 
 		output(n);
 		output('\n');

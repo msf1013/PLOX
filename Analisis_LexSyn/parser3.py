@@ -352,7 +352,6 @@ def esTipoBasico(tipo):
 def checarAtributoAncestros(ancestros, var, lineNumber):
 	listaAn = ancestros.items()
 	for item in listaAn:
-		print(item[1])
 		if (item[1]['variables'].has_key(var)):
 			return True
 	return False
@@ -452,7 +451,6 @@ def p_programa(p):
 def p_ciclo_clase(p):
 	'''ciclo_clase 	: clase
 					| ciclo_clase clase'''
-	print('ciclo_clase')	
 
 # Produccion de declaracion de clase
 def p_clase(p):
@@ -463,7 +461,6 @@ def p_clase(p):
 	global ClaseActual
 	# Se indica que el parsing de la clase se ha completado
 	DirClases[ClaseActual]['estatus'] = 'completa'
-	print('clase')
 
 # Acciones semanticas de declaracion de clase
 def p_declararClase(p):
@@ -553,7 +550,6 @@ def p_limpiarInvocadorFunc(p):
 def p_herencia(p):
 	'''herencia : empty
 				| UNDER ID agregaAncestro'''
-	print('herencia')
 
 # Acciones semanticas para representacion de herencia de Clase
 def p_agregaAncestro(p):
@@ -614,13 +610,11 @@ def p_agregaAncestro(p):
 def p_ciclo_vars(p):
 	'''ciclo_vars 	: acceso vars
 					| ciclo_vars acceso vars'''
-	print('ciclo_vars')
 
 # Produccion de ciclo de declaracion de metodos
 def p_ciclo_func(p):
 	'''ciclo_func 	: func
 					| ciclo_func func'''
-	print('ciclo_func')
 
 # Produccion de ciclo de declaracion de clase MAIN
 def p_clase_main(p):
@@ -628,18 +622,15 @@ def p_clase_main(p):
 					| CLASS MAIN declararClase LLIZQ ciclo_vars main LLDER
 					| CLASS MAIN declararClase LLIZQ ciclo_func main LLDER
 					| CLASS MAIN declararClase LLIZQ main LLDER'''
-	print('clase_main')
 
 # Produccion auxiliar para declaracion de variables
 def p_vars(p):
 	'''vars : var_op PYC'''
-	print('vars')
 
 # Produccion de ciclo de declaracion de variables
 def p_var_op(p):
 	'''var_op 	: tipo ciclo_tipo
 				| ID revisarExistenciaClase DOSP ciclo_id'''
-	print('var_op')
 
 # Acciones semanticas de validacion de declaracion de instancia de Clase
 def p_revisarExistenciaClase(p):
@@ -676,13 +667,11 @@ def p_ciclo_tipo(p):
 					| ID COIZQ cte_numeral CODER declararVariableDim
 					| ciclo_tipo COMA ID declararVariable
 					| ciclo_tipo COMA ID COIZQ cte_numeral CODER declararVariableDim'''
-	print('ciclo_tipo')
 
 # Produccion de ciclo de declaracion de objetos
 def p_ciclo_id(p):
 	'''ciclo_id 	: ID declararVariable
 					| ciclo_id COMA ID declararVariable'''
-	print('ciclo_id')
 
 # Acciones semanticas de declaracion de variables dimensionadas
 def p_declararVariableDim(p):
@@ -858,20 +847,17 @@ def p_tipo(p):
 				| BOOL
 				| CHAR
 				| STRING'''
-	print('tipo')
 
 # Produccion de tipos de acceso
 def p_acceso(p):
 	'''acceso 	: HIDDEN
 				| VISIBLE'''
-	print('acceso')
 
 # Produccion de declaracion de metodo
 def p_func(p):
 	'''func 	: acceso tipo ID declararMetodo params cuerpo_func
 				| acceso WITHOUT ID declararMetodo params cuerpo_func'''
 	initDirsMetodoTemp()
-	print('func')
 
 # Acciones semanticas para declaracion de metodo
 def p_declararMetodo(p):
@@ -941,20 +927,17 @@ def p_declararMetodo(p):
 # Produccion de declaracion de metodo main
 def p_main(p):
 	'''main 	: acceso WITHOUT MAIN rellenaCuadInicial declararMetodo PIZQ PDER cuerpo_func'''
-	print('main')
 
 # Accion semantica para indicar cuadruplo en que comienza metodo main
 def p_rellenaCuadInicial(p):
     '''rellenaCuadInicial : '''
     global Line
-    print ('Line: ' + str(Line))
     Cuad[0][2] = Line
 
 # Produccion de declaracion de parametros
 def p_params(p):
 	'''params 	: PIZQ params_ciclo PDER
 				| PIZQ PDER'''
-	print('params')
 
 # Produccion de ciclo de parametros
 def p_params_ciclo(p):
@@ -962,7 +945,6 @@ def p_params_ciclo(p):
 						| tipo ID COIZQ cte_numeral CODER meterParametrosDim
 						| params_ciclo COMA tipo ID meterParametros
 						| params_ciclo COMA tipo ID COIZQ cte_numeral CODER meterParametrosDim'''
-	print('params_ciclo')
 
 # Acciones semanticas para declarar parametros dimensionados
 def p_meterParametrosDim(p):
@@ -984,9 +966,6 @@ def p_meterParametrosDim(p):
 
 	# Actualizar direcciones disponibles a partir de tamanio de arreglo
 	DirsMetodo[tipo] = DirsMetodo[tipo] + tam
-
-	print('+++DIRNUMERAL')
-	print(DirsMetodo['numeral'])
 
 # Acciones semanticas para declarar parametros
 def p_meterParametros(p):
@@ -1057,7 +1036,6 @@ def p_cuerpo_func(p):
 	else:
 		Cuad.append(['RETURN', '-',  '-', '-'])
 	Line = Line + 1
-	print('cuerpo_func')
 
 # Accion semantica para indicar numero de cuadruplo en que inica el metodo
 def p_inicioFunc(p):
@@ -1070,13 +1048,11 @@ def p_inicioFunc(p):
 def p_ciclo_vars_func(p):
 	'''ciclo_vars_func 	: vars
 						| ciclo_vars_func vars'''
-	print('ciclo_vars_func')
 
 # Produccion de ciclo de estatutos
 def p_ciclo_estatuto(p):
 	'''ciclo_estatuto 	: estatuto
 						| ciclo_estatuto estatuto'''
-	print('ciclo_estatuto')
 
 # Produccion de opciones de estatutos
 def p_estatuto(p):
@@ -1087,7 +1063,6 @@ def p_estatuto(p):
 					| lectura
 					| llamada_func limpiarInvocadorFunc PYC
 					| return'''
-	print('estatuto')
 
 # Produccion de llamada a metodo con invocador
 def p_llamada_func_invocador(p):
@@ -1095,7 +1070,6 @@ def p_llamada_func_invocador(p):
 					| ID PUNTO definirInvocador ID checarFuncion generaEra PIZQ limpiarInvocador PDER generarGosub'''
 	pos = len(p) - 1
 	p[0] = { 'tipo': p[pos]['tipo'], 'id': p[pos]['id'], 'esFuncion' : True }
-	print('llamada_func')
 
 # Produccion de llamada a metodo en cotexto de clase actual
 def p_llamada_func_sin_invocador(p):
@@ -1103,7 +1077,6 @@ def p_llamada_func_sin_invocador(p):
 					| ID checarFuncion generaEra PIZQ limpiarInvocador PDER generarGosub'''
 	pos = len(p) - 1
 	p[0] = { 'tipo': p[pos]['tipo'], 'id': p[pos]['id'], 'esFuncion' : True }
-	print('llamada_func')
 
 # Acciones semanticas para cuadruplo GOSUB al momento de entrar el contexto de un nuevo metodo invocado
 def p_generaGosub(p):
@@ -1222,9 +1195,6 @@ def p_generaGosub(p):
 	# Pasa clase actual
 	if (invocador == ''):
 		for tipoVariable in TiposVar:
-			print('====')
-			print(claseMet)
-			print(DirClases[claseMet])
 			if (DirClases[claseMet]['tam'][tipoVariable] > 0):
 				total = DirClases[claseMet]['tam'][tipoVariable]
 				dirClase = DirBaseClase[tipoVariable]
@@ -1237,10 +1207,6 @@ def p_generaGosub(p):
 		# Busca instancia en metodo
 		if ( DirClases[ClaseActual]['metodos'][MetodoActual]['obj'].has_key(invocador) ):
 			for tipoVariable in TiposVar:
-				print('---')
-				print(invocador)
-				print()
-				print(DirClases[ClaseActual]['metodos'][MetodoActual]['obj'])
 				dirInstancia = DirClases[ClaseActual]['metodos'][MetodoActual]['obj'][invocador][tipoVariable]
 				if (dirInicio != -1):
 					total = DirClases[claseMet]['tam'][tipoVariable]
@@ -1270,7 +1236,6 @@ def p_generaGosub(p):
 		p[0] = {'tipo' : tipo, 'id' : id}
 	
 	PilaLlamadas.pop()
-	print('generarGosub')
 
 # Acciones semanticas para cuadruplo ERA al momento de crear el contexto de un nuevo metodo invocado
 def p_generaEra(p):
@@ -1296,8 +1261,6 @@ def p_generaEra(p):
 
 	# Se agrega fondo falso a Pila de referencias
 	PilaRef.push(-1)
-
-	print('generaEra')
 
 # Acciones semanticas para validar una invocacion valida a metodo
 def p_checarFuncion(p):
@@ -1534,7 +1497,6 @@ def p_exp_ciclo_1(p):
 	actual['numP'] = actual['numP'] + 1
 	PilaLlamadas.pop()
 	PilaLlamadas.push(actual)
-	print('exp_ciclo')
 
 # Produccion de expresiones en parametros de llamada a funcion
 def p_exp_ciclo_2(p):
@@ -1667,7 +1629,6 @@ def p_exp_ciclo_2(p):
 	actual['numP'] = actual['numP'] + 1
 	PilaLlamadas.pop()
 	PilaLlamadas.push(actual)
-	print('exp_ciclo')
 
 # Producciones de metodo length para strings
 def p_exp_string_length(p):
@@ -1702,8 +1663,6 @@ def p_exp_string_length(p):
 	# Se actualiza siguiente direccion de numerales temporales disponibles, y se aumenta el numero de cuadruplo
 	DirsMetodoTemp['numeral'] = DirsMetodoTemp['numeral'] + 1
 	Line = Line + 1
-
-	print('string_length')
 
 # Producciones de metodo charAt para strings
 def p_exp_string_at(p):
@@ -1746,8 +1705,6 @@ def p_exp_string_at(p):
 	DirsMetodoTemp['char'] = DirsMetodoTemp['char'] + 1
 	Line = Line + 1
 
-	print('string_at')
-
 # Producciones de expresiones binarias
 def p_exp_binaria(p):	
 	'''exp 	: exp MAS exp
@@ -1789,7 +1746,7 @@ def p_exp_binaria(p):
 				Cuad.append(['MAS', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
 			else:
 				Cuad.append(['CONCAT', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'+\'.'
@@ -1802,7 +1759,7 @@ def p_exp_binaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['-'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['-'][ p[3]['tipo'] ]] }
 			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['-'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['-'][ p[3]['tipo'] ]] + 1
 			Cuad.append(['MENOS', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'-\'.'
@@ -1815,7 +1772,7 @@ def p_exp_binaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['*'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['*'][ p[3]['tipo'] ]] }
 			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['*'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['*'][ p[3]['tipo'] ]] + 1
 			Cuad.append(['POR', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'*\'.'
@@ -1828,7 +1785,7 @@ def p_exp_binaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['/'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['/'][ p[3]['tipo'] ]] }
 			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['/'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['/'][ p[3]['tipo'] ]] + 1
 			Cuad.append(['ENTRE', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'/\'.'
@@ -1841,7 +1798,7 @@ def p_exp_binaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['%'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['%'][ p[3]['tipo'] ]] }
 			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['%'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['%'][ p[3]['tipo'] ]] + 1
 			Cuad.append(['MOD', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'%\'.'
@@ -1854,7 +1811,7 @@ def p_exp_binaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['=='][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['=='][ p[3]['tipo'] ]] }
 			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['=='][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['=='][ p[3]['tipo'] ]] + 1
 			Cuad.append(['IGUALC', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'==\'.'
@@ -1867,7 +1824,7 @@ def p_exp_binaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['!='][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['!='][ p[3]['tipo'] ]] }
 			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['!='][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['!='][ p[3]['tipo'] ]] + 1
 			Cuad.append(['NOTIGUAL', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'!=\'.'
@@ -1880,7 +1837,7 @@ def p_exp_binaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['>'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['>'][ p[3]['tipo'] ]] }
 			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['>'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['>'][ p[3]['tipo'] ]] + 1
 			Cuad.append(['MAYOR', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'>\'.'
@@ -1893,7 +1850,7 @@ def p_exp_binaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['>='][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['>='][ p[3]['tipo'] ]] }
 			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['>='][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['>='][ p[3]['tipo'] ]] + 1
 			Cuad.append(['MAYORIGUAL', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'>=\'.'
@@ -1906,7 +1863,7 @@ def p_exp_binaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['<'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['<'][ p[3]['tipo'] ]] }
 			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['<'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['<'][ p[3]['tipo'] ]] + 1
 			Cuad.append(['MENOR', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'<\'.'
@@ -1919,7 +1876,7 @@ def p_exp_binaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['<='][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['<='][ p[3]['tipo'] ]] }
 			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['<='][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['<='][ p[3]['tipo'] ]] + 1
 			Cuad.append(['MENORIGUAL', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'<=\'.'
@@ -1932,7 +1889,7 @@ def p_exp_binaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['||'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['||'][ p[3]['tipo'] ]] }
 			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['||'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['||'][ p[3]['tipo'] ]] + 1
 			Cuad.append(['OR', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'||\'.'
@@ -1945,7 +1902,7 @@ def p_exp_binaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[1]['tipo'] ]['&&'][ p[3]['tipo'] ], 'id': DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['&&'][ p[3]['tipo'] ]] }
 			DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['&&'][ p[3]['tipo'] ]] = DirsMetodoTemp[CuboSemantico[ p[1]['tipo'] ]['&&'][ p[3]['tipo'] ]] + 1
 			Cuad.append(['AND', (p[1]['invocador']+'.'+p[1]['id'] if p[1].has_key('invocador') else p[1]['id']), (p[3]['invocador']+'.'+p[3]['id'] if p[3].has_key('invocador') else p[3]['id']), p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible types ' + str(p[1]['tipo']) + ' and ' + str(p[3]['tipo']) + ' with operator \'&&\'.'
@@ -1954,7 +1911,6 @@ def p_exp_binaria(p):
 			
 	# Se salva el valor de la expresion generada para, posiblemente, ser usada en validacion de parametros de llamada a funcion
 	ResExp = p[0]
-	print('exp_binaria')
 
 # Producciones de expresiones unarias
 def p_exp_unaria(p):	
@@ -1983,7 +1939,7 @@ def p_exp_unaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[2]['tipo'] ]['!'], 'id': DirsMetodoTemp[CuboSemantico[ p[2]['tipo'] ]['!']] }
 			DirsMetodoTemp[CuboSemantico[ p[2]['tipo'] ]['!']] = DirsMetodoTemp[CuboSemantico[ p[2]['tipo'] ]['!']] + 1
 			Cuad.append(['NOT', (p[2]['invocador']+'.'+p[2]['id'] if p[2].has_key('invocador') else p[2]['id']), '-', p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible type ' + str(p[2]['tipo']) + ' with preceding operator \'!\'.'
@@ -1996,7 +1952,7 @@ def p_exp_unaria(p):
 			p[0] = {'tipo': CuboSemantico[ p[2]['tipo'] ]['-']['-'], 'id': DirsMetodoTemp[CuboSemantico[ p[2]['tipo'] ]['-']['-']] }
 			DirsMetodoTemp[CuboSemantico[ p[2]['tipo'] ]['-']['-']] = DirsMetodoTemp[CuboSemantico[ p[2]['tipo'] ]['-']['-']] + 1
 			Cuad.append(['UMENOS', (p[2]['invocador']+'.'+p[2]['id'] if p[2].has_key('invocador') else p[2]['id']), '-', p[0]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', incompatible type ' + str(p[2]['tipo']) + ' with preceding operator \'-\'.'
@@ -2009,7 +1965,6 @@ def p_exp_unaria(p):
 		
 	# Se salva el valor de la expresion generada para, posiblemente, ser usada en validacion de parametros de llamada a funcion
 	ResExp = p[0]
-	print('exp_unaria')
 
 # Produccion de expresion a partir de valores dados
 def p_opciones(p):
@@ -2024,12 +1979,10 @@ def p_opciones(p):
 	p[0] = p[1]
 	# Se salva el valor de la expresion generada para, posiblemente, ser usada en validacion de parametros de llamada a funcion
 	ResExp = p[0]
-	print('opciones')
 
 # Produccion de constante string
 def p_cte_str(p):
 	'''cte_str : CTE_STR'''
-	print('cte_str')
 	global DirsConst
 	global DirsConstMap
 	# Verificar si la constante ya se ha leido
@@ -2044,7 +1997,6 @@ def p_cte_str(p):
 # Produccion de constante char
 def p_cte_char(p):
 	'''cte_char : CTE_CHAR'''
-	print('cte_char')
 	global DirsConst
 	global DirsConstMap
 	# Verificar si la constante ya se ha leido
@@ -2059,7 +2011,6 @@ def p_cte_char(p):
 # Produccion de constante numeral
 def p_cte_numeral(p):
 	'''cte_numeral : CTE_NUMERAL'''
-	print('cte_numeral')
 	global DirsConst
 	global DirsConstMap
 	# Verificar si la constante ya se ha leido
@@ -2074,7 +2025,6 @@ def p_cte_numeral(p):
 # Produccion de constante real
 def p_cte_real(p):
 	'''cte_real : CTE_REAL'''
-	print('cte_real')
 	global DirsConst
 	global DirsConstMap
 	# Verificar si la constante ya se ha leido
@@ -2090,7 +2040,6 @@ def p_cte_real(p):
 def p_cte_bool(p):
 	'''cte_bool 	: TRUE
 					| FALSE'''
-	print('cte_bool')
 	global DirsConst
 	global DirsConstMap
 	# Verificar si la constante ya se ha leido
@@ -2130,7 +2079,6 @@ def p_return_exp(p):
 		
 	Cuad.append(['RETURN', p[2]['id'],  '-', '-'])
 	Line = Line + 1
-	print('return')
 
 # Produccion de return con valor de retorno
 def p_return_null(p):
@@ -2152,13 +2100,11 @@ def p_return_null(p):
 		
 	Cuad.append(['RETURN', '-',  '-', '-'])
 	Line = Line + 1
-	print('return')
 
 # Produccion de ciclo while
 def p_while(p):
 	'''while 	: WHILE while_1 PIZQ exp PDER while_2 LLIZQ ciclo_estatuto while_3 LLDER
 				| WHILE while_1 PIZQ exp PDER while_2 LLIZQ while_3 LLDER'''
-	print('while')
 
 # Accion semantica de while
 def p_while_1(p):
@@ -2193,7 +2139,7 @@ def p_while_2(p):
 		raise KeyboardInterrupt
 		
 	Cuad.append(['GOTOF', ResExp['id'],  'missing', '-'])
-	Line = Line + 1;
+	Line = Line + 1
 	# Meter a la pila de saltos la posicion pendiente del goto en falso
 	PSaltos.push(Line - 1)
 
@@ -2206,7 +2152,7 @@ def p_while_3(p):
 	retorno = PSaltos.pop()
 	# Se genera salto hacia el inicio del while
 	Cuad.append(['GOTO', '-', retorno, '-'])
-	Line = Line + 1;
+	Line = Line + 1
 	# Se rellena el cuadruplo pendiente del goto en falso
 	Cuad[falso][2] = Line
 
@@ -2232,7 +2178,7 @@ def p_asignacion(p):
 		# Asignacion de tipos primitivos
 		if (p[1]['tipo'] in TiposVar): 
 			Cuad.append(['IGUAL', p[4]['id'], '-', p[1]['id']])
-			Line = Line + 1;
+			Line = Line + 1
 		# Asignacion de tipos objetos
 		else:
 			claseAux = p[1]['tipo']
@@ -2242,7 +2188,7 @@ def p_asignacion(p):
 					dir2 = p[1]['dirs'][tipo]
 					for pos in range(0, DirClases[claseAux]['tam'][tipo]):
 						Cuad.append(['IGUAL', dir1, '-', dir2])
-						Line = Line + 1;
+						Line = Line + 1
 						dir1 = dir1 + 1
 						dir2 = dir2 + 1
 	else:
@@ -2250,8 +2196,6 @@ def p_asignacion(p):
 			error = 'Semantic error at line ' + str(lineNumber - 1) + ', incompatible type assignment of type ' + str(p[4]['tipo']) + ' into type ' + str(p[1]['tipo']) + '.'
 			correcto = False
 		raise KeyboardInterrupt
-		
-	print('asignacion')
 
 def p_atom_dim(p):
 	'''atom : ID PUNTO definirInvocador ID checarAtributoDim COIZQ limpiarInvocador exp CODER
@@ -2426,7 +2370,6 @@ def p_atom(p):
 					p[0]['dim'] = DirClases[ClaseActual]['varsTam'][AtributoTipo][AtributoAtom]
 			else:
 				p[0] = { 'tipo': AtributoTipo, 'dirs': DirClases[ClaseActual]['obj'][AtributoAtom] }
-	print('atom')
 
 def p_checarAtributoDim(p):
 	'''checarAtributoDim : '''
@@ -2599,14 +2542,8 @@ def p_checarAtributo(p):
 	global correcto
 	lineNumber = scanner.lexer.lineno
 	atributo = scanner.ultimoId
-
-	print('----')
-	print(Invocador)
-	print(ClaseActual)
-	print(atributo)
 	
 	if (Invocador == ''):
-		print( DirClases[ClaseActual]['variables'] )
 		if (MetodoActual == ''):
 			if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
 				AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
@@ -2689,14 +2626,12 @@ def p_condicion(p):
 	'''condicion 	: ciclo_cond ELSE if_3 LLIZQ ciclo_estatuto LLDER if_4
 					| ciclo_cond ELSE if_3 LLIZQ LLDER if_4
 					| ciclo_cond if_4'''
-	print('condicion')
 
 def p_ciclo_cond(p):
 	'''ciclo_cond 	: IF PIZQ exp PDER if_1 LLIZQ ciclo_estatuto if_2 LLDER
 					| IF PIZQ exp PDER if_1 LLIZQ if_2 LLDER
 					| ciclo_cond ELSE IF if_3 PIZQ exp PDER if_1 LLIZQ ciclo_estatuto if_2 LLDER
 					| ciclo_cond ELSE IF if_3 PIZQ exp PDER if_1 LLIZQ if_2 LLDER'''
-	print('ciclo_cond')
 
 def p_if_1(p):
 	'''if_1 : '''
@@ -2720,7 +2655,7 @@ def p_if_1(p):
 		raise KeyboardInterrupt
 		
 	Cuad.append(['GOTOF', ResExp['id'],  'missing', '-'])
-	Line = Line + 1;
+	Line = Line + 1
 	PSaltos.push(Line - 1)
 
 def p_if_2(p):
@@ -2740,7 +2675,7 @@ def p_if_3(p):
 	global Mark
 
 	Cuad.append(['GOTO', '-',  'missing', '-'])
-	Line = Line + 1;
+	Line = Line + 1
 	Cuad[Mark][2] = Line
 	PSaltos.push(Line - 1)
 	Falsos.append(Line - 1)
@@ -2762,8 +2697,7 @@ def p_lectura(p):
 		Cuad.append(['INPUT','-', '-', (p[3]['invocador']+'.'+p[3]['id'])])
 	else:
 		Cuad.append(['INPUT','-', '-', p[3]['id']])
-	Line = Line + 1;
-	print('lectura')
+	Line = Line + 1
 
 def p_escritura(p):
 	'''escritura 	: OUTPUT PIZQ exp PDER PYC'''
@@ -2779,9 +2713,7 @@ def p_escritura(p):
 		raise KeyboardInterrupt
 		
 	Cuad.append(['OUTPUT','-', '-', p[3]['id']])
-	Line = Line + 1;
-
-	print('escritura')
+	Line = Line + 1
 
 # Function to serve as an empty word
 def p_empty(p):
