@@ -336,9 +336,6 @@ precedence = (
     ('right','UMINUS'),
     )
 
-# RESIDUALES
-arch = open('codigo.txt', 'w')
-
 #############################################################################
 #							METODOS AUXILIARES								#
 #############################################################################
@@ -1640,6 +1637,7 @@ def p_exp_string_length(p):
 	global error
 	global correcto
 
+	# Verificar que el parametro de la funcion sea string
 	if ( p[3]['tipo'] != 'string' ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', "length" can only be applied to strings, not variables of type ' +  str(p[3]['tipo']) + '.'
@@ -1647,6 +1645,7 @@ def p_exp_string_length(p):
 		raise KeyboardInterrupt
 		
 
+	# Verificar que el parametro de la funcion no sea arreglo de strings
 	if ( p[3].has_key('dim') ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', "length" can only be applied to strings, not arrays of strings.'
@@ -1674,6 +1673,7 @@ def p_exp_string_at(p):
 	global error
 	global correcto
 
+	# Verificar que el parametro de la funcion sea string
 	if ( p[3]['tipo'] != 'string' ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', "charAt" can only be applied to strings, not variables of type ' + str(p[3]['tipo']) + '.'
@@ -1681,6 +1681,7 @@ def p_exp_string_at(p):
 		raise KeyboardInterrupt
 		
 
+	# Verificar que el parametro de la funcion sea arreglo de strings
 	if ( p[3].has_key('dim') ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', "charAt" can only be applied to strings, not arrays of strings.'
@@ -1688,6 +1689,7 @@ def p_exp_string_at(p):
 		raise KeyboardInterrupt
 		
 
+	# Verificar que el indice que se desea acceder sea de tipo numeral
 	if ( p[5]['tipo'] != 'numeral' ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', "charAt" can only be used with numeral indexes, not variables of type ' + str(p[5]['tipo']) + '.'
@@ -2197,6 +2199,7 @@ def p_asignacion(p):
 			correcto = False
 		raise KeyboardInterrupt
 
+# Produccion de atomo dimensionado
 def p_atom_dim(p):
 	'''atom : ID PUNTO definirInvocador ID checarAtributoDim COIZQ limpiarInvocador exp CODER
 			| ID checarAtributoDim COIZQ limpiarInvocador exp CODER
@@ -2216,13 +2219,14 @@ def p_atom_dim(p):
 	# Arreglo de THIS 
 	if (p[1] == 'this'):
 
+		# Validar que indice sea numeral
 		if ( p[8].has_key('dim') or p[8]['tipo'] != 'numeral' ):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', array index must be a numeral expression.'
 				correcto = False
 			raise KeyboardInterrupt
 			
-
+		# Obtener direccion base, tipo y tamanio de arreglo
 		for tipo in TiposVar:
 			if ( DirClases[ClaseActual]['vars'][tipo].has_key( p[4] ) ):
 				dirBase = DirClases[ClaseActual]['vars'][tipo][ p[4] ]
@@ -2232,6 +2236,7 @@ def p_atom_dim(p):
 	# Arreglo de instancia
 	elif (p[2] == '.'):
 
+		# Validar que indice sea numeral
 		if ( p[8].has_key('dim') or p[8]['tipo'] != 'numeral' ):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', array index must be a numeral expression.'
@@ -2241,6 +2246,7 @@ def p_atom_dim(p):
 
 		# Checar en metodo
 		if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key( p[1] ) ):
+			# Obtener direccion base, tipo y tamanio de arreglo
 			for tipo in TiposVar:
 				if ( DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo].has_key( p[1] + '.' + p[4] ) ):
 					dirBase = DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][ p[1] + '.' + p[4] ]
@@ -2250,12 +2256,9 @@ def p_atom_dim(p):
 					tipoArr = tipo
 
 					tam = DirClases[ claseObj ]['varsTam'][ tipo ][ p[4] ]
-
-					#for tipoAux in TiposVar:
-					#	if ( DirClases[claseObj]['vars'][tipoAux].has_key( p[4] ) ):
-					#		tam =  DirClases[ claseObj ]['varsTam'][ tipoAux ][ p[4] ]
 		# Checar en clase
 		else:
+			# Obtener direccion base, tipo y tamanio de arreglo
 			for tipo in TiposVar:
 				if ( DirClases[ClaseActual]['vars'][tipo].has_key( p[1] + '.' + p[4] ) ):
 					dirBase = DirClases[ClaseActual]['vars'][tipo][ p[1] + '.' + p[4] ]
@@ -2265,7 +2268,7 @@ def p_atom_dim(p):
 		offset = p[8]['id']
 	# Arreglo de contexto
 	else:
-
+		# Validar que indice sea numeral
 		if ( p[5].has_key('dim') or p[5]['tipo'] != 'numeral' ):
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', array index must be a numeral expression.'
@@ -2275,6 +2278,7 @@ def p_atom_dim(p):
 
 		# Checar en metodo
 		if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key( p[1] ) ):
+			# Obtener direccion base, tipo y tamanio de arreglo
 			for tipo in TiposVar:
 				if ( DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo].has_key( p[1] ) ):
 					dirBase = DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][ p[1] ]
@@ -2299,6 +2303,7 @@ def p_atom_dim(p):
 	DirsMetodoTemp['numeral'] = DirsMetodoTemp['numeral'] + 1
 	Line = Line + 1
 
+# Produccion de atomo no dimensionado
 def p_atom(p):
 	'''atom : ID PUNTO definirInvocador ID checarAtributo
 			| ID checarAtributo
@@ -2310,26 +2315,32 @@ def p_atom(p):
 	global AtributoAtom
 	global AtributoTipo
 	lineNumber = scanner.lexer.lineno
+	# Atomo sin invocador
 	if (Invocador != ''):
 		# Buscar en clase actual
 		if (Invocador == 'this'):
+			# Checar si atomo es variable basica
 			if (esTipoBasico(AtributoTipo)):
 				p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][AtributoAtom] }
 				# Checar si es dimensionada
 				if (DirClases[ClaseActual]['varsTam'][AtributoTipo].has_key(AtributoAtom)):
 					p[0]['dim'] = DirClases[ClaseActual]['varsTam'][AtributoTipo][AtributoAtom]
 			else:
+				# Atomo es instancia de clase
 				p[0] = { 'tipo': AtributoTipo, 'dirs': DirClases[ClaseActual]['obj'][AtributoAtom] }
 		# Buscar en instancia : metodo
 		elif (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(Invocador)):
+			# Checar si atomo es variable basica
 			if (esTipoBasico(AtributoTipo)):
 				p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][AtributoTipo][Invocador + '.' + AtributoAtom] }
 				# Checar si es dimensionada
 				if (DirClases[ DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo'] ]['variables'][AtributoAtom].has_key('dim')):
 					p[0]['dim'] = DirClases[ DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo'] ]['variables'][AtributoAtom]['dim']
 			else:
+				# Atomo es instancia de clase
 				dirs = { 'numeral' : 9999999, 'real' : 9999999, 'bool' : 9999999, 'string' : 9999999, 'char' : 9999999 }
 				nombre = Invocador + '.' + AtributoAtom
+				# Recuperar direccion de atributo de instancia
 				for tipo in TiposVar:
 					for key in DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo]:
 						if ( key.startswith(nombre) and DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][tipo][key] < dirs[tipo] ):
@@ -2337,14 +2348,17 @@ def p_atom(p):
 				p[0] = { 'tipo': AtributoTipo, 'dirs': dirs }
 		# Buscar en instancia : clase
 		else:
+			# Checar si atomo es variable basica
 			if (esTipoBasico(AtributoTipo)):
 				p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][Invocador + '.' + AtributoAtom] }
 				# Checar si es dimensionada
 				if (DirClases[ClaseActual]['varsTam'][AtributoTipo].has_key(Invocador + '.' + AtributoAtom)):
 					p[0]['dim'] = DirClases[ClaseActual]['varsTam'][AtributoTipo][Invocador + '.' + AtributoAtom]
 			else:
+				# Atomo es instancia de clase
 				dirs = { 'numeral' : 9999999, 'real' : 9999999, 'bool' : 9999999, 'string' : 9999999, 'char' : 9999999 }
 				nombre = Invocador + '.' + AtributoAtom
+				# Recuperar direccion de atributo de instancia
 				for tipo in TiposVar:
 					for key in DirClases[ClaseActual]['vars'][tipo]:
 						if ( key.startswith(nombre) and DirClases[ClaseActual]['vars'][tipo][key] < dirs[tipo] ):
@@ -2352,25 +2366,29 @@ def p_atom(p):
 				p[0] = { 'tipo': AtributoTipo, 'dirs': dirs }
 	else:
 		# Buscar en metodo actual
-		
 		if (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(AtributoAtom)):
+			# Checar si atomo es variable basica
 			if (esTipoBasico(AtributoTipo)):
 				p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['metodos'][MetodoActual]['vars'][AtributoTipo][AtributoAtom] }
 				# Checar si es dimensionada
 				if (DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][AtributoAtom].has_key('dim')):
 					p[0]['dim'] = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][AtributoAtom]['dim']
 			else:
+				# Atomo es instancia de clase
 				p[0] = { 'tipo': AtributoTipo, 'dirs': DirClases[ClaseActual]['metodos'][MetodoActual]['obj'][AtributoAtom] }
 		# Buscar en clase actual
 		else:
+			# Checar si atomo es variable basica
 			if (esTipoBasico(AtributoTipo)):
 				p[0] = { 'tipo': AtributoTipo, 'id': DirClases[ClaseActual]['vars'][AtributoTipo][AtributoAtom] }
 				# Checar si es dimensionada
 				if (DirClases[ClaseActual]['varsTam'][AtributoTipo].has_key(AtributoAtom)):
 					p[0]['dim'] = DirClases[ClaseActual]['varsTam'][AtributoTipo][AtributoAtom]
 			else:
+				# Atomo es instancia de clase
 				p[0] = { 'tipo': AtributoTipo, 'dirs': DirClases[ClaseActual]['obj'][AtributoAtom] }
 
+# Verificacion semantica de validez de atributo dimensionado
 def p_checarAtributoDim(p):
 	'''checarAtributoDim : '''
 	global ClaseActual
@@ -2386,9 +2404,14 @@ def p_checarAtributoDim(p):
 	lineNumber = scanner.lexer.lineno
 	atributo = scanner.ultimoId
 	
+	# Atributo sin invocador
 	if (Invocador == ''):
+
+		# Buscar en contexto de clase
 		if (MetodoActual == ''):
+			# Chequeo en clase ctual
 			if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
+				# Validar que atributo sea dimensionado
 				if ( DirClases[ClaseActual]['variables'][atributo].has_key('dim') ):
 					AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
 				else:
@@ -2396,8 +2419,9 @@ def p_checarAtributoDim(p):
 						error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 						correcto = False
 					raise KeyboardInterrupt
-					
+			# Chequeo en jerarquia de clases
 			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
+				# Validar que atributo sea dimensionado
 				if ( checarAtributoAncestrosDim(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 					AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
 				else:
@@ -2405,15 +2429,18 @@ def p_checarAtributoDim(p):
 						error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 						correcto = False
 					raise KeyboardInterrupt
-					
+			# Atributo no encontrado en jerarquia de clases
 			else:
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy.'
 					correcto = False
 				raise KeyboardInterrupt
-				
+		
+		# Buscar en contexto de metodo
 		else:
+			# Chequeo en metodo actual
 			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(atributo) ):
+				# Validar que atributo sea dimensionado
 				if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][atributo].has_key('dim') ):
 					AtributoTipo = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][atributo]['tipo']
 				else:
@@ -2421,8 +2448,9 @@ def p_checarAtributoDim(p):
 						error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 						correcto = False
 					raise KeyboardInterrupt
-					
+			# Chequeo en clase actual
 			elif ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
+				# Validar que atributo sea dimensionado
 				if ( DirClases[ClaseActual]['variables'][atributo].has_key('dim') ):
 					AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
 				else:
@@ -2430,8 +2458,9 @@ def p_checarAtributoDim(p):
 						error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 						correcto = False
 					raise KeyboardInterrupt
-					
+			# Chequeo en jerarquia de clases
 			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
+				# Validar que atributo sea dimensionado
 				if ( checarAtributoAncestrosDim(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 					AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
 				else:
@@ -2439,15 +2468,18 @@ def p_checarAtributoDim(p):
 						error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 						correcto = False
 					raise KeyboardInterrupt
-					
+			# Atributo no encontrado en jerarquia de clases
 			else:
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy.'
 					correcto = False
 				raise KeyboardInterrupt
-				
+	
+	# Invocador es THIS
 	elif (Invocador == 'this'):
+		# Chequeo en clase actual
 		if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
+			# Validar que atributo sea dimensionado
 			if ( DirClases[ClaseActual]['variables'][atributo].has_key('dim') ):
 				AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
 			else:
@@ -2455,8 +2487,9 @@ def p_checarAtributoDim(p):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 					correcto = False
 				raise KeyboardInterrupt
-				
+		# Chequeo en jerarquia de clases
 		elif( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
+			# Validar que atributo sea dimensionado
 			if ( checarAtributoAncestrosDim(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 				AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
 			else:
@@ -2464,17 +2497,19 @@ def p_checarAtributoDim(p):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 					correcto = False
 				raise KeyboardInterrupt
-				
+		# Atributo no encontrado en jerarquia de clases
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy.'
 				correcto = False
 			raise KeyboardInterrupt
-			
+	
+	# Invocador particular
 	else:
 
 		claseAux = ''
 
+		# Obtener nombre de clase de instancia
 		if (MetodoActual != ''):
 			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(Invocador) ):
 				claseAux = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo']
@@ -2488,14 +2523,15 @@ def p_checarAtributoDim(p):
 			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], Invocador, lineNumber)):
 				claseAux = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], Invocador, lineNumber)
 
-
+		# Chequeo en clase de instancia
 		if ( DirClases[claseAux]['variables'].has_key(atributo) ):
+			# Verificar que atributo sea visible
 			if ( not (DirClases[claseAux]['variables'][atributo]['acceso'] == 'visible') ):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is hidden.'
 					correcto = False
 				raise KeyboardInterrupt
-				
+			# Verificar que atributo sea dimensionado
 			if ( DirClases[claseAux]['variables'][atributo].has_key('dim') ):
 				AtributoTipo = DirClases[claseAux]['variables'][atributo]['tipo']
 			else:
@@ -2503,14 +2539,16 @@ def p_checarAtributoDim(p):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 					correcto = False
 				raise KeyboardInterrupt
-				
+		# Chequeo en jerarquia de clase de instancia
 		elif ( checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
+			# Verificar que atributo sea visible
 			if ( not esVisibleAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is hidden.'
 					correcto = False
 				raise KeyboardInterrupt
-				
+			
+			# Verificar que atributo sea dimensionado	
 			if ( checarAtributoAncestrosDim(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
 				AtributoTipo = valorAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)
 			else:
@@ -2518,16 +2556,18 @@ def p_checarAtributoDim(p):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is not an array.'
 					correcto = False
 				raise KeyboardInterrupt
-				
+		# Atributo no encontrado en jerarquia de clases
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy.'
 				correcto = False
 			raise KeyboardInterrupt
-			
+		# Definir clase de invocador
 		InvocadorTipo = claseAux
+	# Definir nombre de atributo invocado por invocador
 	AtributoAtom = atributo
 
+# Verificacion semantica de validez de atributo (no dimensionado)
 def p_checarAtributo(p):
 	'''checarAtributo : '''
 	global ClaseActual
@@ -2542,20 +2582,24 @@ def p_checarAtributo(p):
 	global correcto
 	lineNumber = scanner.lexer.lineno
 	atributo = scanner.ultimoId
-	
+
+	# Atributo sin invocador	
 	if (Invocador == ''):
 		if (MetodoActual == ''):
+			# Obtener tipo de dato de atributo
 			if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
 				AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
 			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 				AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
 			else:
+				# Atributo no encontrado en jerarquia de clases
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy.'
 					correcto = False
 				raise KeyboardInterrupt
-				
+		# Invocacion desde metodo
 		else:
+			# Obtener tipo de dato de atributo
 			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(atributo) ):
 				AtributoTipo = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][atributo]['tipo']
 			elif ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
@@ -2563,26 +2607,30 @@ def p_checarAtributo(p):
 			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)):
 				AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
 			else:
+				# Atributo no encontrado en jerarquia de clases
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy.'
 					correcto = False
 				raise KeyboardInterrupt
-				
+	# Invocador es THIS
 	elif (Invocador == 'this'):
+		# Obtener tipo de dato de atributo
 		if ( DirClases[ClaseActual]['variables'].has_key(atributo) ):
 			AtributoTipo = DirClases[ClaseActual]['variables'][atributo]['tipo']
 		elif( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber) ):
 			AtributoTipo = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], atributo, lineNumber)
 		else:
+			# Atributo no encontrado en jerarquia de clases
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy.'
 				correcto = False
 			raise KeyboardInterrupt
-			
+	# Invocador particular
 	else:
 
 		claseAux = ''
 
+		# Obtener clase de invocador
 		if (MetodoActual != ''):
 			if ( DirClases[ClaseActual]['metodos'][MetodoActual]['variables'].has_key(Invocador) ):
 				claseAux = DirClases[ClaseActual]['metodos'][MetodoActual]['variables'][Invocador]['tipo']
@@ -2596,8 +2644,9 @@ def p_checarAtributo(p):
 			elif ( checarAtributoAncestros(DirClases[ClaseActual]['ancestros'], Invocador, lineNumber)):
 				claseAux = valorAtributoAncestros(DirClases[ClaseActual]['ancestros'], Invocador, lineNumber)
 
-
+		# Verificar atributo en clase
 		if ( DirClases[claseAux]['variables'].has_key(atributo) ):
+			# Verificar que atributo sea visible
 			if ( not (DirClases[claseAux]['variables'][atributo]['acceso'] == 'visible') ):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is hidden.'
@@ -2605,7 +2654,9 @@ def p_checarAtributo(p):
 				raise KeyboardInterrupt
 				
 			AtributoTipo = DirClases[claseAux]['variables'][atributo]['tipo']
+		# Verificar atributo en jerarquia de clases 
 		elif ( checarAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
+			# Verificar que atributo sea visible
 			if ( not esVisibleAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber) ):
 				if(correcto):
 					error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' is hidden.'
@@ -2613,6 +2664,7 @@ def p_checarAtributo(p):
 				raise KeyboardInterrupt
 				
 			AtributoTipo = valorAtributoAncestros(DirClases[claseAux]['ancestros'], atributo, lineNumber)
+		# Atributo no encontrado en jerarquia de clases
 		else:
 			if(correcto):
 				error = 'Semantic error at line ' + str(lineNumber) + ', variable ' + str(atributo) + ' not found in Class Hierarchy.'
@@ -2622,17 +2674,20 @@ def p_checarAtributo(p):
 		InvocadorTipo = claseAux
 	AtributoAtom = atributo
 
+# Produccion de condicion
 def p_condicion(p):
 	'''condicion 	: ciclo_cond ELSE if_3 LLIZQ ciclo_estatuto LLDER if_4
 					| ciclo_cond ELSE if_3 LLIZQ LLDER if_4
 					| ciclo_cond if_4'''
 
+# Produccion de condicion
 def p_ciclo_cond(p):
 	'''ciclo_cond 	: IF PIZQ exp PDER if_1 LLIZQ ciclo_estatuto if_2 LLDER
 					| IF PIZQ exp PDER if_1 LLIZQ if_2 LLDER
 					| ciclo_cond ELSE IF if_3 PIZQ exp PDER if_1 LLIZQ ciclo_estatuto if_2 LLDER
 					| ciclo_cond ELSE IF if_3 PIZQ exp PDER if_1 LLIZQ if_2 LLDER'''
 
+# Verificacion semantica de if
 def p_if_1(p):
 	'''if_1 : '''
 	global PSaltos
@@ -2642,31 +2697,38 @@ def p_if_1(p):
 	global error
 	global correcto
 	lineNumber = scanner.lexer.lineno
+
+	# Verificar que expresion de condicion no sea dimensionada
 	if (ResExp.has_key('dim')):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber - 1) + ', expected "bool" expression in if condition, but got array reference.'
 			correcto = False
 		raise KeyboardInterrupt
-		
+	
+	# Verificar que expresion de condicion sea booleana
 	if (ResExp['tipo'] != 'bool'):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber - 1) + ', expected "bool" expression, but "' + str(ResExp['tipo']) + '" expression given in if condition.'
 			correcto = False
 		raise KeyboardInterrupt
-		
+	
+	# Generar cuadruplo de GOTO en falso con salto pendiente, y agregar linea actual a pila de saltos
 	Cuad.append(['GOTOF', ResExp['id'],  'missing', '-'])
 	Line = Line + 1
 	PSaltos.push(Line - 1)
 
+# Verificacion semantica de if
 def p_if_2(p):
 	'''if_2 : '''
 	global PSaltos
 	global Line
 	global Mark
+	# Rellenar cuadruplo faltante de salto previo
 	falso = PSaltos.pop()
 	Cuad[falso][2] = Line
 	Mark = falso
 
+# Verificacion semantica de if
 def p_if_3(p):
 	'''if_3 : '''
 	global PSaltos
@@ -2674,31 +2736,40 @@ def p_if_3(p):
 	global Falsos
 	global Mark
 
+	# Generar GOTO al final de bloque if/else con salto pendiente
+	# y meter en pila de saltos la linea actual
 	Cuad.append(['GOTO', '-',  'missing', '-'])
 	Line = Line + 1
 	Cuad[Mark][2] = Line
 	PSaltos.push(Line - 1)
 	Falsos.append(Line - 1)
 
+# Verificacion semantica de if
 def p_if_4(p):
 	'''if_4 : '''
 	global PSaltos
 	global Line
 	global Falsos
+
+	# Rellenar cuadruplos pendientes con salto a final de bloque if/else
 	for falso in Falsos:
 		PSaltos.pop()
 		Cuad[falso][2] = Line
 	Falsos = []
 
+# Produccion de lectura/input
 def p_lectura(p):
 	'''lectura 	: INPUT PIZQ atom limpiarInvocador PDER PYC'''
 	global Line
+
+	# Generar cuadruplo
 	if (p[3].has_key('invocador')):
 		Cuad.append(['INPUT','-', '-', (p[3]['invocador']+'.'+p[3]['id'])])
 	else:
 		Cuad.append(['INPUT','-', '-', p[3]['id']])
 	Line = Line + 1
 
+# Produccion de escritura/output
 def p_escritura(p):
 	'''escritura 	: OUTPUT PIZQ exp PDER PYC'''
 	global Line
@@ -2706,6 +2777,8 @@ def p_escritura(p):
 	global error
 	global correcto
 	lineNumber = scanner.lexer.lineno
+
+	# Verificar que expresion no sea arreglo
 	if ( p[3].has_key('dim') ):
 		if(correcto):
 			error = 'Semantic error at line ' + str(lineNumber) + ', can\'t print array references.'

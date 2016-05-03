@@ -67,24 +67,20 @@ t_DOSP     = r'\:'
 def t_CTE_STR(t):
     r'\"(\\.|[^"])*\"|\"\"'
     return t
-    #return { 'tipo': 'cte_string', 'id': t.value }
 
 def t_CTE_CHAR(t):
     r"\'(\\.|[^'])\'|\'\'"
     return t
-    #return { 'tipo': 'cte_char', 'id': t.value }
 
 def t_CTE_REAL(t):
     r'[0-9]+\.[0-9]+'
     return t
-    #return { 'tipo': 'cte_real', 'id': t.value }
 
 def t_CTE_NUMERAL(t):
     r'[0-9]+'
     global ultimoNumeral
     ultimoNumeral = t.value
     return t
-    #return { 'tipo': 'cte_numeral', 'id': t.value }
 
 # Caracteres ignorados
 t_ignore = " \t\r"
