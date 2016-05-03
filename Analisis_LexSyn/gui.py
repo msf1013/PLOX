@@ -5,7 +5,7 @@ import os.path
 import copy
 import parser3
 import tkMessageBox
-import virtualMachine2
+import vmPrueba
 
 class PloxStudio(Tkinter.Tk):
      # Constructor que mantiene un tracking del contenedor padre
@@ -103,11 +103,11 @@ class PloxStudio(Tkinter.Tk):
      def executeFile(self):
           tkMessageBox.showinfo("Execution messages", "Executing in console.")
 
-          try:
+          #try:
                # Se ejecuta archivo
-               virtualMachine2.execute()
-          except:
-               tkMessageBox.showerror("Execution errors", virtualMachine2.error)
+          vmPrueba.execute()
+          #except:
+               #tkMessageBox.showerror("Execution errors", virtualMachine2.error)
 
           print('\n\n\n\n')
 

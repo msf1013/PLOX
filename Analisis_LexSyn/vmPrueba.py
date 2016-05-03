@@ -989,89 +989,52 @@ def mayorQue(Operador1, Operador2, Resultado):
 			else:
 				Operador1 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador1)):
 			Operador1 = DirConstantes[Operador1]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador1)):
 			Operador1 = MapaMemoria[contextoActual][Operador1]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador1 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion2 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion2 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador2)):
 				Operador2 = DirConstantes[Operador2]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador2)):
 				Operador2 = MapaMemoria[contextoActual][Operador2]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador2 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador2)):
 			Operador2 = DirConstantes[Operador2]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador2)):
 			Operador2 = MapaMemoria[contextoActual][Operador2]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador2 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccionR != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccionR == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Resultado)):
 				Resultado = DirConstantes[Resultado]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Resultado)):
 				Resultado = MapaMemoria[contextoActual][Resultado]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Resultado = 0
 
-	# Se almacena el valor de la operacion mayor que en la direccion del resultado
 	MapaMemoria[contextoActual][Resultado] = Operador1 > Operador2
 	return 'mayorQue'
 
-# Funcion que toma dos operadores del cuadruplo, revisa si el primero es menor
-# al segundo, y pone el resultado de la operacion en la direccion del Resultado
 def menorQue(Operador1, Operador2, Resultado):
 	global PMemoria
 	global PContexto
 	global MapaMemoria
 	global DirConstantes
-	
-	# Se obtiene el contexto actual
 	contextoActual = PMemoria.at(PContexto.top())
 
-	# Se revisa que tipo de direcciones representan las direcciones de los
-	# operadores y la direccion del resultado
 	TipoDireccion1 = revisarDireccion(Operador1)
 	TipoDireccion2 = revisarDireccion(Operador2)
 	TipoDireccionR = revisarDireccion(Resultado)
 	
-	# Se obtiene el valor numerico de las direcciones (eliminando '||' y '()'
-	# al principio y al final de la direccion)
 	if(TipoDireccion1 != 'Directo'):
 		Operador1 = str(Operador1)[1:-1]
 
@@ -1081,111 +1044,65 @@ def menorQue(Operador1, Operador2, Resultado):
 	if(TipoDireccionR != 'Directo'):
 		Resultado = str(Resultado)[1:-1]
 
-	# Se parsea el valor de las direcciones a valores enteros
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
 	Resultado = int(Resultado)
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion1 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion1 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador1)):
 				Operador1 = DirConstantes[Operador1]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador1)):
 				Operador1 = MapaMemoria[contextoActual][Operador1]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador1 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador1)):
 			Operador1 = DirConstantes[Operador1]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador1)):
 			Operador1 = MapaMemoria[contextoActual][Operador1]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador1 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion2 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion2 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador2)):
 				Operador2 = DirConstantes[Operador2]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador2)):
 				Operador2 = MapaMemoria[contextoActual][Operador2]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador2 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador2)):
 			Operador2 = DirConstantes[Operador2]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador2)):
 			Operador2 = MapaMemoria[contextoActual][Operador2]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador2 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccionR != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccionR == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Resultado)):
 				Resultado = DirConstantes[Resultado]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Resultado)):
 				Resultado = MapaMemoria[contextoActual][Resultado]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Resultado = 0
 
-	# Se almacena el valor de la operacion menor que en la direccion del resultado
 	MapaMemoria[contextoActual][Resultado] = Operador1 < Operador2
 	return 'menorQue'
 
-# Funcion que toma dos operadores del cuadruplo, revisa si el primero es menor o igual
-# al segundo, y pone el resultado de la operacion en la direccion del Resultado
 def menorIgualQue(Operador1, Operador2, Resultado):
 	global PMemoria
 	global PContexto
 	global MapaMemoria
 	global DirConstantes
-	
-	# Se obtiene el contexto actual
 	contextoActual = PMemoria.at(PContexto.top())
 
-	# Se revisa que tipo de direcciones representan las direcciones de los
-	# operadores y la direccion del resultado
 	TipoDireccion1 = revisarDireccion(Operador1)
 	TipoDireccion2 = revisarDireccion(Operador2)
 	TipoDireccionR = revisarDireccion(Resultado)
 	
-	# Se obtiene el valor numerico de las direcciones (eliminando '||' y '()'
-	# al principio y al final de la direccion)
 	if(TipoDireccion1 != 'Directo'):
 		Operador1 = str(Operador1)[1:-1]
 
@@ -1195,111 +1112,65 @@ def menorIgualQue(Operador1, Operador2, Resultado):
 	if(TipoDireccionR != 'Directo'):
 		Resultado = str(Resultado)[1:-1]
 
-	# Se parsea el valor de las direcciones a valores enteros
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
 	Resultado = int(Resultado)
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion1 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion1 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador1)):
 				Operador1 = DirConstantes[Operador1]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador1)):
 				Operador1 = MapaMemoria[contextoActual][Operador1]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador1 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador1)):
 			Operador1 = DirConstantes[Operador1]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador1)):
 			Operador1 = MapaMemoria[contextoActual][Operador1]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador1 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion2 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion2 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador2)):
 				Operador2 = DirConstantes[Operador2]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador2)):
 				Operador2 = MapaMemoria[contextoActual][Operador2]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador2 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador2)):
 			Operador2 = DirConstantes[Operador2]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador2)):
 			Operador2 = MapaMemoria[contextoActual][Operador2]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador2 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccionR != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccionR == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Resultado)):
 				Resultado = DirConstantes[Resultado]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Resultado)):
 				Resultado = MapaMemoria[contextoActual][Resultado]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Resultado = 0
 
-	# Se almacena el valor de la operacion menor o igual que en la direccion del resultado
 	MapaMemoria[contextoActual][Resultado] = Operador1 <= Operador2
 	return 'menorIgualQue'
 
-# Funcion que toma dos operadores del cuadruplo, revisa si el primero es mayor o igual
-# al segundo, y pone el resultado de la operacion en la direccion del Resultado
 def mayorIgualQue(Operador1, Operador2, Resultado):
 	global PMemoria
 	global PContexto
 	global MapaMemoria
 	global DirConstantes
-	
-	# Se obtiene el contexto actual
 	contextoActual = PMemoria.at(PContexto.top())
 
-	# Se revisa que tipo de direcciones representan las direcciones de los
-	# operadores y la direccion del resultado
 	TipoDireccion1 = revisarDireccion(Operador1)
 	TipoDireccion2 = revisarDireccion(Operador2)
 	TipoDireccionR = revisarDireccion(Resultado)
 	
-	# Se obtiene el valor numerico de las direcciones (eliminando '||' y '()'
-	# al principio y al final de la direccion)
 	if(TipoDireccion1 != 'Directo'):
 		Operador1 = str(Operador1)[1:-1]
 
@@ -1309,111 +1180,65 @@ def mayorIgualQue(Operador1, Operador2, Resultado):
 	if(TipoDireccionR != 'Directo'):
 		Resultado = str(Resultado)[1:-1]
 
-	# Se parsea el valor de las direcciones a valores enteros
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
 	Resultado = int(Resultado)
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion1 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion1 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador1)):
 				Operador1 = DirConstantes[Operador1]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador1)):
 				Operador1 = MapaMemoria[contextoActual][Operador1]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador1 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador1)):
 			Operador1 = DirConstantes[Operador1]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador1)):
 			Operador1 = MapaMemoria[contextoActual][Operador1]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador1 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion2 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion2 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador2)):
 				Operador2 = DirConstantes[Operador2]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador2)):
 				Operador2 = MapaMemoria[contextoActual][Operador2]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador2 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador2)):
 			Operador2 = DirConstantes[Operador2]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador2)):
 			Operador2 = MapaMemoria[contextoActual][Operador2]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador2 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccionR != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccionR == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Resultado)):
 				Resultado = DirConstantes[Resultado]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Resultado)):
 				Resultado = MapaMemoria[contextoActual][Resultado]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Resultado = 0
 
-	# Se almacena el valor de la operacion mayor o igual que en la direccion del resultado
 	MapaMemoria[contextoActual][Resultado] = Operador1 >= Operador2
 	return 'mayorIgualQue'
 
-# Funcion que toma dos operadores del cuadruplo, revisa si el primero es igual
-# al segundo, y pone el resultado de la operacion en la direccion del Resultado
 def igualQue(Operador1, Operador2, Resultado):
 	global PMemoria
 	global PContexto
 	global MapaMemoria
 	global DirConstantes
-	
-	# Se obtiene el contexto actual
 	contextoActual = PMemoria.at(PContexto.top())
 
-	# Se revisa que tipo de direcciones representan las direcciones de los
-	# operadores y la direccion del resultado
 	TipoDireccion1 = revisarDireccion(Operador1)
 	TipoDireccion2 = revisarDireccion(Operador2)
 	TipoDireccionR = revisarDireccion(Resultado)
 	
-	# Se obtiene el valor numerico de las direcciones (eliminando '||' y '()'
-	# al principio y al final de la direccion)
 	if(TipoDireccion1 != 'Directo'):
 		Operador1 = str(Operador1)[1:-1]
 
@@ -1423,111 +1248,65 @@ def igualQue(Operador1, Operador2, Resultado):
 	if(TipoDireccionR != 'Directo'):
 		Resultado = str(Resultado)[1:-1]
 
-	# Se parsea el valor de las direcciones a valores enteros
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
 	Resultado = int(Resultado)
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion1 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion1 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador1)):
 				Operador1 = DirConstantes[Operador1]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador1)):
 				Operador1 = MapaMemoria[contextoActual][Operador1]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador1 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador1)):
 			Operador1 = DirConstantes[Operador1]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador1)):
 			Operador1 = MapaMemoria[contextoActual][Operador1]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador1 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion2 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion2 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador2)):
 				Operador2 = DirConstantes[Operador2]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador2)):
 				Operador2 = MapaMemoria[contextoActual][Operador2]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador2 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador2)):
 			Operador2 = DirConstantes[Operador2]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador2)):
 			Operador2 = MapaMemoria[contextoActual][Operador2]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador2 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccionR != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccionR == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Resultado)):
 				Resultado = DirConstantes[Resultado]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Resultado)):
 				Resultado = MapaMemoria[contextoActual][Resultado]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Resultado = 0
 
-	# Se almacena el valor de la operacion igual que en la direccion del resultado
 	MapaMemoria[contextoActual][Resultado] = Operador1 == Operador2
 	return 'igualQue'
 
-# Funcion que toma dos operadores del cuadruplo, revisa si el primero es diferente
-# al segundo, y pone el resultado de la operacion en la direccion del Resultado
 def noIgualQue(Operador1, Operador2, Resultado):
 	global PMemoria
 	global PContexto
 	global MapaMemoria
 	global DirConstantes
-	
-	# Se obtiene el contexto actual
 	contextoActual = PMemoria.at(PContexto.top())
 
-	# Se revisa que tipo de direcciones representan las direcciones de los
-	# operadores y la direccion del resultado
 	TipoDireccion1 = revisarDireccion(Operador1)
 	TipoDireccion2 = revisarDireccion(Operador2)
 	TipoDireccionR = revisarDireccion(Resultado)
 	
-	# Se obtiene el valor numerico de las direcciones (eliminando '||' y '()'
-	# al principio y al final de la direccion)
 	if(TipoDireccion1 != 'Directo'):
 		Operador1 = str(Operador1)[1:-1]
 
@@ -1537,112 +1316,66 @@ def noIgualQue(Operador1, Operador2, Resultado):
 	if(TipoDireccionR != 'Directo'):
 		Resultado = str(Resultado)[1:-1]
 
-	# Se parsea el valor de las direcciones a valores enteros
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
 	Resultado = int(Resultado)
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion1 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion1 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador1)):
 				Operador1 = DirConstantes[Operador1]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador1)):
 				Operador1 = MapaMemoria[contextoActual][Operador1]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador1 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador1)):
 			Operador1 = DirConstantes[Operador1]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador1)):
 			Operador1 = MapaMemoria[contextoActual][Operador1]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador1 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion2 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion2 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador2)):
 				Operador2 = DirConstantes[Operador2]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador2)):
 				Operador2 = MapaMemoria[contextoActual][Operador2]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador2 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador2)):
 			Operador2 = DirConstantes[Operador2]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador2)):
 			Operador2 = MapaMemoria[contextoActual][Operador2]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador2 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccionR != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccionR == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Resultado)):
 				Resultado = DirConstantes[Resultado]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Resultado)):
 				Resultado = MapaMemoria[contextoActual][Resultado]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Resultado = 0
 
-	# Se almacena el valor de la operacion diferente a en la direccion del resultado
 	MapaMemoria[contextoActual][Resultado] = Operador1 != Operador2
 	return 'noIgualQue'
 
-# Funcion que toma dos operadores del cuadruplo, los divide y pone su
-# resultado en la direccion del Resultado
 def modulo(Operador1, Operador2, Resultado):
 	global PMemoria
 	global PContexto
 	global MapaMemoria
 	global DirConstantes
 	global error
-	
-	# Se obtiene el contexto actual
 	contextoActual = PMemoria.at(PContexto.top())
 
-	# Se revisa que tipo de direcciones representan las direcciones de los
-	# operadores y la direccion del resultado
 	TipoDireccion1 = revisarDireccion(Operador1)
 	TipoDireccion2 = revisarDireccion(Operador2)
 	TipoDireccionR = revisarDireccion(Resultado)
 	
-	# Se obtiene el valor numerico de las direcciones (eliminando '||' y '()'
-	# al principio y al final de la direccion)
 	if(TipoDireccion1 != 'Directo'):
 		Operador1 = str(Operador1)[1:-1]
 
@@ -1652,178 +1385,105 @@ def modulo(Operador1, Operador2, Resultado):
 	if(TipoDireccionR != 'Directo'):
 		Resultado = str(Resultado)[1:-1]
 
-	# Se parsea el valor de las direcciones a valores enteros
 	Operador1 = int(Operador1)
 	Operador2 = int(Operador2)
 	Resultado = int(Resultado)
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion1 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion1 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador1)):
 				Operador1 = DirConstantes[Operador1]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador1)):
 				Operador1 = MapaMemoria[contextoActual][Operador1]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador1 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador1)):
 			Operador1 = DirConstantes[Operador1]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador1)):
 			Operador1 = MapaMemoria[contextoActual][Operador1]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador1 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion2 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion2 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador2)):
 				Operador2 = DirConstantes[Operador2]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador2)):
 				Operador2 = MapaMemoria[contextoActual][Operador2]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador2 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador2)):
 			Operador2 = DirConstantes[Operador2]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador2)):
 			Operador2 = MapaMemoria[contextoActual][Operador2]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador2 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccionR != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccionR == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Resultado)):
 				Resultado = DirConstantes[Resultado]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Resultado)):
 				Resultado = MapaMemoria[contextoActual][Resultado]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Resultado = 0
 
-	# Si el operador 2 en la division es 0, entonces se marca error de ejecucion
-	# y se detiene el programa
 	if(Operador2 == 0):
 		error = "Execution Error: Division by 0"
 		raise KeyboardInterrupt
 
-	# Se almacena el valor de la division en la direccion del resultado
 	MapaMemoria[contextoActual][Resultado] = Operador1 % Operador2
 	return 'modulo'
 
-# Funcion que toma un valor numerico y lo multiplica por -1, poniendo
-# su resultado en la direccion del Resultado
 def negacion(Operador1, Operador2, Resultado):
 	global PMemoria
 	global PContexto
 	global MapaMemoria
 	global DirConstantes
-	
-	# Se obtiene el contexto actual
 	contextoActual = PMemoria.at(PContexto.top())
 
-	# Se revisa que tipo de direcciones representan las direcciones de los
-	# operadores y la direccion del resultado
 	TipoDireccion1 = revisarDireccion(Operador1)
 	TipoDireccionR = revisarDireccion(Resultado)
 	
-	# Se obtiene el valor numerico de las direcciones (eliminando '||' y '()'
-	# al principio y al final de la direccion)
 	if(TipoDireccion1 != 'Directo'):
 		Operador1 = str(Operador1)[1:-1]
 
 	if(TipoDireccionR != 'Directo'):
 		Resultado = str(Resultado)[1:-1]
 
-	# Se parsea el valor de las direcciones a valores enteros
 	Operador1 = int(Operador1)
 	Resultado = int(Resultado)
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion1 != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion1 == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Operador1)):
 				Operador1 = DirConstantes[Operador1]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Operador1)):
 				Operador1 = MapaMemoria[contextoActual][Operador1]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Operador1 = 0
 
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Operador1)):
 			Operador1 = DirConstantes[Operador1]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Operador1)):
 			Operador1 = MapaMemoria[contextoActual][Operador1]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Operador1 = 0
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccionR != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccionR == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Resultado)):
 				Resultado = DirConstantes[Resultado]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Resultado)):
 				Resultado = MapaMemoria[contextoActual][Resultado]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Resultado = 0
 
-	# Se almacena el valor de la operacion negacion en la direccion del resultado
 	MapaMemoria[contextoActual][Resultado] = -1 * Operador1
 	return 'negacion'
 
-# Funcion que obtiene un valor como input del teclado y lo almacena en una variable
 def stdIn(Operador1, Operador2, Resultado):
 	global PMemoria
 	global PContexto
@@ -1832,41 +1492,24 @@ def stdIn(Operador1, Operador2, Resultado):
 	global DirBaseClase
 	global DirBaseMetodo
 	global DirBaseMetodoTemp
-	
-	# Se obtiene el contexto actual
 	contextoActual = PMemoria.at(PContexto.top())
 
-	# Se revisa que tipo de direcciones representan las direcciones de los
-	# operadores y la direccion del resultado
 	TipoDireccion = revisarDireccion(Resultado)
 	
-	# Se obtiene el valor numerico de las direcciones (eliminando '||' y '()'
-	# al principio y al final de la direccion)
 	if(TipoDireccion != 'Directo'):
 		Resultado = str(Resultado)[1:-1]
 
-	# Se parsea el valor de las direcciones a valores enteros
 	Resultado = int(Resultado)
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Resultado)):
 				Resultado = DirConstantes[Resultado]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Resultado)):
 				Resultado = MapaMemoria[contextoActual][Resultado]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Resultado = 0
 
-	# Se revisa de qué tipo es la dirección de la variable donde se va a almacenar
-	# el resultado y se parsea al tipo especifico
 	if((Resultado >= DirBaseClase['numeral'] and Resultado < DirBaseClase['real']) or (Resultado >= DirBaseMetodo['numeral'] and Resultado < DirBaseMetodo['real']) or (Resultado >= DirBaseMetodoTemp['numeral'] and Resultado < DirBaseMetodoTemp['real'])):
 		valor = int(raw_input())
 	elif((Resultado >= DirBaseClase['real'] and Resultado < DirBaseClase['string']) or (Resultado >= DirBaseMetodo['real'] and Resultado < DirBaseMetodo['string']) or (Resultado >= DirBaseMetodoTemp['real'] and Resultado < DirBaseMetodoTemp['string'])):
@@ -1880,68 +1523,43 @@ def stdIn(Operador1, Operador2, Resultado):
 	else:
 		valor = raw_input()
 
-	# Se almacena el valor qu se obtiene del teclado en la direccion del resultado
 	MapaMemoria[contextoActual][Resultado] = valor
 	return 'stdIn'
 
-# Funcion que arroja un valor como output a la consola
 def stdOut(Operador1, Operador2, Resultado):
 	global PMemoria
 	global PContexto
 	global MapaMemoria
 	global DirConstantes
-	
-	# Se obtiene el contexto actual
 	contextoActual = PMemoria.at(PContexto.top())
 
-	# Se revisa que tipo de direcciones representan las direcciones de los
-	# operadores y la direccion del resultado
 	TipoDireccion = revisarDireccion(Resultado)
 	
-	# Se obtiene el valor numerico de las direcciones (eliminando '||' y '()'
-	# al principio y al final de la direccion)
 	if(TipoDireccion != 'Directo'):
 		Resultado = str(Resultado)[1:-1]
 
-	# Se parsea el valor de las direcciones a valores enteros
 	Resultado = int(Resultado)
 
-	# Si el tipo de direccionamiento no es una direccion tal cual
 	if(TipoDireccion != 'Base'):
-		# Si el direccionamiento es de tipo indirecto
 		if(TipoDireccion == 'Indirecto'):
-			# Se revisa en el directorio de constantes si ahi se encuentra la
-			# nueva direccion, y si es asi, se almacena su valor
 			if(DirConstantes.has_key(Resultado)):
 				Resultado = DirConstantes[Resultado]
-			# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-			# direccion, y si es asi, se almacena su valor
 			elif(MapaMemoria[contextoActual].has_key(Resultado)):
 				Resultado = MapaMemoria[contextoActual][Resultado]
-			# Si no se encontro el valor de la nueva direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				Resultado = ''
 	
-		# Se revisa en el directorio de constantes si ahi se encuentra el valor
-		# de la direccion del operador, y si es asi, se almacena este valor
 		if(DirConstantes.has_key(Resultado)):
 			Resultado = DirConstantes[Resultado]
-		# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-		# direccion del operador, y si es asi, se almacena este valor
 		elif(MapaMemoria[contextoActual].has_key(Resultado)):
 			Resultado = MapaMemoria[contextoActual][Resultado]
-		# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-		# entonces el valor default que es 0
 		else:
 			Resultado = ''
 
-	# Se imprime el resultado en consola, reemplazando los \n
 	print(str(Resultado).replace('\\n', '\n'), end='')
 
 	return 'stdOut'
 
-# Funcion que sirve para retornar los valores de una funcion a su contexto anterior
 def retorno(Operador1, Operador2, Resultado):
 	global PMemoria
 	global PContexto
@@ -1951,80 +1569,47 @@ def retorno(Operador1, Operador2, Resultado):
 	global cuadruploActual
 	global numCuadruplos
 	
-	# Si no es el retorno de la funcion main
 	if(cuadruploActual != numCuadruplos - 1):
-		# Se obtiene el contexto actual
 		contextoActual = PMemoria.top()
 		PContexto.pop()
-
-		# Se obtiene el contexto al que se va a regresar
 		contextoNuevo = PMemoria.at(PContexto.top())
 		PContexto.push(PMemoria.size() - 1)
 
-		# Si si se retorna un valor
 		if(Operador1 != '-'):
-			# Se revisa que tipo de direcciones representan las direcciones de los
-			# operadores y la direccion del resultado
 			TipoDireccion = revisarDireccion(Operador1)
 	
-			# Se obtiene el valor numerico de las direcciones (eliminando '||' y '()'
-			# al principio y al final de la direccion)
 			if(TipoDireccion != 'Directo'):
 				Operador1 = str(Operador1)[1:-1]
 
-			# Se parsea el valor de las direcciones a valores enteros
 			Direccion = int(Operador1)
-		
-		# Si no se retorna un valor
 		else:
 			TipoDireccion = 'Base'
 			Direccion = 0
 
-		# Si el tipo de direccionamiento no es una direccion tal cual
 		if(TipoDireccion != 'Base'):
-			# Si el direccionamiento es de tipo indirecto
 			if(TipoDireccion == 'Indirecto'):
-				# Se revisa en el directorio de constantes si ahi se encuentra la
-				# nueva direccion, y si es asi, se almacena su valor
 				if(DirConstantes.has_key(Direccion)):
 					Direccion = DirConstantes[Direccion]
-				# Se revisa en el mapa de memoria si ahi se encuentra la nueva
-				# direccion, y si es asi, se almacena su valor
 				elif(MapaMemoria[contextoActual].has_key(Direccion)):
 					Direccion = MapaMemoria[contextoActual][Direccion]
-				# Si no se encontro el valor de la nueva direccion, se obtiene
-				# entonces el valor default que es 0
 				else:
 					Direccion = ''
 
-			# Se revisa en el directorio de constantes si ahi se encuentra el valor
-			# de la direccion del operador, y si es asi, se almacena este valor
 			if(DirConstantes.has_key(Direccion)):
 				ValorRetorno = DirConstantes[Direccion]
-			# Se revisa en el mapa de memoria si ahi se encuentra el valor de la
-			# direccion del operador, y si es asi, se almacena este valor
 			elif(MapaMemoria[contextoActual].has_key(Direccion)):
 				ValorRetorno = MapaMemoria[contextoActual][Direccion]
-			# Si no se encontro el valor al que apuntaba la direccion, se obtiene
-			# entonces el valor default que es 0
 			else:
 				ValorRetorno = 0
 
-		# Se obtiene la direccion en la que se guardara valor de retorno
 		DireccionRetorno = PRetornos.top()[0]
-		
-		# Si la direccion si tiene valor de retorno, este se guarda
 		if(DireccionRetorno != '-'):
 			MapaMemoria[contextoNuevo][DireccionRetorno] = ValorRetorno
 
-		# Se obtiene el cuadruplo al cual se regresara
 		cuadruploActual = PRetornos.top()[1]
 
 		PRetornos.pop()
 
-		# Si no se regresan ni arreglos ni atributos del objeto, se borra el
-		# contexto actual del Mapa de Memoria y se saca este contexto de la
-		# pila de contextos y la pila de memorias
 		if(Cuadruplos[cuadruploActual + 1][0] != "ATTR_RET" and Cuadruplos[cuadruploActual + 1][0] != "REF_RET"):
 			del MapaMemoria[contextoActual]
 			PContexto.pop()
